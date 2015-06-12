@@ -9,3 +9,7 @@ body {
 * {
   box-sizing: border-box;
 }
+
+[contenteditable=true] {
+  border: 1px dotted gray;
+}

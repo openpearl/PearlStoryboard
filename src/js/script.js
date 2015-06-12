@@ -1,12 +1,20 @@
 var Router = window.ReactRouter;
 var Route = window.ReactRouter.Route;
+var RouteHandler = window.ReactRouter.RouteHandler;
 
-var App = require('../jsx/App.jsx');
-var Tree = require('../jsx/Message/Tree.jsx');
+var App = React.createClass({
+  render: function() {
+    return (
+      <RouteHandler/>
+    );
+  }
+});
+
+var Editor = require('../jsx/Editor/Editor.jsx');
 
 var routes = (
   <Route handler={App}>
-    <Route handler={Tree} />
+    <Route handler={Editor} />
   </Route>
 );
 
