@@ -194,8 +194,24 @@ module.exports = MessageCard;
 },{}],5:[function(require,module,exports){
 var LogicCard = React.createClass({displayName: "LogicCard",
 
+  getInitialState: function() {
+    return {
+      visible: true,
+      childLogicCards: []
+    };
+  },
+
   handleAddClick: function() {
-    this.props.onAddClick(this);
+    // this.props.onAddClick(this);
+
+    console.log("Handling the click in Logic card.");
+
+    var _this = this;
+    _this.state.childLogicCards.push(
+      React.createElement(LogicCard, {card: {}})
+    );
+
+    this.setState(_this.state);
   },
 
   handleDrop: function(e) {
@@ -211,19 +227,30 @@ var LogicCard = React.createClass({displayName: "LogicCard",
   },
 
   render: function() {
+    var _this = this;
+
+    if (this.props.card.childLogicCards != null) {
+      _this.state.childLogicCards = this.props.card.childLogicCards.map(
+        function(card, index) {
+          return React.createElement(LogicCard, {key: index, card: card})
+      });
+
+      _this.setState(_this.state);
+
+    }
+
     return (
       React.createElement("div", {className: "logic-card-block", id: "testing", onDrop: this.handleDrop}, 
+        
         React.createElement("div", {className: "logic-card"}, 
-
+          React.createElement("span", null, "Parent ID: "), 
+          React.createElement("div", {contentEditable: "true"}), 
           React.createElement("span", null, "ID: "), 
           React.createElement("div", {contentEditable: "true"}), 
-
           React.createElement("span", null, "Speaker: "), 
           React.createElement("div", {contentEditable: "true"}), 
-
           React.createElement("span", null, "Message: "), 
           React.createElement("div", {contentEditable: "true"})
-
         ), 
 
         React.createElement("div", {className: "add-card-right", onClick: this.handleAddClick}, 
@@ -232,6 +259,10 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
         React.createElement("div", {className: "add-card-down", onClick: this.handleAddClick}, 
           React.createElement("i", {className: "fa fa-arrow-down"})
+        ), 
+
+        React.createElement("div", {className: "tree-new-level"}, 
+          _this.state.childLogicCards
         )
 
       )
@@ -249,28 +280,7 @@ var Tree = React.createClass({displayName: "Tree",
 
   getInitialState: function() {
     return {
-      logicCards: []
     };
-  },
-
-  handleAddClick: function(logicCardComponent) {
-    console.log("Button was clicked.");
-    console.log(logicCardComponent);
-
-    this.addLogicCard();
-
-  },
-
-  addLogicCard: function() {
-    var _this = this;
-
-    console.log("Adding logic cards.");
-
-    _this.state.logicCards.push(
-      React.createElement(LogicCard, {onAddClick: _this.handleAddClick})
-    );
-
-    this.setState(_this.state);
   },
 
   render: function() {
@@ -278,8 +288,7 @@ var Tree = React.createClass({displayName: "Tree",
 
     return (
       React.createElement("div", {id: "tree-display"}, 
-        React.createElement(LogicCard, {onAddClick: _this.handleAddClick}), 
-        _this.state.logicCards
+        React.createElement(LogicCard, {card: {}, onAddClick: _this.handleAddClick})
       )
     );
   }

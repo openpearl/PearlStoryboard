@@ -71,6 +71,19 @@ body {
   height: -moz-min-content;
   height: min-content; }
 
+.tree-new-level {
+  background-color: red;
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  height: -webkit-min-content;
+  height: -moz-min-content;
+  height: min-content;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-right: -450px; }
+
 .logic-card {
   width: 300px;
   height: -webkit-min-content;
@@ -109,5 +122,6 @@ body {
 
 .add-card-down {
   bottom: 0;
-  left: 0;
+  left: 50%;
+  margin-left: -50px;
   margin-bottom: -80px; }

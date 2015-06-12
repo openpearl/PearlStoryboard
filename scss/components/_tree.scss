@@ -14,6 +14,18 @@
   height: min-content;
 }
 
+.tree-new-level {
+  background-color: red;
+  width: min-content;
+  height: min-content;
+
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-right: -450px;
+
+}
+
 .logic-card {
 
   width: 300px;
@@ -65,7 +77,8 @@ $add-card-size: 50px;
 .add-card-down {
   @extend %add-card;
   bottom: 0;
-  left: 0;
+  left: 50%;
+  margin-left: -$add-card-size; 
 
   margin-bottom: -30px - $add-card-size;
 }
