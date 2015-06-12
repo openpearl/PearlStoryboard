@@ -1,0 +1,22 @@
+$sidebar-content: 300px;
+
+#message-bank {
+  background-color: darken(white, 20%);
+  width: min-content;
+  padding: 20px;
+}
+
+#searchbar {
+  width: $sidebar-content;
+  height: 30px;
+  font-size: 18px;
+  background-color: palette(Yellow, 100);
+}
+
+.message-card {
+  width: $sidebar-content;
+  @extend %sh1;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: white;
+}
