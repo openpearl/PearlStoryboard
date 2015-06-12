@@ -1,0 +1,16 @@
+// Don't forget to import your newly creating .scss files here.
+// Don't include the .scss in the end.
+
+// Vendors.
+
+// Helpers.
+@import "helpers/materialPalette";
+@import "helpers/materialShadows";
+
+// Base.
+@import "base/base";
+
+// Components.
+@import "components/editor";
+@import "components/messageBank";
+@import "components/tree";

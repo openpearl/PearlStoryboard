@@ -1,0 +1,127 @@
+/**
+ * google-material-color v1.1.0
+ * https://github.com/danlevan/google-material-color
+ */
+.message-card, .logic-card, .add-card-right, .add-card-down {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); }
+
+.message-card:hover, .add-card-right:hover, .add-card-down:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); }
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  line-height: 1.5;
+  padding: 0px;
+  margin: 0px; }
+
+* {
+  box-sizing: border-box; }
+
+[contenteditable=true] {
+  border: 1px dotted gray; }
+
+#editor-page {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: flex-start;
+      -ms-flex-align: start;
+          align-items: flex-start; }
+
+#message-bank {
+  background-color: #BBDEFB;
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  padding: 20px; }
+
+#searchbar {
+  width: 300px;
+  height: 30px;
+  font-size: 18px;
+  background-color: #FFF9C4; }
+
+.message-card {
+  width: 300px;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: white;
+  border-radius: 3px; }
+
+#tree-display {
+  height: 100%;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  -webkit-flex-shrink: 1;
+      -ms-flex-negative: 1;
+          flex-shrink: 1;
+  -webkit-flex-basis: auto;
+      -ms-flex-preferred-size: auto;
+          flex-basis: auto;
+  padding: 20px; }
+
+.logic-card-block {
+  position: relative;
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  height: -webkit-min-content;
+  height: -moz-min-content;
+  height: min-content; }
+
+.tree-new-level {
+  background-color: red;
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  height: -webkit-min-content;
+  height: -moz-min-content;
+  height: min-content;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-right: -450px; }
+
+.logic-card {
+  width: 300px;
+  height: -webkit-min-content;
+  height: -moz-min-content;
+  height: min-content;
+  padding: 20px;
+  box-sizing: content-box;
+  padding-bottom: 10px; }
+  .logic-card > [contenteditable] {
+    margin-bottom: 10px; }
+
+.add-card-right, .add-card-down {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  border-radius: 25px;
+  background-color: #BBDEFB;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  font-size: 24px;
+  color: black; }
+  .add-card-right:hover, .add-card-down:hover {
+    cursor: pointer; }
+
+.add-card-right {
+  right: 0px;
+  top: 0px;
+  margin-right: -80px; }
+
+.add-card-down {
+  bottom: 0;
+  left: 50%;
+  margin-left: -50px;
+  margin-bottom: -80px; }
