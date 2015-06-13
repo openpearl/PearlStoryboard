@@ -212,9 +212,13 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     _this.setState(_this.state);
   },
 
-  handlePlusSibling: function() {
-    console.log("Handling the down arrow.");
-    console.log(this.props);
+  hideChildren: function() {
+    var _this = this;
+
+    _this.state.visible = !_this.state.visible;
+    console.log(_this.state.visible);
+    _this.setState(_this.state);
+
   },
 
   handleDrop: function(e) {
@@ -225,13 +229,62 @@ var LogicCard = React.createClass({displayName: "LogicCard",
   render: function() {
     var _this = this;
 
-    // Choose which button to use.
     var newOrAddButton;
+    var hideButton;
+    var deleteButton;
+
+    var childrenTreeStyle;
+    var hideButtonStyle;
+
+    if (_this.state.visible === true) {
+      
+      childrenTreeStyle = classNames({
+        'tree-new-level': true,
+        'hide': false
+      });
+
+      hideButtonStyle = classNames({
+        'fa': true,
+        'fa-bookmark': true,
+        'fa-bookmark-o': false
+      });
+      
+    } else {
+
+      childrenTreeStyle = classNames({
+        'tree-new-level': true,
+        'hide': true
+      });
+
+      hideButtonStyle = classNames({
+        'fa': true,
+        'fa-bookmark': false,
+        'fa-bookmark-o': true
+      });
+
+    }
+
     if (_this.state.childLogicCards.length  === 0) {
       newOrAddButton = React.createElement("i", {className: "fa fa-arrow-right"});
+
+      hideButton = React.createElement("div", null);
+
     } else {
       newOrAddButton = React.createElement("i", {className: "fa fa-plus"});
+
+      hideButton = (
+        React.createElement("div", {className: "hide-card-button", onClick: this.hideChildren}, 
+          React.createElement("i", {className: hideButtonStyle})
+        )
+      );
     }
+
+    deleteButton = (
+      React.createElement("div", {className: "delete-card-button", 
+        onClick: this.deleteCard}, 
+        React.createElement("i", {className: "fa fa-times"})
+      )
+    );
 
     return (
       React.createElement("div", {className: "logic-card-block", id: "testing", onDrop: this.handleDrop}, 
@@ -246,19 +299,25 @@ var LogicCard = React.createClass({displayName: "LogicCard",
             React.createElement("span", null, "Message: "), 
             React.createElement("div", {contentEditable: "true"}), 
 
-            React.createElement("div", {className: "add-card-button", onClick: this.handleRightArrow}, 
-              newOrAddButton
+            React.createElement("div", {className: "card-buttons-container"}, 
+              React.createElement("div", {className: "add-card-button", onClick: this.handleRightArrow}, 
+                newOrAddButton
+              ), 
+
+              hideButton, 
+              deleteButton
+
             )
           )
         ), 
 
-        React.createElement("div", {className: "tree-new-level"}, 
+        React.createElement("div", {className: childrenTreeStyle}, 
           _this.state.childLogicCards
         )
+
       )
     );
   }
-
 });
 
 module.exports = LogicCard;

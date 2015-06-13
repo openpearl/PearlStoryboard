@@ -22,3 +22,12 @@ html {
 .fa {
   color: white;
 }
+
+.hide {
+  visibility: hidden;
+  display: none;
+
+  & > * {
+    display: none;
+  }
+}

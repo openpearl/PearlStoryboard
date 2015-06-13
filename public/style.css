@@ -2,10 +2,10 @@
  * google-material-color v1.1.0
  * https://github.com/danlevan/google-material-color
  */
-#message-bank, .message-card, .logic-card-content, .add-card-button {
+#message-bank, .message-card, .logic-card-content, .add-card-button, .hide-card-button, .delete-card-button {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); }
 
-.message-card:hover, .add-card-button:hover {
+.message-card:hover, .add-card-button:hover, .hide-card-button:hover, .delete-card-button:hover {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); }
 
 body {
@@ -28,6 +28,12 @@ html {
 
 .fa {
   color: white; }
+
+.hide {
+  visibility: hidden;
+  display: none; }
+  .hide > * {
+    display: none; }
 
 #message-bank {
   background-color: #4285f4;
@@ -74,7 +80,7 @@ html {
 .logic-card-content {
   padding: 15px; }
 
-.add-card-button {
+.add-card-button, .hide-card-button, .delete-card-button {
   width: 40px;
   height: 40px;
   border-radius: 20px;
@@ -89,9 +95,24 @@ html {
       -ms-flex-pack: center;
           justify-content: center;
   font-size: 24px; }
-  .add-card-button:hover {
+  .add-card-button:hover, .hide-card-button:hover, .delete-card-button:hover {
     cursor: pointer; }
 
-.add-card-button {
+.card-buttons-container {
   margin-left: auto;
-  margin-top: 15px; }
+  text-align: right;
+  width: 100%;
+  margin-top: 15px;
+  display: inline-block; }
+
+.add-card-button, .hide-card-button, .delete-card-button {
+  float: right;
+  margin-left: 10px; }
+
+.hide-card-button {
+  background-color: #6d4c41; }
+
+.delete-card-button {
+  background-color: #d23f31;
+  float: left;
+  margin-left: 0; }

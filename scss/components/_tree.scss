@@ -31,13 +31,13 @@
   padding: 15px;
 }
 
-$add-card-size: 40px;
+$card-button-size: 40px;
 
-%add-card {
+%card-button {
 
-  width: $add-card-size;
-  height: $add-card-size;
-  border-radius: $add-card-size / 2;
+  width: $card-button-size;
+  height: $card-button-size;
+  border-radius: $card-button-size / 2;
   @extend %sh1;
 
   background-color: $blue;
@@ -54,9 +54,28 @@ $add-card-size: 40px;
   }
 }
 
-.add-card-button {
+.card-buttons-container {
   margin-left: auto;
-  @extend %add-card;
-
+  text-align: right;
+  width: 100%;
   margin-top: 15px;
+
+  display: inline-block;
+
+}
+
+.add-card-button, .hide-card-button, .delete-card-button {
+  float: right;
+  @extend %card-button;
+  margin-left: 10px;
+}
+
+.hide-card-button {
+  background-color: $brown;
+}
+
+.delete-card-button {
+  background-color: $red;
+  float: left;
+  margin-left: 0;
 }
