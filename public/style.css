@@ -2,10 +2,10 @@
  * google-material-color v1.1.0
  * https://github.com/danlevan/google-material-color
  */
-.message-card, .logic-card, .add-card-right, .add-card-down {
+.message-card, .logic-card, .add-card-right {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); }
 
-.message-card:hover, .add-card-right:hover, .add-card-down:hover {
+.message-card:hover, .add-card-right:hover {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); }
 
 body {
@@ -15,8 +15,11 @@ body {
   padding: 0px;
   margin: 0px; }
 
-* {
+html {
   box-sizing: border-box; }
+
+*, *:before, *:after {
+  box-sizing: inherit; }
 
 [contenteditable=true] {
   border: 1px dotted gray; }
@@ -63,42 +66,31 @@ body {
   padding: 20px; }
 
 .logic-card-block {
-  position: relative;
-  width: -webkit-min-content;
-  width: -moz-min-content;
-  width: min-content;
-  height: -webkit-min-content;
-  height: -moz-min-content;
-  height: min-content; }
+  margin-bottom: 20px; }
 
 .tree-new-level {
-  background-color: red;
   width: -webkit-min-content;
   width: -moz-min-content;
   width: min-content;
   height: -webkit-min-content;
   height: -moz-min-content;
   height: min-content;
-  position: absolute;
-  right: 0;
-  top: 0;
-  margin-right: -450px; }
+  margin-left: 20px; }
 
 .logic-card {
   width: 300px;
-  height: -webkit-min-content;
-  height: -moz-min-content;
-  height: min-content;
   padding: 20px;
   box-sizing: content-box;
-  padding-bottom: 10px; }
+  height: -webkit-min-content;
+  height: -moz-min-content;
+  height: min-content; }
   .logic-card > [contenteditable] {
     margin-bottom: 10px; }
 
-.add-card-right, .add-card-down {
+.add-card-right {
+  margin-left: auto;
   width: 50px;
   height: 50px;
-  position: absolute;
   border-radius: 25px;
   background-color: #BBDEFB;
   display: -webkit-flex;
@@ -112,16 +104,5 @@ body {
           justify-content: center;
   font-size: 24px;
   color: black; }
-  .add-card-right:hover, .add-card-down:hover {
+  .add-card-right:hover {
     cursor: pointer; }
-
-.add-card-right {
-  right: 0px;
-  top: 0px;
-  margin-right: -80px; }
-
-.add-card-down {
-  bottom: 0;
-  left: 50%;
-  margin-left: -50px;
-  margin-bottom: -80px; }

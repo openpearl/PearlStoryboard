@@ -9,32 +9,30 @@
 }
 
 .logic-card-block {
-  position: relative;
-  width: min-content;
-  height: min-content;
+  // width: min-content;
+  margin-bottom: 20px;
+  // background-color: yellow;
+  // display: flex;
 }
 
 .tree-new-level {
-  background-color: red;
+  // background-color: red;
   width: min-content;
   height: min-content;
 
-  position: absolute;
-  right: 0;
-  top: 0;
-  margin-right: -450px;
-
+  margin-left: 20px;
 }
 
 .logic-card {
 
   width: 300px;
-  height: min-content;
   padding: 20px;
   box-sizing: content-box;
   @extend %sh1;
 
-  padding-bottom: 10px;
+  height: min-content;
+
+  // padding-bottom: 80px;
 
   & > [contenteditable] {
     margin-bottom: 10px;
@@ -44,9 +42,10 @@
 $add-card-size: 50px;
 
 %add-card {
+  margin-left: auto;
+
   width: $add-card-size;
   height: $add-card-size;
-  position: absolute;
   border-radius: $add-card-size / 2;
   @extend %sh1;
 
@@ -67,18 +66,4 @@ $add-card-size: 50px;
 
 .add-card-right {
   @extend %add-card;
-
-  right: 0px;
-  top: 0px;
-
-  margin-right: -30px - $add-card-size;
-}
-
-.add-card-down {
-  @extend %add-card;
-  bottom: 0;
-  left: 50%;
-  margin-left: -$add-card-size; 
-
-  margin-bottom: -30px - $add-card-size;
 }

@@ -116,7 +116,7 @@ var MessageBank = React.createClass({
 
     return (
       <div id="message-bank">
-        <input type="text" id="searchbar"></input>
+        <input type="text" id="searchbar" placeholder="Search: "></input>
         <div>{messageCards}</div>
       </div>
     );

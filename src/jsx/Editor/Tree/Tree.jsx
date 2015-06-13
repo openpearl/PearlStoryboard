@@ -12,7 +12,7 @@ var Tree = React.createClass({
 
     return (
       <div id="tree-display">
-        <LogicCard card={{}} onAddClick={_this.handleAddClick} />
+        <LogicCard card={{}} />
       </div>
     );
   }

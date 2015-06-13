@@ -161,7 +161,7 @@ var MessageBank = React.createClass({displayName: "MessageBank",
 
     return (
       React.createElement("div", {id: "message-bank"}, 
-        React.createElement("input", {type: "text", id: "searchbar"}), 
+        React.createElement("input", {type: "text", id: "searchbar", placeholder: "Search: "}), 
         React.createElement("div", null, messageCards)
       )
     );
@@ -201,17 +201,20 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     };
   },
 
-  handleAddClick: function() {
-    // this.props.onAddClick(this);
-
-    console.log("Handling the click in Logic card.");
-
+  handleRightArrow: function() {
     var _this = this;
-    _this.state.childLogicCards.push(
+
+    // Add a new logic child to the start of the list.
+    _this.state.childLogicCards.unshift(
       React.createElement(LogicCard, {card: {}})
     );
 
-    this.setState(_this.state);
+    _this.setState(_this.state);
+  },
+
+  handlePlusSibling: function() {
+    console.log("Handling the down arrow.");
+    console.log(this.props);
   },
 
   handleDrop: function(e) {
@@ -219,52 +222,39 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     var data = e.data;
   },
 
-  componentDidMount: function() {
-
-    // Draws a line.
-    // $('#testing').line(0, 0, 20, 20);    
-  
-  },
-
   render: function() {
     var _this = this;
 
-    if (this.props.card.childLogicCards != null) {
-      _this.state.childLogicCards = this.props.card.childLogicCards.map(
-        function(card, index) {
-          return React.createElement(LogicCard, {key: index, card: card})
-      });
-
-      _this.setState(_this.state);
-
+    // Choose which button to use.
+    var newOrAddButton;
+    if (_this.state.childLogicCards.length  === 0) {
+      newOrAddButton = React.createElement("i", {className: "fa fa-arrow-right"});
+    } else {
+      newOrAddButton = React.createElement("i", {className: "fa fa-plus"});
     }
 
     return (
       React.createElement("div", {className: "logic-card-block", id: "testing", onDrop: this.handleDrop}, 
-        
         React.createElement("div", {className: "logic-card"}, 
-          React.createElement("span", null, "Parent ID: "), 
-          React.createElement("div", {contentEditable: "true"}), 
-          React.createElement("span", null, "ID: "), 
-          React.createElement("div", {contentEditable: "true"}), 
-          React.createElement("span", null, "Speaker: "), 
-          React.createElement("div", {contentEditable: "true"}), 
-          React.createElement("span", null, "Message: "), 
-          React.createElement("div", {contentEditable: "true"})
-        ), 
+          React.createElement("div", {className: "logic-card-content"}, 
+            React.createElement("span", null, "Parent ID: "), 
+            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("span", null, "ID: "), 
+            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("span", null, "Speaker: "), 
+            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("span", null, "Message: "), 
+            React.createElement("div", {contentEditable: "true"}), 
 
-        React.createElement("div", {className: "add-card-right", onClick: this.handleAddClick}, 
-          React.createElement("i", {className: "fa fa-arrow-right"})
-        ), 
-
-        React.createElement("div", {className: "add-card-down", onClick: this.handleAddClick}, 
-          React.createElement("i", {className: "fa fa-arrow-down"})
+            React.createElement("div", {className: "add-card-right", onClick: this.handleRightArrow}, 
+              newOrAddButton
+            )
+          )
         ), 
 
         React.createElement("div", {className: "tree-new-level"}, 
           _this.state.childLogicCards
         )
-
       )
     );
   }
@@ -288,7 +278,7 @@ var Tree = React.createClass({displayName: "Tree",
 
     return (
       React.createElement("div", {id: "tree-display"}, 
-        React.createElement(LogicCard, {card: {}, onAddClick: _this.handleAddClick})
+        React.createElement(LogicCard, {card: {}})
       )
     );
   }

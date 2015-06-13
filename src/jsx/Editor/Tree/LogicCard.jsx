@@ -7,17 +7,20 @@ var LogicCard = React.createClass({
     };
   },
 
-  handleAddClick: function() {
-    // this.props.onAddClick(this);
-
-    console.log("Handling the click in Logic card.");
-
+  handleRightArrow: function() {
     var _this = this;
-    _this.state.childLogicCards.push(
-      <LogicCard card={{}} />
+
+    // Add a new logic child to the start of the list.
+    _this.state.childLogicCards.unshift(
+      <LogicCard card={{}}/>
     );
 
-    this.setState(_this.state);
+    _this.setState(_this.state);
+  },
+
+  handlePlusSibling: function() {
+    console.log("Handling the down arrow.");
+    console.log(this.props);
   },
 
   handleDrop: function(e) {
@@ -25,52 +28,39 @@ var LogicCard = React.createClass({
     var data = e.data;
   },
 
-  componentDidMount: function() {
-
-    // Draws a line.
-    // $('#testing').line(0, 0, 20, 20);    
-  
-  },
-
   render: function() {
     var _this = this;
 
-    if (this.props.card.childLogicCards != null) {
-      _this.state.childLogicCards = this.props.card.childLogicCards.map(
-        function(card, index) {
-          return <LogicCard key={index} card={card} />
-      });
-
-      _this.setState(_this.state);
-
+    // Choose which button to use.
+    var newOrAddButton;
+    if (_this.state.childLogicCards.length  === 0) {
+      newOrAddButton = <i className="fa fa-arrow-right"></i>;
+    } else {
+      newOrAddButton = <i className="fa fa-plus"></i>;
     }
 
     return (
       <div className="logic-card-block" id="testing" onDrop={this.handleDrop}>
-        
         <div className="logic-card">
-          <span>Parent ID: </span>
-          <div contentEditable='true'></div>
-          <span>ID: </span>
-          <div contentEditable='true'></div>
-          <span>Speaker: </span>
-          <div contentEditable='true'></div>
-          <span>Message: </span>
-          <div contentEditable='true'></div>
-        </div>
+          <div className="logic-card-content">
+            <span>Parent ID: </span>
+            <div contentEditable='true'></div>
+            <span>ID: </span>
+            <div contentEditable='true'></div>
+            <span>Speaker: </span>
+            <div contentEditable='true'></div>
+            <span>Message: </span>
+            <div contentEditable='true'></div>
 
-        <div className="add-card-right" onClick={this.handleAddClick}>
-          <i className="fa fa-arrow-right"></i>
-        </div>
-
-        <div className="add-card-down" onClick={this.handleAddClick}>
-          <i className="fa fa-arrow-down"></i>
+            <div className="add-card-right" onClick={this.handleRightArrow}>
+              {newOrAddButton}
+            </div>
+          </div>
         </div>
 
         <div className="tree-new-level">
           {_this.state.childLogicCards}
         </div>
-
       </div>
     );
   }
