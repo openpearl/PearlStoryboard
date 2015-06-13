@@ -246,7 +246,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
             React.createElement("span", null, "Message: "), 
             React.createElement("div", {contentEditable: "true"}), 
 
-            React.createElement("div", {className: "add-card-right", onClick: this.handleRightArrow}, 
+            React.createElement("div", {className: "add-card-button", onClick: this.handleRightArrow}, 
               newOrAddButton
             )
           )

@@ -52,7 +52,7 @@ var LogicCard = React.createClass({
             <span>Message: </span>
             <div contentEditable='true'></div>
 
-            <div className="add-card-right" onClick={this.handleRightArrow}>
+            <div className="add-card-button" onClick={this.handleRightArrow}>
               {newOrAddButton}
             </div>
           </div>

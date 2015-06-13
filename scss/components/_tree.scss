@@ -1,62 +1,52 @@
 #tree-display {
-  // background-color: red;
   height: 100%;
-
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: auto;
   padding: 20px;
+  white-space:nowrap;
+  float: left;
+
+  height: 100%;
+  overflow: scroll;
 }
 
 .logic-card-block {
-  // width: min-content;
-  margin-bottom: 20px;
-  // background-color: yellow;
-  // display: flex;
 }
 
 .tree-new-level {
-  // background-color: red;
-  width: min-content;
-  height: min-content;
-
   margin-left: 20px;
+  display: inline-block;
+  white-space:nowrap;
+  vertical-align:top;
 }
 
 .logic-card {
-
   width: 300px;
-  padding: 20px;
-  box-sizing: content-box;
-  @extend %sh1;
-
-  height: min-content;
-
-  // padding-bottom: 80px;
-
-  & > [contenteditable] {
-    margin-bottom: 10px;
-  }
+  display: inline-block;
+  vertical-align:top;
+  margin-bottom: 20px;
+  background-color: white;
 }
 
-$add-card-size: 50px;
+.logic-card-content {
+  @extend %sh1;
+  padding: 15px;
+}
+
+$add-card-size: 40px;
 
 %add-card {
-  margin-left: auto;
 
   width: $add-card-size;
   height: $add-card-size;
   border-radius: $add-card-size / 2;
   @extend %sh1;
 
-  background-color: palette(Blue, 100);
+  background-color: $blue;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   font-size: 24px;
-  color: black;
 
   &:hover {
     @extend %sh2;
@@ -64,6 +54,9 @@ $add-card-size: 50px;
   }
 }
 
-.add-card-right {
+.add-card-button {
+  margin-left: auto;
   @extend %add-card;
+
+  margin-top: 15px;
 }
