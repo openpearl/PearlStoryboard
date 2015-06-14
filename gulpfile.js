@@ -50,6 +50,7 @@ gulp.task('scss', function() {
     .pipe(sass().on('error', sass.logError))
     .pipe(postcss(processors))
     .pipe(gulp.dest('public'));
+    
 });
 
 gulp.task('scss:watch', function() {

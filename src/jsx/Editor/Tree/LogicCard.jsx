@@ -3,16 +3,20 @@ var LogicCard = React.createClass({
   getInitialState: function() {
     return {
       visible: true,
-      childLogicCards: []
+      childLogicCards: {}
     };
   },
 
-  handleRightArrow: function() {
+  handleAdd: function() {
     var _this = this;
+    var uniqueDateKey = Date.now();
 
     // Add a new logic child to the start of the list.
-    _this.state.childLogicCards.unshift(
-      <LogicCard card={{}}/>
+    _this.state.childLogicCards[uniqueDateKey] = (
+      <LogicCard card={{}}
+        key={uniqueDateKey} 
+        childCardId={uniqueDateKey}
+        deleteCard={_this.deleteChildCard}/>
     );
 
     _this.setState(_this.state);
@@ -22,9 +26,19 @@ var LogicCard = React.createClass({
     var _this = this;
 
     _this.state.visible = !_this.state.visible;
-    console.log(_this.state.visible);
     _this.setState(_this.state);
+  },
 
+  // Pass the context back to the parent.
+  deleteCard: function() {
+    this.props.deleteCard(this);
+  },
+
+  deleteChildCard: function(childCard) {
+    var _this = this;
+
+    delete _this.state.childLogicCards[childCard.props.childCardId]; 
+    _this.setState(_this.state);
   },
 
   handleDrop: function(e) {
@@ -42,55 +56,41 @@ var LogicCard = React.createClass({
     var childrenTreeStyle;
     var hideButtonStyle;
 
+    // Toggle depending on visibility.
     if (_this.state.visible === true) {
-      
       childrenTreeStyle = classNames({
         'tree-new-level': true,
         'hide': false
       });
-
       hideButtonStyle = classNames({
         'fa': true,
         'fa-bookmark': true,
         'fa-bookmark-o': false
       });
-      
     } else {
-
       childrenTreeStyle = classNames({
         'tree-new-level': true,
         'hide': true
       });
-
       hideButtonStyle = classNames({
         'fa': true,
         'fa-bookmark': false,
         'fa-bookmark-o': true
       });
-
     }
 
-    if (_this.state.childLogicCards.length  === 0) {
+    // Toggle if there are any child logic cards.
+    if ($.isEmptyObject(_this.state.childLogicCards)) {
       newOrAddButton = <i className="fa fa-arrow-right"></i>;
-
       hideButton = <div></div>;
-
     } else {
       newOrAddButton = <i className="fa fa-plus"></i>;
-
       hideButton = (
         <div className="hide-card-button" onClick={this.hideChildren}>
           <i className={hideButtonStyle}></i>
         </div>
       );
     }
-
-    deleteButton = (
-      <div className="delete-card-button" 
-        onClick={this.deleteCard}>
-        <i className="fa fa-times"></i>
-      </div>
-    );
 
     return (
       <div className="logic-card-block" id="testing" onDrop={this.handleDrop}>
@@ -106,12 +106,16 @@ var LogicCard = React.createClass({
             <div contentEditable='true'></div>
 
             <div className="card-buttons-container">
-              <div className="add-card-button" onClick={this.handleRightArrow}>
+              <div className="add-card-button" onClick={this.handleAdd}>
                 {newOrAddButton}
               </div>
 
               {hideButton}
-              {deleteButton}
+
+              <div className="delete-card-button" 
+                onClick={_this.deleteCard}>
+                <i className="fa fa-times"></i>
+              </div>
 
             </div>
           </div>
