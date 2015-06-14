@@ -35,6 +35,11 @@
 .logic-card-content {
   @extend %sh1;
   padding: 15px;
+
+
+  & > [contenteditable] {
+    white-space: pre-wrap;
+  }
 }
 
 $card-button-size: 40px;

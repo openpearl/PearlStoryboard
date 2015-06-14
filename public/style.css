@@ -24,7 +24,10 @@ html {
   box-sizing: inherit; }
 
 [contenteditable=true] {
-  border: 1px dotted gray; }
+  border: 1px dotted gray;
+  word-wrap: normal;
+  max-width: 100%;
+  white-space: pre; }
 
 .fa {
   color: white; }
@@ -92,6 +95,8 @@ html {
 
 .logic-card-content {
   padding: 15px; }
+  .logic-card-content > [contenteditable] {
+    white-space: pre-wrap; }
 
 .add-card-button, .hide-card-button, .delete-card-button {
   width: 40px;

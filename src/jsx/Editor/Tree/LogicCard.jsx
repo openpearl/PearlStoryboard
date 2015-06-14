@@ -45,6 +45,10 @@ var LogicCard = React.createClass({
     _this.setState(_this.state);
   },
 
+  preventDefault: function (event) {
+    event.preventDefault();
+  },
+
   handleDrop: function(ev) {
     var _this = this;
     ev.preventDefault();
@@ -54,16 +58,11 @@ var LogicCard = React.createClass({
     try {
       data = JSON.parse(ev.dataTransfer.getData('text'));
     } catch (e) {
-      // If the text data isn't parsable we'll just ignore it.
       return;
     }
-
-    // Do something with the data.
-    console.log(data);
-
-
-
-
+    _this.state.cardId = data.bankCardId;
+    _this.state.message = data.message;
+    _this.setState(_this.state);
   },
 
   render: function() {
@@ -106,27 +105,29 @@ var LogicCard = React.createClass({
     } else {
       newOrAddButton = <i className="fa fa-plus"></i>;
       hideButton = (
-        <div className="hide-card-button" onClick={this.hideChildren}>
+        <div className="hide-card-button" onClick={_this.hideChildren}>
           <i className={hideButtonStyle}></i>
         </div>
       );
     }
 
     return (
-      <div className="logic-card-block" id="testing">
+      <div className="logic-card-block" id="testing" >
         <div className="logic-card">
-          <div className="logic-card-content" onDrop={this.handleDrop}>
+          <div className="logic-card-content" 
+            onDragOver={_this.preventDefault}
+            onDrop={_this.handleDrop}>
             <span>Parent ID: </span>
-            <div contentEditable='true'></div>
+            <div contentEditable='true'>{_this.state.parentCardId}</div>
             <span>ID: </span>
-            <div contentEditable='true'></div>
+            <div contentEditable='true'>{_this.state.cardId}</div>
             <span>Speaker: </span>
-            <div contentEditable='true'></div>
+            <div contentEditable='true'>{_this.state.speaker}</div>
             <span>Message: </span>
-            <div contentEditable='true'></div>
+            <div contentEditable='true'>{_this.state.message}</div>
 
             <div className="card-buttons-container">
-              <div className="add-card-button" onClick={this.handleAdd}>
+              <div className="add-card-button" onClick={_this.handleAdd}>
                 {newOrAddButton}
               </div>
 

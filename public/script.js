@@ -274,6 +274,10 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     _this.setState(_this.state);
   },
 
+  preventDefault: function (event) {
+    event.preventDefault();
+  },
+
   handleDrop: function(ev) {
     var _this = this;
     ev.preventDefault();
@@ -283,16 +287,11 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     try {
       data = JSON.parse(ev.dataTransfer.getData('text'));
     } catch (e) {
-      // If the text data isn't parsable we'll just ignore it.
       return;
     }
-
-    // Do something with the data.
-    console.log(data);
-
-
-
-
+    _this.state.cardId = data.bankCardId;
+    _this.state.message = data.message;
+    _this.setState(_this.state);
   },
 
   render: function() {
@@ -335,7 +334,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     } else {
       newOrAddButton = React.createElement("i", {className: "fa fa-plus"});
       hideButton = (
-        React.createElement("div", {className: "hide-card-button", onClick: this.hideChildren}, 
+        React.createElement("div", {className: "hide-card-button", onClick: _this.hideChildren}, 
           React.createElement("i", {className: hideButtonStyle})
         )
       );
@@ -344,18 +343,20 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     return (
       React.createElement("div", {className: "logic-card-block", id: "testing"}, 
         React.createElement("div", {className: "logic-card"}, 
-          React.createElement("div", {className: "logic-card-content", onDrop: this.handleDrop}, 
+          React.createElement("div", {className: "logic-card-content", 
+            onDragOver: _this.preventDefault, 
+            onDrop: _this.handleDrop}, 
             React.createElement("span", null, "Parent ID: "), 
-            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("div", {contentEditable: "true"}, _this.state.parentCardId), 
             React.createElement("span", null, "ID: "), 
-            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("div", {contentEditable: "true"}, _this.state.cardId), 
             React.createElement("span", null, "Speaker: "), 
-            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("div", {contentEditable: "true"}, _this.state.speaker), 
             React.createElement("span", null, "Message: "), 
-            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("div", {contentEditable: "true"}, _this.state.message), 
 
             React.createElement("div", {className: "card-buttons-container"}, 
-              React.createElement("div", {className: "add-card-button", onClick: this.handleAdd}, 
+              React.createElement("div", {className: "add-card-button", onClick: _this.handleAdd}, 
                 newOrAddButton
               ), 
 

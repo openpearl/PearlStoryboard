@@ -17,6 +17,9 @@ html {
 
 [contenteditable=true] {
   border: 1px dotted gray;
+  word-wrap: normal;
+  max-width: 100%;
+  white-space: pre;
 }
 
 .fa {
