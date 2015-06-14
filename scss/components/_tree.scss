@@ -1,62 +1,63 @@
 #tree-display {
-  // background-color: red;
+  padding: 20px;
+  white-space:nowrap;
+  width: 100%;
   height: 100%;
+  overflow: scroll;
 
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: auto;
-  padding: 20px;
-}
+  &:hover {
+    cursor: grab;
+  }
 
-.logic-card-block {
-  // width: min-content;
-  margin-bottom: 20px;
-  // background-color: yellow;
-  // display: flex;
-}
-
-.tree-new-level {
-  // background-color: red;
-  width: min-content;
-  height: min-content;
-
-  margin-left: 20px;
-}
-
-.logic-card {
-
-  width: 300px;
-  padding: 20px;
-  box-sizing: content-box;
-  @extend %sh1;
-
-  height: min-content;
-
-  // padding-bottom: 80px;
-
-  & > [contenteditable] {
-    margin-bottom: 10px;
+  &:active {
+    cursor: grabbing;
   }
 }
 
-$add-card-size: 50px;
+.logic-card-block {
+}
 
-%add-card {
-  margin-left: auto;
+.tree-new-level {
+  margin-left: 20px;
+  display: inline-block;
+  white-space:nowrap;
+  vertical-align:top;
+}
 
-  width: $add-card-size;
-  height: $add-card-size;
-  border-radius: $add-card-size / 2;
+.logic-card {
+  width: 300px;
+  display: inline-block;
+  vertical-align:top;
+  margin-bottom: 20px;
+  background-color: white;
+}
+
+.logic-card-content {
+  @extend %sh1;
+  padding: 15px;
+
+
+  & > [contenteditable] {
+    white-space: pre-wrap;
+  }
+}
+
+$card-button-size: 40px;
+
+%card-button {
+
+  width: $card-button-size;
+  height: $card-button-size;
+  border-radius: $card-button-size / 2;
   @extend %sh1;
 
-  background-color: palette(Blue, 100);
+  background-color: $blue;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   font-size: 24px;
-  color: black;
 
   &:hover {
     @extend %sh2;
@@ -64,6 +65,28 @@ $add-card-size: 50px;
   }
 }
 
-.add-card-right {
-  @extend %add-card;
+.card-buttons-container {
+  margin-left: auto;
+  text-align: right;
+  width: 100%;
+  margin-top: 15px;
+
+  display: inline-block;
+
+}
+
+.add-card-button, .hide-card-button, .delete-card-button {
+  float: right;
+  @extend %card-button;
+  margin-left: 10px;
+}
+
+.hide-card-button {
+  background-color: $brown;
+}
+
+.delete-card-button {
+  background-color: $red;
+  float: left;
+  margin-left: 0;
 }

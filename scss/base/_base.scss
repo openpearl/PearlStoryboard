@@ -1,9 +1,11 @@
 body {
   font-family: 'Roboto', sans-serif;
-  font-weight: 300;
   line-height: 1.5;
   padding: 0px;
   margin: 0px;
+  background-color: #ececec;
+  font-size: 13px;
+  color: lighten(black, 20%);
 }
 
 html {
@@ -15,4 +17,20 @@ html {
 
 [contenteditable=true] {
   border: 1px dotted gray;
+  word-wrap: normal;
+  max-width: 100%;
+  white-space: pre;
+}
+
+.fa {
+  color: white;
+}
+
+.hide {
+  visibility: hidden;
+  display: none;
+
+  & > * {
+    display: none;
+  }
 }

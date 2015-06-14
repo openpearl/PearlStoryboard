@@ -1,16 +1,19 @@
 $sidebar-content: 300px;
 
 #message-bank {
-  background-color: palette(Blue, 100);
+  background-color: $blue;
   width: min-content;
   padding: 20px;
+  height: 100%;
+  flex-shrink: 0;
+  overflow: scroll;
+  white-space: normal;
+  @extend %sh1;
 }
 
 #searchbar {
   width: $sidebar-content;
   height: 30px;
-  font-size: 18px;
-  background-color: palette(Yellow, 100);
 }
 
 .message-card {

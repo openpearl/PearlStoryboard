@@ -7,12 +7,16 @@ var Tree = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    $("#tree-display").attachDragger();
+  },
+
   render: function() {
     var _this = this;
 
     return (
       <div id="tree-display">
-        <LogicCard card={{}} />
+        <LogicCard card={{}} deleteCard={function() {return;}}/>
       </div>
     );
   }

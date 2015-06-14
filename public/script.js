@@ -1,4 +1,27 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// JQuery.
+// Allow draggable windows.
+$.fn.attachDragger = function(){
+  var attachment = false, lastPosition, position, difference;
+  $( $(this).selector ).on("mousedown mouseup mousemove",function(e){
+    if( e.type == "mousedown" ) attachment = true, lastPosition = [e.clientX, e.clientY];
+    if( e.type == "mouseup" ) attachment = false;
+    if( e.type == "mousemove" && attachment == true ){
+      position = [e.clientX, e.clientY];
+      difference = [ (position[0]-lastPosition[0]), (position[1]-lastPosition[1]) ];
+      $(this).scrollLeft( $(this).scrollLeft() - difference[0] );
+      $(this).scrollTop( $(this).scrollTop() - difference[1] );
+      lastPosition = [e.clientX, e.clientY];
+    }
+  });
+
+  $(window).on("mouseup", function(){
+    attachment = false;
+  });
+}
+
+// ReactJS ====================================================================
+
 var Router = window.ReactRouter;
 var Route = window.ReactRouter.Route;
 var RouteHandler = window.ReactRouter.RouteHandler;
@@ -178,10 +201,22 @@ var MessageCard = React.createClass({displayName: "MessageCard",
     // console.log(this.props.cardId);    
   },
 
+  dragStart: function(ev) {
+    var _this = this;
+
+    var data = {
+      bankCardId: _this.props.cardId,
+      message: _this.props.message
+    }
+
+    ev.dataTransfer.setData('text', JSON.stringify(data));
+  },
+
   render: function() {
     var _this = this;
     return (
-      React.createElement("div", {className: "message-card", draggable: "true"}, 
+      React.createElement("div", {className: "message-card", draggable: "true", 
+        onDragStart: _this.dragStart}, 
         React.createElement("i", null, _this.props.cardId), 
         React.createElement("div", null, _this.props.message)
       )
@@ -197,68 +232,152 @@ var LogicCard = React.createClass({displayName: "LogicCard",
   getInitialState: function() {
     return {
       visible: true,
-      childLogicCards: []
+      cardId: "",
+      parentCardId: "",
+      speaker: "",
+      message: "",
+      childLogicCards: {}
     };
   },
 
-  handleRightArrow: function() {
+  handleAdd: function() {
     var _this = this;
+    var uniqueDateKey = Date.now();
 
     // Add a new logic child to the start of the list.
-    _this.state.childLogicCards.unshift(
-      React.createElement(LogicCard, {card: {}})
+    _this.state.childLogicCards[uniqueDateKey] = (
+      React.createElement(LogicCard, {card: {}, 
+        key: uniqueDateKey, 
+        childCardId: uniqueDateKey, 
+        deleteCard: _this.deleteChildCard})
     );
 
     _this.setState(_this.state);
   },
 
-  handlePlusSibling: function() {
-    console.log("Handling the down arrow.");
-    console.log(this.props);
+  hideChildren: function() {
+    var _this = this;
+
+    _this.state.visible = !_this.state.visible;
+    _this.setState(_this.state);
   },
 
-  handleDrop: function(e) {
-    e.preventDefault();
-    var data = e.data;
+  // Pass the context back to the parent.
+  deleteCard: function() {
+    this.props.deleteCard(this);
+  },
+
+  deleteChildCard: function(childCard) {
+    var _this = this;
+
+    delete _this.state.childLogicCards[childCard.props.childCardId]; 
+    _this.setState(_this.state);
+  },
+
+  preventDefault: function (event) {
+    event.preventDefault();
+  },
+
+  handleDrop: function(ev) {
+    var _this = this;
+    ev.preventDefault();
+
+    var data;
+
+    try {
+      data = JSON.parse(ev.dataTransfer.getData('text'));
+    } catch (e) {
+      return;
+    }
+    _this.state.cardId = data.bankCardId;
+    _this.state.message = data.message;
+    _this.setState(_this.state);
   },
 
   render: function() {
     var _this = this;
 
-    // Choose which button to use.
     var newOrAddButton;
-    if (_this.state.childLogicCards.length  === 0) {
+    var hideButton;
+    var deleteButton;
+
+    var childrenTreeStyle;
+    var hideButtonStyle;
+
+    // Toggle depending on visibility.
+    if (_this.state.visible === true) {
+      childrenTreeStyle = classNames({
+        'tree-new-level': true,
+        'hide': false
+      });
+      hideButtonStyle = classNames({
+        'fa': true,
+        'fa-bookmark': true,
+        'fa-bookmark-o': false
+      });
+    } else {
+      childrenTreeStyle = classNames({
+        'tree-new-level': true,
+        'hide': true
+      });
+      hideButtonStyle = classNames({
+        'fa': true,
+        'fa-bookmark': false,
+        'fa-bookmark-o': true
+      });
+    }
+
+    // Toggle if there are any child logic cards.
+    if ($.isEmptyObject(_this.state.childLogicCards)) {
       newOrAddButton = React.createElement("i", {className: "fa fa-arrow-right"});
+      hideButton = React.createElement("div", null);
     } else {
       newOrAddButton = React.createElement("i", {className: "fa fa-plus"});
+      hideButton = (
+        React.createElement("div", {className: "hide-card-button", onClick: _this.hideChildren}, 
+          React.createElement("i", {className: hideButtonStyle})
+        )
+      );
     }
 
     return (
-      React.createElement("div", {className: "logic-card-block", id: "testing", onDrop: this.handleDrop}, 
+      React.createElement("div", {className: "logic-card-block", id: "testing"}, 
         React.createElement("div", {className: "logic-card"}, 
-          React.createElement("div", {className: "logic-card-content"}, 
+          React.createElement("div", {className: "logic-card-content", 
+            onDragOver: _this.preventDefault, 
+            onDrop: _this.handleDrop}, 
             React.createElement("span", null, "Parent ID: "), 
-            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("div", {contentEditable: "true"}, _this.state.parentCardId), 
             React.createElement("span", null, "ID: "), 
-            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("div", {contentEditable: "true"}, _this.state.cardId), 
             React.createElement("span", null, "Speaker: "), 
-            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("div", {contentEditable: "true"}, _this.state.speaker), 
             React.createElement("span", null, "Message: "), 
-            React.createElement("div", {contentEditable: "true"}), 
+            React.createElement("div", {contentEditable: "true"}, _this.state.message), 
 
-            React.createElement("div", {className: "add-card-right", onClick: this.handleRightArrow}, 
-              newOrAddButton
+            React.createElement("div", {className: "card-buttons-container"}, 
+              React.createElement("div", {className: "add-card-button", onClick: _this.handleAdd}, 
+                newOrAddButton
+              ), 
+
+              hideButton, 
+
+              React.createElement("div", {className: "delete-card-button", 
+                onClick: _this.deleteCard}, 
+                React.createElement("i", {className: "fa fa-times"})
+              )
+
             )
           )
         ), 
 
-        React.createElement("div", {className: "tree-new-level"}, 
+        React.createElement("div", {className: childrenTreeStyle}, 
           _this.state.childLogicCards
         )
+
       )
     );
   }
-
 });
 
 module.exports = LogicCard;
@@ -273,12 +392,16 @@ var Tree = React.createClass({displayName: "Tree",
     };
   },
 
+  componentDidMount: function() {
+    $("#tree-display").attachDragger();
+  },
+
   render: function() {
     var _this = this;
 
     return (
       React.createElement("div", {id: "tree-display"}, 
-        React.createElement(LogicCard, {card: {}})
+        React.createElement(LogicCard, {card: {}, deleteCard: function() {return;}})
       )
     );
   }

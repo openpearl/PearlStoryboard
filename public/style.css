@@ -2,18 +2,20 @@
  * google-material-color v1.1.0
  * https://github.com/danlevan/google-material-color
  */
-.message-card, .logic-card, .add-card-right {
+#message-bank, .message-card, .logic-card-content, .add-card-button, .hide-card-button, .delete-card-button {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); }
 
-.message-card:hover, .add-card-right:hover {
+.message-card:hover, .add-card-button:hover, .hide-card-button:hover, .delete-card-button:hover {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); }
 
 body {
   font-family: 'Roboto', sans-serif;
-  font-weight: 300;
   line-height: 1.5;
   padding: 0px;
-  margin: 0px; }
+  margin: 0px;
+  background-color: #ececec;
+  font-size: 13px;
+  color: #333333; }
 
 html {
   box-sizing: border-box; }
@@ -22,28 +24,41 @@ html {
   box-sizing: inherit; }
 
 [contenteditable=true] {
-  border: 1px dotted gray; }
+  border: 1px dotted gray;
+  word-wrap: normal;
+  max-width: 100%;
+  white-space: pre; }
+
+.fa {
+  color: white; }
+
+.hide {
+  visibility: hidden;
+  display: none; }
+  .hide > * {
+    display: none; }
 
 #editor-page {
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: flex-start;
-      -ms-flex-align: start;
-          align-items: flex-start; }
+  display: flex; }
 
 #message-bank {
-  background-color: #BBDEFB;
+  background-color: #4285f4;
   width: -webkit-min-content;
   width: -moz-min-content;
   width: min-content;
-  padding: 20px; }
+  padding: 20px;
+  height: 100%;
+  -webkit-flex-shrink: 0;
+      -ms-flex-negative: 0;
+          flex-shrink: 0;
+  overflow: scroll;
+  white-space: normal; }
 
 #searchbar {
   width: 300px;
-  height: 30px;
-  font-size: 18px;
-  background-color: #FFF9C4; }
+  height: 30px; }
 
 .message-card {
   width: 300px;
@@ -53,46 +68,41 @@ html {
   border-radius: 3px; }
 
 #tree-display {
+  padding: 20px;
+  white-space: nowrap;
+  width: 100%;
   height: 100%;
-  -webkit-flex-grow: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
-  -webkit-flex-shrink: 1;
-      -ms-flex-negative: 1;
-          flex-shrink: 1;
-  -webkit-flex-basis: auto;
-      -ms-flex-preferred-size: auto;
-          flex-basis: auto;
-  padding: 20px; }
-
-.logic-card-block {
-  margin-bottom: 20px; }
+  overflow: scroll; }
+  #tree-display:hover {
+    cursor: -webkit-grab;
+    cursor: grab; }
+  #tree-display:active {
+    cursor: -webkit-grabbing;
+    cursor: grabbing; }
 
 .tree-new-level {
-  width: -webkit-min-content;
-  width: -moz-min-content;
-  width: min-content;
-  height: -webkit-min-content;
-  height: -moz-min-content;
-  height: min-content;
-  margin-left: 20px; }
+  margin-left: 20px;
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: top; }
 
 .logic-card {
   width: 300px;
-  padding: 20px;
-  box-sizing: content-box;
-  height: -webkit-min-content;
-  height: -moz-min-content;
-  height: min-content; }
-  .logic-card > [contenteditable] {
-    margin-bottom: 10px; }
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: 20px;
+  background-color: white; }
 
-.add-card-right {
-  margin-left: auto;
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  background-color: #BBDEFB;
+.logic-card-content {
+  padding: 15px; }
+  .logic-card-content > [contenteditable] {
+    white-space: pre-wrap; }
+
+.add-card-button, .hide-card-button, .delete-card-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #4285f4;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
@@ -102,7 +112,25 @@ html {
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
-  font-size: 24px;
-  color: black; }
-  .add-card-right:hover {
+  font-size: 24px; }
+  .add-card-button:hover, .hide-card-button:hover, .delete-card-button:hover {
     cursor: pointer; }
+
+.card-buttons-container {
+  margin-left: auto;
+  text-align: right;
+  width: 100%;
+  margin-top: 15px;
+  display: inline-block; }
+
+.add-card-button, .hide-card-button, .delete-card-button {
+  float: right;
+  margin-left: 10px; }
+
+.hide-card-button {
+  background-color: #6d4c41; }
+
+.delete-card-button {
+  background-color: #d23f31;
+  float: left;
+  margin-left: 0; }

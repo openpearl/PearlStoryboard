@@ -3,68 +3,152 @@ var LogicCard = React.createClass({
   getInitialState: function() {
     return {
       visible: true,
-      childLogicCards: []
+      cardId: "",
+      parentCardId: "",
+      speaker: "",
+      message: "",
+      childLogicCards: {}
     };
   },
 
-  handleRightArrow: function() {
+  handleAdd: function() {
     var _this = this;
+    var uniqueDateKey = Date.now();
 
     // Add a new logic child to the start of the list.
-    _this.state.childLogicCards.unshift(
-      <LogicCard card={{}}/>
+    _this.state.childLogicCards[uniqueDateKey] = (
+      <LogicCard card={{}}
+        key={uniqueDateKey} 
+        childCardId={uniqueDateKey}
+        deleteCard={_this.deleteChildCard}/>
     );
 
     _this.setState(_this.state);
   },
 
-  handlePlusSibling: function() {
-    console.log("Handling the down arrow.");
-    console.log(this.props);
+  hideChildren: function() {
+    var _this = this;
+
+    _this.state.visible = !_this.state.visible;
+    _this.setState(_this.state);
   },
 
-  handleDrop: function(e) {
-    e.preventDefault();
-    var data = e.data;
+  // Pass the context back to the parent.
+  deleteCard: function() {
+    this.props.deleteCard(this);
+  },
+
+  deleteChildCard: function(childCard) {
+    var _this = this;
+
+    delete _this.state.childLogicCards[childCard.props.childCardId]; 
+    _this.setState(_this.state);
+  },
+
+  preventDefault: function (event) {
+    event.preventDefault();
+  },
+
+  handleDrop: function(ev) {
+    var _this = this;
+    ev.preventDefault();
+
+    var data;
+
+    try {
+      data = JSON.parse(ev.dataTransfer.getData('text'));
+    } catch (e) {
+      return;
+    }
+    _this.state.cardId = data.bankCardId;
+    _this.state.message = data.message;
+    _this.setState(_this.state);
   },
 
   render: function() {
     var _this = this;
 
-    // Choose which button to use.
     var newOrAddButton;
-    if (_this.state.childLogicCards.length  === 0) {
+    var hideButton;
+    var deleteButton;
+
+    var childrenTreeStyle;
+    var hideButtonStyle;
+
+    // Toggle depending on visibility.
+    if (_this.state.visible === true) {
+      childrenTreeStyle = classNames({
+        'tree-new-level': true,
+        'hide': false
+      });
+      hideButtonStyle = classNames({
+        'fa': true,
+        'fa-bookmark': true,
+        'fa-bookmark-o': false
+      });
+    } else {
+      childrenTreeStyle = classNames({
+        'tree-new-level': true,
+        'hide': true
+      });
+      hideButtonStyle = classNames({
+        'fa': true,
+        'fa-bookmark': false,
+        'fa-bookmark-o': true
+      });
+    }
+
+    // Toggle if there are any child logic cards.
+    if ($.isEmptyObject(_this.state.childLogicCards)) {
       newOrAddButton = <i className="fa fa-arrow-right"></i>;
+      hideButton = <div></div>;
     } else {
       newOrAddButton = <i className="fa fa-plus"></i>;
+      hideButton = (
+        <div className="hide-card-button" onClick={_this.hideChildren}>
+          <i className={hideButtonStyle}></i>
+        </div>
+      );
     }
 
     return (
-      <div className="logic-card-block" id="testing" onDrop={this.handleDrop}>
+      <div className="logic-card-block" id="testing" >
         <div className="logic-card">
-          <div className="logic-card-content">
+          <div className="logic-card-content" 
+            onDragOver={_this.preventDefault}
+            onDrop={_this.handleDrop}>
             <span>Parent ID: </span>
-            <div contentEditable='true'></div>
+            <div contentEditable='true'>{_this.state.parentCardId}</div>
             <span>ID: </span>
-            <div contentEditable='true'></div>
+            <div contentEditable='true'>{_this.state.cardId}</div>
             <span>Speaker: </span>
-            <div contentEditable='true'></div>
+            <div contentEditable='true'>{_this.state.speaker}</div>
             <span>Message: </span>
-            <div contentEditable='true'></div>
+            <div contentEditable='true'>{_this.state.message}</div>
 
-            <div className="add-card-right" onClick={this.handleRightArrow}>
-              {newOrAddButton}
+            <div className="card-buttons-container">
+              <div className="add-card-button" onClick={_this.handleAdd}>
+                {newOrAddButton}
+              </div>
+
+              {hideButton}
+
+              <div className="delete-card-button" 
+                onClick={_this.deleteCard}>
+                <i className="fa fa-times"></i>
+              </div>
+
             </div>
           </div>
         </div>
 
-        <div className="tree-new-level">
+        <div className={childrenTreeStyle}>
           {_this.state.childLogicCards}
         </div>
+
       </div>
     );
   }
-
 });
 
 module.exports = LogicCard;
