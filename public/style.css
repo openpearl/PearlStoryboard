@@ -35,6 +35,11 @@ html {
   .hide > * {
     display: none; }
 
+#editor-page {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex; }
+
 #message-bank {
   background-color: #4285f4;
   width: -webkit-min-content;
@@ -42,8 +47,11 @@ html {
   width: min-content;
   padding: 20px;
   height: 100%;
+  -webkit-flex-shrink: 0;
+      -ms-flex-negative: 0;
+          flex-shrink: 0;
   overflow: scroll;
-  float: left; }
+  white-space: normal; }
 
 #searchbar {
   width: 300px;
@@ -57,12 +65,17 @@ html {
   border-radius: 3px; }
 
 #tree-display {
-  height: 100%;
   padding: 20px;
   white-space: nowrap;
-  float: left;
+  width: 100%;
   height: 100%;
   overflow: scroll; }
+  #tree-display:hover {
+    cursor: -webkit-grab;
+    cursor: grab; }
+  #tree-display:active {
+    cursor: -webkit-grabbing;
+    cursor: grabbing; }
 
 .tree-new-level {
   margin-left: 20px;

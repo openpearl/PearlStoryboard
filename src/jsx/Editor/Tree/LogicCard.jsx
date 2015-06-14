@@ -3,6 +3,10 @@ var LogicCard = React.createClass({
   getInitialState: function() {
     return {
       visible: true,
+      cardId: "",
+      parentCardId: "",
+      speaker: "",
+      message: "",
       childLogicCards: {}
     };
   },
@@ -41,9 +45,25 @@ var LogicCard = React.createClass({
     _this.setState(_this.state);
   },
 
-  handleDrop: function(e) {
-    e.preventDefault();
-    var data = e.data;
+  handleDrop: function(ev) {
+    var _this = this;
+    ev.preventDefault();
+
+    var data;
+
+    try {
+      data = JSON.parse(ev.dataTransfer.getData('text'));
+    } catch (e) {
+      // If the text data isn't parsable we'll just ignore it.
+      return;
+    }
+
+    // Do something with the data.
+    console.log(data);
+
+
+
+
   },
 
   render: function() {
@@ -93,9 +113,9 @@ var LogicCard = React.createClass({
     }
 
     return (
-      <div className="logic-card-block" id="testing" onDrop={this.handleDrop}>
+      <div className="logic-card-block" id="testing">
         <div className="logic-card">
-          <div className="logic-card-content">
+          <div className="logic-card-content" onDrop={this.handleDrop}>
             <span>Parent ID: </span>
             <div contentEditable='true'></div>
             <span>ID: </span>

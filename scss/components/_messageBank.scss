@@ -5,18 +5,15 @@ $sidebar-content: 300px;
   width: min-content;
   padding: 20px;
   height: 100%;
-
+  flex-shrink: 0;
   overflow: scroll;
-
-  float: left;
-
+  white-space: normal;
   @extend %sh1;
 }
 
 #searchbar {
   width: $sidebar-content;
   height: 30px;
-  // font-size: 15px;
 }
 
 .message-card {

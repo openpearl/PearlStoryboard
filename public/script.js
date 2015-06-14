@@ -1,4 +1,27 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// JQuery.
+// Allow draggable windows.
+$.fn.attachDragger = function(){
+  var attachment = false, lastPosition, position, difference;
+  $( $(this).selector ).on("mousedown mouseup mousemove",function(e){
+    if( e.type == "mousedown" ) attachment = true, lastPosition = [e.clientX, e.clientY];
+    if( e.type == "mouseup" ) attachment = false;
+    if( e.type == "mousemove" && attachment == true ){
+      position = [e.clientX, e.clientY];
+      difference = [ (position[0]-lastPosition[0]), (position[1]-lastPosition[1]) ];
+      $(this).scrollLeft( $(this).scrollLeft() - difference[0] );
+      $(this).scrollTop( $(this).scrollTop() - difference[1] );
+      lastPosition = [e.clientX, e.clientY];
+    }
+  });
+
+  $(window).on("mouseup", function(){
+    attachment = false;
+  });
+}
+
+// ReactJS ====================================================================
+
 var Router = window.ReactRouter;
 var Route = window.ReactRouter.Route;
 var RouteHandler = window.ReactRouter.RouteHandler;
@@ -178,10 +201,22 @@ var MessageCard = React.createClass({displayName: "MessageCard",
     // console.log(this.props.cardId);    
   },
 
+  dragStart: function(ev) {
+    var _this = this;
+
+    var data = {
+      bankCardId: _this.props.cardId,
+      message: _this.props.message
+    }
+
+    ev.dataTransfer.setData('text', JSON.stringify(data));
+  },
+
   render: function() {
     var _this = this;
     return (
-      React.createElement("div", {className: "message-card", draggable: "true"}, 
+      React.createElement("div", {className: "message-card", draggable: "true", 
+        onDragStart: _this.dragStart}, 
         React.createElement("i", null, _this.props.cardId), 
         React.createElement("div", null, _this.props.message)
       )
@@ -197,6 +232,10 @@ var LogicCard = React.createClass({displayName: "LogicCard",
   getInitialState: function() {
     return {
       visible: true,
+      cardId: "",
+      parentCardId: "",
+      speaker: "",
+      message: "",
       childLogicCards: {}
     };
   },
@@ -235,9 +274,25 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     _this.setState(_this.state);
   },
 
-  handleDrop: function(e) {
-    e.preventDefault();
-    var data = e.data;
+  handleDrop: function(ev) {
+    var _this = this;
+    ev.preventDefault();
+
+    var data;
+
+    try {
+      data = JSON.parse(ev.dataTransfer.getData('text'));
+    } catch (e) {
+      // If the text data isn't parsable we'll just ignore it.
+      return;
+    }
+
+    // Do something with the data.
+    console.log(data);
+
+
+
+
   },
 
   render: function() {
@@ -287,9 +342,9 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     }
 
     return (
-      React.createElement("div", {className: "logic-card-block", id: "testing", onDrop: this.handleDrop}, 
+      React.createElement("div", {className: "logic-card-block", id: "testing"}, 
         React.createElement("div", {className: "logic-card"}, 
-          React.createElement("div", {className: "logic-card-content"}, 
+          React.createElement("div", {className: "logic-card-content", onDrop: this.handleDrop}, 
             React.createElement("span", null, "Parent ID: "), 
             React.createElement("div", {contentEditable: "true"}), 
             React.createElement("span", null, "ID: "), 
@@ -334,6 +389,10 @@ var Tree = React.createClass({displayName: "Tree",
   getInitialState: function() {
     return {
     };
+  },
+
+  componentDidMount: function() {
+    $("#tree-display").attachDragger();
   },
 
   render: function() {

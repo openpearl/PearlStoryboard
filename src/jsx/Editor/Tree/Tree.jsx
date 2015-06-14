@@ -7,6 +7,10 @@ var Tree = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    $("#tree-display").attachDragger();
+  },
+
   render: function() {
     var _this = this;
 
