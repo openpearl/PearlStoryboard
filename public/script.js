@@ -232,10 +232,12 @@ module.exports = MessageCard;
 var LogicCard = React.createClass({displayName: "LogicCard",
 
   getInitialState: function() {
+    var _this = this;
+
     return {
       visible: true,
       cardId: "",
-      parentCardId: "",
+      parentCardId: _this.props.parentCardId,
       childrenCards: {},
       speaker: "",
       message: ""
@@ -248,6 +250,22 @@ var LogicCard = React.createClass({displayName: "LogicCard",
       console.log("Event triggered.");
       _this.saveTree();
     });
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var _this = this;    
+
+    if (nextProps.parentCardId) {
+      _this.state.parentCardId = nextProps.parentCardId;
+    }
+  },
+
+  componentWillUpdate: function(nextProps, nextState) {
+    var _this = this;
+
+    for (cardIndex in _this.state.childrenCards) {
+      _this.state.childrenCards[cardIndex].parentCardId = nextState.cardId;
+    }
   },
 
   componentWillUnmount: function() {
@@ -298,6 +316,9 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     catch (e) { return; }
     _this.state.cardId = data.bankCardId;
     _this.state.message = data.message;
+
+    console.log(_this.state.cardId);
+
     _this.setState(_this.state);
   },
 
@@ -346,6 +367,8 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     }
 
     var childrenCardViews = {};
+    console.log(_this.state.cardId);
+
     for (childIndex in _this.state.childrenCards) {
       childrenCardViews[childIndex] = (
         React.createElement(LogicCard, {
