@@ -88,18 +88,27 @@ var MessageBank = React.createClass({
       }
 
       console.log(messagesJson)
-      _this.setDownloadLink(messagesJson);
+      _this.setDownloadLink(messagesJson, "messages.json", 
+        "Download 1st conversion.");
     });
   },
 
-  setDownloadLink: function(messagesJson) {
+  setDownloadLink: function(messagesJson, downloadName, linkMessage) {
     var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(messagesJson));
 
-    $('<a href="data:' + data + '" download="messages.json">Save and input converted file.</a>').appendTo('#tree-display');
+    $('#download-link').empty();
+    $('<a href="data:' + data + '" download=' + downloadName + '>'
+      + linkMessage
+      + '</a>').appendTo('#download-link');
   },
 
   triggerSaveTree: function() {
     $(GlobalEvents).trigger('tree:save');
+  },
+
+  downloadTree: function() {
+    this.setDownloadLink(ProcessedTree, "final.json",
+      "Download final conversion.");
   },
 
   render: function() {
@@ -115,7 +124,9 @@ var MessageBank = React.createClass({
 
     return (
       <div id="message-bank">
-        <button onClick={_this.triggerSaveTree}>Hello!</button>
+        <button onClick={_this.triggerSaveTree}>Trigger Save</button>
+        <button onClick={_this.downloadTree}>Download</button>
+        <div id="download-link"></div>
         <input type="text" id="searchbar" placeholder="Search: "></input>
         <div>{messageCards}</div>
       </div>

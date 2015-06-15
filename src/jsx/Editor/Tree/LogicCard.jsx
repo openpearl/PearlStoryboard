@@ -10,6 +10,7 @@ var LogicCard = React.createClass({
       cardId: "",
       parentCardId: _this.props.parentCardId,
       childrenCards: {},
+      childrenCardIds: [],
       speaker: "",
       message: ""
     };
@@ -26,8 +27,10 @@ var LogicCard = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     var _this = this;    
 
+    // Updates the parentCardId property if the parent gets new ID.
     if (nextProps.parentCardId) {
       _this.state.parentCardId = nextProps.parentCardId;
+      _this.setState(_this.state);
     }
   },
 
@@ -37,6 +40,21 @@ var LogicCard = React.createClass({
     // Update children to have parentCardId.
     for (cardIndex in _this.state.childrenCards) {
       _this.state.childrenCards[cardIndex].parentCardId = nextState.cardId;
+
+      // Add to child id list if it's not present.
+      console.log(_this.state.childrenCardIds
+        .indexOf(_this.state.childrenCards[cardIndex].cardId));
+      if (_this.state.childrenCardIds
+        .indexOf(_this.state.childrenCards[cardIndex].cardId) <= 1) {
+        _this.state.childrenCardIds
+          .push(_this.state.childrenCards[cardIndex].cardId);
+      }
+    }
+
+    for (var i = 0; i < _this.state.childrenCardIds.length; i++) {
+      if (_this.state.childrenCardIds[i] === "") {
+        _this.state.childrenCardIds.splice(i, 1);
+      }
     }
 
     // Update parent to have childId.
@@ -115,19 +133,27 @@ var LogicCard = React.createClass({
   saveTree: function(ev) {
     var _this = this;
 
-    var childrenCardIds = [];
-    for (childIndex in _this.state.childrenCards) {
-      // Display the list of child IDs.
-      childrenCardIds.push(_this.state.childrenCards[childIndex].cardId);
-    }
+    // TODO: Naive and requires cleanup in the future.
+    var uniqueArray = [];
+    uniqueArray = _this.state.childrenCardIds.filter(function(item, pos) {
+      return _this.state.childrenCardIds.indexOf(item) == pos;
+    });
+    _this.state.childrenCardIds = uniqueArray;
 
     ProcessedTree[_this.state.cardId] = {
       cardId: _this.state.cardId,
       parentCardId: _this.state.parentCardId,
-      childrenCardIds: childrenCardIds,
+      childrenCardIds: _this.state.childrenCardIds,
       speaker: _this.state.speaker,
       message: _this.state.message
     }
+  },
+
+  addChildId: function() {
+    var _this = this;
+    var newChildId = window.prompt("Add a child ID:");
+    _this.state.childrenCardIds.push(newChildId);
+    _this.setState(_this.state);
   },
 
   render: function() {
@@ -141,7 +167,6 @@ var LogicCard = React.createClass({
     var hideButtonStyle;
 
     var childrenCardViews = {};
-    var childrenCardIds = [];
 
     for (childIndex in _this.state.childrenCards) {
       childrenCardViews[childIndex] = (
@@ -154,9 +179,6 @@ var LogicCard = React.createClass({
           onChildCreate={_this.handleChildCreate}
         />
       );
-
-      // Display the list of child IDs.
-      childrenCardIds.push(_this.state.childrenCards[childIndex].cardId);
     }
 
     // Toggle depending on visibility.
@@ -202,17 +224,11 @@ var LogicCard = React.createClass({
             onDragOver={_this.preventDefault}
             onDrop={_this.handleDrop}>
             <span>Parent ID: </span>
-            <ContentEditable html={_this.state.parentCardId} 
-              onChange={_this.handleCEChange} 
-              sourceState="parentCardId" />
+            <div>{_this.state.parentCardId}</div>
             <span>ID: </span>
-            <ContentEditable html={_this.state.cardId} 
-              onChange={_this.handleCEChange} 
-              sourceState="cardId" />
-            <span>Children IDs: </span>
-            <ContentEditable html={childrenCardIds} 
-              onChange={_this.handleCEChange}
-              sourceState="childrenCards" />
+            <div>{_this.state.cardId}</div>
+            <span onClick={_this.addChildId}>Children IDs: </span>
+            <div>{_this.state.childrenCardIds}</div>
             <span>Speaker: </span>
             <ContentEditable html={_this.state.speaker} 
               onChange={_this.handleCEChange}
@@ -221,7 +237,6 @@ var LogicCard = React.createClass({
             <ContentEditable html={_this.state.message} 
               onChange={_this.handleCEChange}
               sourceState="message" />
-
             <div className="card-buttons-container">
               <div className="add-card-button" onClick={_this.handleAdd}>
                 {newOrAddButton}
