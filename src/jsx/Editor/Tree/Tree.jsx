@@ -15,6 +15,7 @@ var Tree = React.createClass({
       <div id="tree-display">
         <LogicCard 
           deleteCard={function() {return;}}
+          onChildCreate={function() {return;}}
           ref={uniqueDateKey}/>
       </div>
     );

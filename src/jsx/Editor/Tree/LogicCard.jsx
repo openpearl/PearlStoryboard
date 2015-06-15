@@ -32,16 +32,20 @@ var LogicCard = React.createClass({
   componentWillUpdate: function(nextProps, nextState) {
     var _this = this;
 
+    // Update children to have parentCardId.
     for (cardIndex in _this.state.childrenCards) {
       _this.state.childrenCards[cardIndex].parentCardId = nextState.cardId;
     }
+
+    // Update parent to have childId.
+    _this.props.onChildCreate(_this);
   },
 
   componentWillUnmount: function() {
     $(GlobalEvents).off('tree:save');
   },
 
-  preventDefault: function (ev) {
+  preventDefault: function(ev) {
     ev.preventDefault();
   },
 
@@ -56,6 +60,23 @@ var LogicCard = React.createClass({
     };
 
     _this.setState(_this.state);
+  },
+
+  handleChildCreate: function(childContext) {
+    var _this = this;
+    console.log("Handle child create: ");
+    console.log(childContext);
+
+    console.log(childContext.props.cardKey);
+    console.log(childContext.state.cardId);
+
+    var childCardKey = childContext.props.cardKey;
+    var childContextId = childContext.state.cardId;
+
+    if (_this.state.childrenCards[childCardKey].cardId !== childContextId) {
+      _this.state.childrenCards[childCardKey].cardId = childContextId;
+      _this.setState(_this.state);
+    }
   },
 
   hideChildren: function() {
@@ -85,9 +106,6 @@ var LogicCard = React.createClass({
     catch (e) { return; }
     _this.state.cardId = data.bankCardId;
     _this.state.message = data.message;
-
-    console.log(_this.state.cardId);
-
     _this.setState(_this.state);
   },
 
@@ -112,6 +130,25 @@ var LogicCard = React.createClass({
     var childrenTreeStyle;
     var hideButtonStyle;
 
+    var childrenCardViews = {};
+    var childrenCardIds = [];
+
+    for (childIndex in _this.state.childrenCards) {
+      childrenCardViews[childIndex] = (
+        <LogicCard
+          key={_this.state.childrenCards[childIndex].key}
+          ref={_this.state.childrenCards[childIndex].key}
+          cardKey={_this.state.childrenCards[childIndex].key}
+          parentCardId={_this.state.cardId} 
+          deleteCard={_this.deleteChildCard}
+          onChildCreate={_this.handleChildCreate}
+        />
+      );
+
+      // Display the list of child IDs.
+      childrenCardIds.push(_this.state.childrenCards[childIndex].cardId);
+    }
+
     // Toggle depending on visibility.
     if (_this.state.visible === true) {
       childrenTreeStyle = classNames({
@@ -133,21 +170,6 @@ var LogicCard = React.createClass({
         'fa-bookmark': false,
         'fa-bookmark-o': true
       });
-    }
-
-    var childrenCardViews = {};
-    console.log(_this.state.cardId);
-
-    for (childIndex in _this.state.childrenCards) {
-      childrenCardViews[childIndex] = (
-        <LogicCard
-          key={_this.state.childrenCards[childIndex].key}
-          ref={_this.state.childrenCards[childIndex].key}
-          cardKey={_this.state.childrenCards[childIndex].key}
-          parentCardId={_this.state.cardId} 
-          deleteCard={_this.deleteChildCard}
-        />
-      );
     }
 
     // Toggle if there are any child logic cards.
@@ -174,7 +196,7 @@ var LogicCard = React.createClass({
             <span>ID: </span>
             <div contentEditable='true'>{_this.state.cardId}</div>
             <span>Children IDs: </span>
-            <div contentEditable='true'>{_this.state.childrenCardIds}</div>
+            <div contentEditable='true'>{childrenCardIds}</div>
             <span>Speaker: </span>
             <div contentEditable='true'>{_this.state.speaker}</div>
             <span>Message: </span>
