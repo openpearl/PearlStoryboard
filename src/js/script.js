@@ -24,6 +24,8 @@ $.fn.attachDragger = function(){
 var Router = window.ReactRouter;
 var Route = window.ReactRouter.Route;
 var RouteHandler = window.ReactRouter.RouteHandler;
+GlobalEvents = {};
+ProcessedTree = {};
 
 var App = React.createClass({
   render: function() {

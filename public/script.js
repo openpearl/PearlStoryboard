@@ -25,6 +25,8 @@ $.fn.attachDragger = function(){
 var Router = window.ReactRouter;
 var Route = window.ReactRouter.Route;
 var RouteHandler = window.ReactRouter.RouteHandler;
+GlobalEvents = {};
+ProcessedTree = {};
 
 var App = React.createClass({displayName: "App",
   render: function() {
@@ -77,11 +79,7 @@ var MessageBank = React.createClass({displayName: "MessageBank",
   },
 
   componentDidMount: function() {
-
     var _this = this;
-
-    // Load message bank data.
-    console.log("Component mounted.");
 
     $.ajax({
       type: "GET",
@@ -89,7 +87,6 @@ var MessageBank = React.createClass({displayName: "MessageBank",
       dataType: "json",
       success: function(data) {
         console.log("messages.json loaded.");
-        // console.log(data);
 
         _this.setState({
           messageBank: data
@@ -171,6 +168,10 @@ var MessageBank = React.createClass({displayName: "MessageBank",
     $('<a href="data:' + data + '" download="messages.json">Save and input converted file.</a>').appendTo('#tree-display');
   },
 
+  triggerSaveTree: function() {
+    $(GlobalEvents).trigger('tree:save');
+  },
+
   render: function() {
     var _this = this;
 
@@ -184,6 +185,7 @@ var MessageBank = React.createClass({displayName: "MessageBank",
 
     return (
       React.createElement("div", {id: "message-bank"}, 
+        React.createElement("button", {onClick: _this.triggerSaveTree}, "Hello!"), 
         React.createElement("input", {type: "text", id: "searchbar", placeholder: "Search: "}), 
         React.createElement("div", null, messageCards)
       )
@@ -240,16 +242,45 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     };
   },
 
+  componentWillReceiveProps: function(nextProps) {
+    var _this = this;
+
+    console.log("Next props:");
+    console.log(nextProps);
+  },
+
+  componentDidMount: function() {
+    var _this = this;
+    $(GlobalEvents).on('tree:save', function(ev) {
+      console.log("Event triggered.");
+      _this.saveTree();
+    });
+  },
+
+  componentWillUnmount: function() {
+    $(GlobalEvents).off('tree:save');
+  },
+
+  preventDefault: function (ev) {
+    ev.preventDefault();
+  },
+
   handleAdd: function() {
     var _this = this;
     var uniqueDateKey = Date.now();
 
+    console.log(_this.state.childLogicCards);
+
     // Add a new logic child to the start of the list.
+
+    // This part needs to be refactored.
     _this.state.childLogicCards[uniqueDateKey] = (
       React.createElement(LogicCard, {card: {}, 
         key: uniqueDateKey, 
+        parentCardId: _this.state.cardId, 
         childCardId: uniqueDateKey, 
-        deleteCard: _this.deleteChildCard})
+        deleteCard: _this.deleteChildCard, 
+        ref: uniqueDateKey})
     );
 
     _this.setState(_this.state);
@@ -274,10 +305,6 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     _this.setState(_this.state);
   },
 
-  preventDefault: function (event) {
-    event.preventDefault();
-  },
-
   handleDrop: function(ev) {
     var _this = this;
     ev.preventDefault();
@@ -291,7 +318,21 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     }
     _this.state.cardId = data.bankCardId;
     _this.state.message = data.message;
-    _this.setState(_this.state);
+    // _this.setState(_this.state);
+    this.setState(_this.state);
+  },
+
+  saveTree: function(ev) {
+    var _this = this;
+
+    console.log(_this.state.childLogicCards);
+
+    ProcessedTree[_this.state.cardId] = {
+      cardId: _this.state.cardId,
+      parentCardId: _this.state.parentCardId,
+      speaker: _this.state.speaker,
+      message: _this.state.message
+    }
   },
 
   render: function() {
@@ -326,6 +367,8 @@ var LogicCard = React.createClass({displayName: "LogicCard",
         'fa-bookmark-o': true
       });
     }
+
+    // for ()
 
     // Toggle if there are any child logic cards.
     if ($.isEmptyObject(_this.state.childLogicCards)) {
@@ -392,16 +435,16 @@ var Tree = React.createClass({displayName: "Tree",
     };
   },
 
-  componentDidMount: function() {
-    $("#tree-display").attachDragger();
-  },
-
   render: function() {
     var _this = this;
+    var uniqueDateKey = Date.now();
 
     return (
       React.createElement("div", {id: "tree-display"}, 
-        React.createElement(LogicCard, {card: {}, deleteCard: function() {return;}})
+        React.createElement(LogicCard, {
+          card: {}, 
+          deleteCard: function() {return;}, 
+          ref: uniqueDateKey})
       )
     );
   }

@@ -7,16 +7,16 @@ var Tree = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-    $("#tree-display").attachDragger();
-  },
-
   render: function() {
     var _this = this;
+    var uniqueDateKey = Date.now();
 
     return (
       <div id="tree-display">
-        <LogicCard card={{}} deleteCard={function() {return;}}/>
+        <LogicCard 
+          card={{}} 
+          deleteCard={function() {return;}}
+          ref={uniqueDateKey}/>
       </div>
     );
   }

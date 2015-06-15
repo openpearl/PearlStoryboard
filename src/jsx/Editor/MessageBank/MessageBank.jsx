@@ -9,11 +9,7 @@ var MessageBank = React.createClass({
   },
 
   componentDidMount: function() {
-
     var _this = this;
-
-    // Load message bank data.
-    console.log("Component mounted.");
 
     $.ajax({
       type: "GET",
@@ -21,7 +17,6 @@ var MessageBank = React.createClass({
       dataType: "json",
       success: function(data) {
         console.log("messages.json loaded.");
-        // console.log(data);
 
         _this.setState({
           messageBank: data
@@ -103,6 +98,10 @@ var MessageBank = React.createClass({
     $('<a href="data:' + data + '" download="messages.json">Save and input converted file.</a>').appendTo('#tree-display');
   },
 
+  triggerSaveTree: function() {
+    $(GlobalEvents).trigger('tree:save');
+  },
+
   render: function() {
     var _this = this;
 
@@ -116,6 +115,7 @@ var MessageBank = React.createClass({
 
     return (
       <div id="message-bank">
+        <button onClick={_this.triggerSaveTree}>Hello!</button>
         <input type="text" id="searchbar" placeholder="Search: "></input>
         <div>{messageCards}</div>
       </div>
