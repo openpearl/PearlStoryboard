@@ -1,3 +1,5 @@
+var ContentEditable = require('../../ContentEditable.jsx');
+
 var LogicCard = React.createClass({
 
   getInitialState: function() {
@@ -64,11 +66,6 @@ var LogicCard = React.createClass({
 
   handleChildCreate: function(childContext) {
     var _this = this;
-    console.log("Handle child create: ");
-    console.log(childContext);
-
-    console.log(childContext.props.cardKey);
-    console.log(childContext.state.cardId);
 
     var childCardKey = childContext.props.cardKey;
     var childContextId = childContext.state.cardId;
@@ -109,12 +106,25 @@ var LogicCard = React.createClass({
     _this.setState(_this.state);
   },
 
+  handleCEChange: function(ev) {
+    var _this = this;
+    _this.state[ev.target.sourceState] = ev.target.value;
+    _this.setState(_this.setState);
+  },
+
   saveTree: function(ev) {
     var _this = this;
+
+    var childrenCardIds = [];
+    for (childIndex in _this.state.childrenCards) {
+      // Display the list of child IDs.
+      childrenCardIds.push(_this.state.childrenCards[childIndex].cardId);
+    }
 
     ProcessedTree[_this.state.cardId] = {
       cardId: _this.state.cardId,
       parentCardId: _this.state.parentCardId,
+      childrenCardIds: childrenCardIds,
       speaker: _this.state.speaker,
       message: _this.state.message
     }
@@ -192,15 +202,25 @@ var LogicCard = React.createClass({
             onDragOver={_this.preventDefault}
             onDrop={_this.handleDrop}>
             <span>Parent ID: </span>
-            <div contentEditable='true'>{_this.state.parentCardId}</div>
+            <ContentEditable html={_this.state.parentCardId} 
+              onChange={_this.handleCEChange} 
+              sourceState="parentCardId" />
             <span>ID: </span>
-            <div contentEditable='true'>{_this.state.cardId}</div>
+            <ContentEditable html={_this.state.cardId} 
+              onChange={_this.handleCEChange} 
+              sourceState="cardId" />
             <span>Children IDs: </span>
-            <div contentEditable='true'>{childrenCardIds}</div>
+            <ContentEditable html={childrenCardIds} 
+              onChange={_this.handleCEChange}
+              sourceState="childrenCards" />
             <span>Speaker: </span>
-            <div contentEditable='true'>{_this.state.speaker}</div>
+            <ContentEditable html={_this.state.speaker} 
+              onChange={_this.handleCEChange}
+              sourceState="speaker" />
             <span>Message: </span>
-            <div contentEditable='true'>{_this.state.message}</div>
+            <ContentEditable html={_this.state.message} 
+              onChange={_this.handleCEChange}
+              sourceState="message" />
 
             <div className="card-buttons-container">
               <div className="add-card-button" onClick={_this.handleAdd}>

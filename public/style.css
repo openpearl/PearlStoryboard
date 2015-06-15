@@ -15,7 +15,8 @@ body {
   margin: 0px;
   background-color: #ececec;
   font-size: 13px;
-  color: #333333; }
+  color: #333333;
+  overflow: hidden; }
 
 html {
   box-sizing: border-box; }

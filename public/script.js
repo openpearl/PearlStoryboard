@@ -48,7 +48,36 @@ Router.run(routes, function (Handler) {
   React.render(React.createElement(Handler, null), document.getElementById('content'));
 });
 
-},{"../jsx/Editor/Editor.jsx":2}],2:[function(require,module,exports){
+},{"../jsx/Editor/Editor.jsx":3}],2:[function(require,module,exports){
+var ContentEditable = React.createClass({displayName: "ContentEditable",
+	render: function(){
+		return React.createElement("div", {
+			onInput: this.emitChange, 
+			onBlur: this.emitChange, 
+			contentEditable: true, 
+			dangerouslySetInnerHTML: {__html: this.props.html}});
+	},
+	shouldComponentUpdate: function(nextProps){
+		return nextProps.html !== this.getDOMNode().innerHTML;
+	},
+	emitChange: function(){
+		var html = this.getDOMNode().innerHTML;
+		if (this.props.onChange && html !== this.lastHtml) {
+
+			this.props.onChange({
+				target: {
+					value: html,
+					sourceState: this.props.sourceState
+				}
+			});
+		}
+		this.lastHtml = html;
+	}
+});
+
+module.exports = ContentEditable;
+
+},{}],3:[function(require,module,exports){
 var MessageBank = require("./MessageBank/MessageBank.jsx");
 var Tree = require("./Tree/Tree.jsx");
 
@@ -67,7 +96,7 @@ var Editor = React.createClass({displayName: "Editor",
 
 module.exports = Editor;
 
-},{"./MessageBank/MessageBank.jsx":3,"./Tree/Tree.jsx":6}],3:[function(require,module,exports){
+},{"./MessageBank/MessageBank.jsx":4,"./Tree/Tree.jsx":7}],4:[function(require,module,exports){
 var MessageCard = require('./MessageCard.jsx');
 
 var MessageBank = React.createClass({displayName: "MessageBank",
@@ -196,7 +225,7 @@ var MessageBank = React.createClass({displayName: "MessageBank",
 
 module.exports = MessageBank;
 
-},{"./MessageCard.jsx":4}],4:[function(require,module,exports){
+},{"./MessageCard.jsx":5}],5:[function(require,module,exports){
 var MessageCard = React.createClass({displayName: "MessageCard",
 
   componentDidMount: function() {
@@ -228,7 +257,9 @@ var MessageCard = React.createClass({displayName: "MessageCard",
 
 module.exports = MessageCard;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
+var ContentEditable = require('../../ContentEditable.jsx');
+
 var LogicCard = React.createClass({displayName: "LogicCard",
 
   getInitialState: function() {
@@ -295,11 +326,6 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
   handleChildCreate: function(childContext) {
     var _this = this;
-    console.log("Handle child create: ");
-    console.log(childContext);
-
-    console.log(childContext.props.cardKey);
-    console.log(childContext.state.cardId);
 
     var childCardKey = childContext.props.cardKey;
     var childContextId = childContext.state.cardId;
@@ -340,12 +366,25 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     _this.setState(_this.state);
   },
 
+  handleCEChange: function(ev) {
+    var _this = this;
+    _this.state[ev.target.sourceState] = ev.target.value;
+    _this.setState(_this.setState);
+  },
+
   saveTree: function(ev) {
     var _this = this;
+
+    var childrenCardIds = [];
+    for (childIndex in _this.state.childrenCards) {
+      // Display the list of child IDs.
+      childrenCardIds.push(_this.state.childrenCards[childIndex].cardId);
+    }
 
     ProcessedTree[_this.state.cardId] = {
       cardId: _this.state.cardId,
       parentCardId: _this.state.parentCardId,
+      childrenCardIds: childrenCardIds,
       speaker: _this.state.speaker,
       message: _this.state.message
     }
@@ -423,15 +462,25 @@ var LogicCard = React.createClass({displayName: "LogicCard",
             onDragOver: _this.preventDefault, 
             onDrop: _this.handleDrop}, 
             React.createElement("span", null, "Parent ID: "), 
-            React.createElement("div", {contentEditable: "true"}, _this.state.parentCardId), 
+            React.createElement(ContentEditable, {html: _this.state.parentCardId, 
+              onChange: _this.handleCEChange, 
+              sourceState: "parentCardId"}), 
             React.createElement("span", null, "ID: "), 
-            React.createElement("div", {contentEditable: "true"}, _this.state.cardId), 
+            React.createElement(ContentEditable, {html: _this.state.cardId, 
+              onChange: _this.handleCEChange, 
+              sourceState: "cardId"}), 
             React.createElement("span", null, "Children IDs: "), 
-            React.createElement("div", {contentEditable: "true"}, childrenCardIds), 
+            React.createElement(ContentEditable, {html: childrenCardIds, 
+              onChange: _this.handleCEChange, 
+              sourceState: "childrenCards"}), 
             React.createElement("span", null, "Speaker: "), 
-            React.createElement("div", {contentEditable: "true"}, _this.state.speaker), 
+            React.createElement(ContentEditable, {html: _this.state.speaker, 
+              onChange: _this.handleCEChange, 
+              sourceState: "speaker"}), 
             React.createElement("span", null, "Message: "), 
-            React.createElement("div", {contentEditable: "true"}, _this.state.message), 
+            React.createElement(ContentEditable, {html: _this.state.message, 
+              onChange: _this.handleCEChange, 
+              sourceState: "message"}), 
 
             React.createElement("div", {className: "card-buttons-container"}, 
               React.createElement("div", {className: "add-card-button", onClick: _this.handleAdd}, 
@@ -460,7 +509,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
 module.exports = LogicCard;
 
-},{}],6:[function(require,module,exports){
+},{"../../ContentEditable.jsx":2}],7:[function(require,module,exports){
 var LogicCard = require('./LogicCard.jsx');
 
 var Tree = React.createClass({displayName: "Tree",
@@ -488,4 +537,4 @@ var Tree = React.createClass({displayName: "Tree",
 
 module.exports = Tree;
 
-},{"./LogicCard.jsx":5}]},{},[1]);
+},{"./LogicCard.jsx":6}]},{},[1]);
