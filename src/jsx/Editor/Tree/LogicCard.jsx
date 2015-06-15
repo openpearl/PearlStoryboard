@@ -5,17 +5,10 @@ var LogicCard = React.createClass({
       visible: true,
       cardId: "",
       parentCardId: "",
+      childrenCards: {},
       speaker: "",
-      message: "",
-      childLogicCards: {}
+      message: ""
     };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    var _this = this;
-
-    console.log("Next props:");
-    console.log(nextProps);
   },
 
   componentDidMount: function() {
@@ -38,19 +31,11 @@ var LogicCard = React.createClass({
     var _this = this;
     var uniqueDateKey = Date.now();
 
-    console.log(_this.state.childLogicCards);
-
-    // Add a new logic child to the start of the list.
-
-    // This part needs to be refactored.
-    _this.state.childLogicCards[uniqueDateKey] = (
-      <LogicCard card={{}}
-        key={uniqueDateKey}
-        parentCardId={_this.state.cardId} 
-        childCardId={uniqueDateKey}
-        deleteCard={_this.deleteChildCard}
-        ref={uniqueDateKey} />
-    );
+    _this.state.childrenCards[uniqueDateKey] = {
+      key: uniqueDateKey,
+      cardId: "",
+      parentCardId: _this.state.cardId
+    };
 
     _this.setState(_this.state);
   },
@@ -69,32 +54,24 @@ var LogicCard = React.createClass({
 
   deleteChildCard: function(childCard) {
     var _this = this;
-
-    delete _this.state.childLogicCards[childCard.props.childCardId]; 
+    delete _this.state.childrenCards[childCard.props.cardKey]; 
     _this.setState(_this.state);
   },
 
   handleDrop: function(ev) {
-    var _this = this;
     ev.preventDefault();
-
+    var _this = this;
     var data;
 
-    try {
-      data = JSON.parse(ev.dataTransfer.getData('text'));
-    } catch (e) {
-      return;
-    }
+    try { data = JSON.parse(ev.dataTransfer.getData('text')); }
+    catch (e) { return; }
     _this.state.cardId = data.bankCardId;
     _this.state.message = data.message;
-    // _this.setState(_this.state);
-    this.setState(_this.state);
+    _this.setState(_this.state);
   },
 
   saveTree: function(ev) {
     var _this = this;
-
-    console.log(_this.state.childLogicCards);
 
     ProcessedTree[_this.state.cardId] = {
       cardId: _this.state.cardId,
@@ -137,10 +114,21 @@ var LogicCard = React.createClass({
       });
     }
 
-    // for ()
+    var childrenCardViews = {};
+    for (childIndex in _this.state.childrenCards) {
+      childrenCardViews[childIndex] = (
+        <LogicCard
+          key={_this.state.childrenCards[childIndex].key}
+          ref={_this.state.childrenCards[childIndex].key}
+          cardKey={_this.state.childrenCards[childIndex].key}
+          parentCardId={_this.state.cardId} 
+          deleteCard={_this.deleteChildCard}
+        />
+      );
+    }
 
     // Toggle if there are any child logic cards.
-    if ($.isEmptyObject(_this.state.childLogicCards)) {
+    if ($.isEmptyObject(_this.state.childrenCards)) {
       newOrAddButton = <i className="fa fa-arrow-right"></i>;
       hideButton = <div></div>;
     } else {
@@ -162,6 +150,8 @@ var LogicCard = React.createClass({
             <div contentEditable='true'>{_this.state.parentCardId}</div>
             <span>ID: </span>
             <div contentEditable='true'>{_this.state.cardId}</div>
+            <span>Children IDs: </span>
+            <div contentEditable='true'>{_this.state.childrenCardIds}</div>
             <span>Speaker: </span>
             <div contentEditable='true'>{_this.state.speaker}</div>
             <span>Message: </span>
@@ -184,7 +174,7 @@ var LogicCard = React.createClass({
         </div>
 
         <div className={childrenTreeStyle}>
-          {_this.state.childLogicCards}
+          {childrenCardViews}
         </div>
 
       </div>
