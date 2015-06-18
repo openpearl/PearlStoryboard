@@ -10,7 +10,7 @@ var LogicCard = React.createClass({
       cardId: "",
       parentCardId: _this.props.parentCardId,
       childrenCards: {},
-      childrenCardIds: [],
+      childrenCardIds: [], // For easy reference later on.
       speaker: "",
       message: ""
     };
@@ -42,6 +42,8 @@ var LogicCard = React.createClass({
       _this.state.childrenCards[cardIndex].parentCardId = nextState.cardId;
 
       // Add to child id list if it's not present.
+      // FIXME: This seems buggy as you can add more than one child
+      // and never be able to remove them.
       console.log(_this.state.childrenCardIds
         .indexOf(_this.state.childrenCards[cardIndex].cardId));
       if (_this.state.childrenCardIds
@@ -51,17 +53,19 @@ var LogicCard = React.createClass({
       }
     }
 
+    // TODO: Figure out what this for loop does.
     for (var i = 0; i < _this.state.childrenCardIds.length; i++) {
       if (_this.state.childrenCardIds[i] === "") {
         _this.state.childrenCardIds.splice(i, 1);
       }
     }
 
-    // Update parent to have childId.
+    // Update parent to have childCardId.
     _this.props.onChildCreate(_this);
   },
 
   componentWillUnmount: function() {
+    // Make sure to remove any bound event listeners.
     $(GlobalEvents).off('tree:save');
   },
 
@@ -69,11 +73,14 @@ var LogicCard = React.createClass({
     ev.preventDefault();
   },
 
+  // Creates a new card.
   handleAdd: function() {
     var _this = this;
     var uniqueDateKey = Date.now();
 
     _this.state.childrenCards[uniqueDateKey] = {
+      // The key is important for React.
+      // It also helps us identify cards who don't have an assigned cardId yet.
       key: uniqueDateKey,
       cardId: "",
       parentCardId: _this.state.cardId
@@ -88,6 +95,7 @@ var LogicCard = React.createClass({
     var childCardKey = childContext.props.cardKey;
     var childContextId = childContext.state.cardId;
 
+    // TODO: Figure out what this if statement does.
     if (_this.state.childrenCards[childCardKey].cardId !== childContextId) {
       _this.state.childrenCards[childCardKey].cardId = childContextId;
       _this.setState(_this.state);
@@ -102,6 +110,7 @@ var LogicCard = React.createClass({
   },
 
   // Pass the context back to the parent.
+  // deleteChildCard does the actual work. This just bridges the command.
   deleteCard: function() {
     this.props.deleteCard(this);
   },
@@ -112,6 +121,7 @@ var LogicCard = React.createClass({
     _this.setState(_this.state);
   },
 
+  // Handle collecting information when dropping a card from the messageBank.
   handleDrop: function(ev) {
     ev.preventDefault();
     var _this = this;
@@ -124,12 +134,15 @@ var LogicCard = React.createClass({
     _this.setState(_this.state);
   },
 
+  // Manually save contentEditable changes to React state since React doesn't
+  // automatically handle this for us.
   handleCEChange: function(ev) {
     var _this = this;
     _this.state[ev.target.sourceState] = ev.target.value;
     _this.setState(_this.setState);
   },
 
+  // Save the card into the ProcessedTree.
   saveTree: function(ev) {
     var _this = this;
 
@@ -149,6 +162,7 @@ var LogicCard = React.createClass({
     }
   },
 
+  // Manually add a ChildCardId if multiple parents point to one child.
   addChildId: function() {
     var _this = this;
     var newChildId = window.prompt("Add a child ID:");
@@ -168,6 +182,7 @@ var LogicCard = React.createClass({
 
     var childrenCardViews = {};
 
+    // Produce the nested child LogicCards.
     for (childIndex in _this.state.childrenCards) {
       childrenCardViews[childIndex] = (
         <LogicCard
@@ -182,6 +197,7 @@ var LogicCard = React.createClass({
     }
 
     // Toggle depending on visibility.
+    // TODO: Package or shorten for cleaner code.
     if (_this.state.visible === true) {
       childrenTreeStyle = classNames({
         'tree-new-level': true,

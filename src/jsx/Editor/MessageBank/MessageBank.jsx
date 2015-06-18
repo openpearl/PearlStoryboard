@@ -11,6 +11,7 @@ var MessageBank = React.createClass({
   componentDidMount: function() {
     var _this = this;
 
+    // Load the message.json file, which is a processed version of message.csv
     $.ajax({
       type: "GET",
       url: "files/messages.json",
@@ -21,8 +22,11 @@ var MessageBank = React.createClass({
         _this.setState({
           messageBank: data
         })
-        _this.bindSearch();
+        _this.bindSearch(); // Allow for the list to be searchable.
       },
+
+      // If no message.json file found, reprocess message.csv
+      // TODO: Package this so that we don't get a hugely nested callback.
       error: function() {
         $.ajax({
           type: "GET",
@@ -38,12 +42,9 @@ var MessageBank = React.createClass({
   },
 
   bindSearch: function() {
-
     $messages = $(".message-card");
-
     $('#searchbar').keyup(function() {
       var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-      
       $messages.show().filter(function() {
         var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
         return !~text.indexOf(val);
@@ -60,6 +61,10 @@ var MessageBank = React.createClass({
 
     if (allTextLines.length === 0) { return; }
 
+    // Use Random.org to generate IDs for us so that we don't have 
+    // redundancies.
+    // TODO: Consider alternatives that are local so we don't have to jump
+    // everywhere for our services.
     var randomOrgRequest = {
       "jsonrpc": "2.0",
       "method": "generateStrings",

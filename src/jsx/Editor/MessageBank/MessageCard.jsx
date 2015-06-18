@@ -1,9 +1,6 @@
 var MessageCard = React.createClass({
 
-  componentDidMount: function() {
-    // console.log(this.props.cardId);    
-  },
-
+  // Handle collecting data for a drag.
   dragStart: function(ev) {
     var _this = this;
 
