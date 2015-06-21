@@ -8,9 +8,22 @@ var Tree = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    var _this = this;
+    $(GlobalEvents).on('tree:clear', function(ev) {
+      _this.resetTree();
+    });
+  },
+  
+  componentWillUnmount: function () {
+    var _this = this;
+    $(GlobalEvents).off('tree:clear');
+  },
+
   resetTree: function(childContext) {
     console.log("Resetting the tree.");
     var _this = this;
+    ProcessedTree = {};
     _this.replaceState(_this.getInitialState());
   },
 

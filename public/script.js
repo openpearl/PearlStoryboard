@@ -233,7 +233,8 @@ var MessageBank = React.createClass({displayName: "MessageBank",
     // Pop the already rendered nodes out of the equation 
     // for faster processing.
 
-        
+    // Delete all current history of cards.
+    $(GlobalEvents).trigger('tree:clear');
     
   },
 
@@ -591,9 +592,22 @@ var Tree = React.createClass({displayName: "Tree",
     };
   },
 
+  componentDidMount: function() {
+    var _this = this;
+    $(GlobalEvents).on('tree:clear', function(ev) {
+      _this.resetTree();
+    });
+  },
+  
+  componentWillUnmount: function () {
+    var _this = this;
+    $(GlobalEvents).off('tree:clear');
+  },
+
   resetTree: function(childContext) {
     console.log("Resetting the tree.");
     var _this = this;
+    ProcessedTree = {};
     _this.replaceState(_this.getInitialState());
   },
 
