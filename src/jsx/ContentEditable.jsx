@@ -16,6 +16,7 @@ var ContentEditable = React.createClass({
 			this.props.onChange({
 				target: {
 					value: html,
+					// Determines which source the content is from.
 					sourceState: this.props.sourceState
 				}
 			});

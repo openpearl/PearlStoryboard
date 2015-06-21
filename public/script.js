@@ -20,12 +20,20 @@ $.fn.attachDragger = function(){
   });
 }
 
-// ReactJS ====================================================================
+module.exports = $.fn.attachDragger;
 
+},{}],2:[function(require,module,exports){
+require('./dragTree.js');
+
+// React Router requirements.
 var Router = window.ReactRouter;
 var Route = window.ReactRouter.Route;
 var RouteHandler = window.ReactRouter.RouteHandler;
+
+// Global event system.
 GlobalEvents = {};
+
+// Holder for the processed tree document.
 ProcessedTree = {};
 
 var App = React.createClass({displayName: "App",
@@ -48,7 +56,7 @@ Router.run(routes, function (Handler) {
   React.render(React.createElement(Handler, null), document.getElementById('content'));
 });
 
-},{"../jsx/Editor/Editor.jsx":3}],2:[function(require,module,exports){
+},{"../jsx/Editor/Editor.jsx":4,"./dragTree.js":1}],3:[function(require,module,exports){
 var ContentEditable = React.createClass({displayName: "ContentEditable",
 	render: function(){
 		return React.createElement("div", {
@@ -67,6 +75,7 @@ var ContentEditable = React.createClass({displayName: "ContentEditable",
 			this.props.onChange({
 				target: {
 					value: html,
+					// Determines which source the content is from.
 					sourceState: this.props.sourceState
 				}
 			});
@@ -77,7 +86,7 @@ var ContentEditable = React.createClass({displayName: "ContentEditable",
 
 module.exports = ContentEditable;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var MessageBank = require("./MessageBank/MessageBank.jsx");
 var Tree = require("./Tree/Tree.jsx");
 
@@ -96,7 +105,7 @@ var Editor = React.createClass({displayName: "Editor",
 
 module.exports = Editor;
 
-},{"./MessageBank/MessageBank.jsx":4,"./Tree/Tree.jsx":7}],4:[function(require,module,exports){
+},{"./MessageBank/MessageBank.jsx":5,"./Tree/Tree.jsx":8}],5:[function(require,module,exports){
 var MessageCard = require('./MessageCard.jsx');
 
 var MessageBank = React.createClass({displayName: "MessageBank",
@@ -110,6 +119,7 @@ var MessageBank = React.createClass({displayName: "MessageBank",
   componentDidMount: function() {
     var _this = this;
 
+    // Load the message.json file, which is a processed version of message.csv
     $.ajax({
       type: "GET",
       url: "files/messages.json",
@@ -120,8 +130,11 @@ var MessageBank = React.createClass({displayName: "MessageBank",
         _this.setState({
           messageBank: data
         })
-        _this.bindSearch();
+        _this.bindSearch(); // Allow for the list to be searchable.
       },
+
+      // If no message.json file found, reprocess message.csv
+      // TODO: Package this so that we don't get a hugely nested callback.
       error: function() {
         $.ajax({
           type: "GET",
@@ -137,12 +150,9 @@ var MessageBank = React.createClass({displayName: "MessageBank",
   },
 
   bindSearch: function() {
-
     $messages = $(".message-card");
-
     $('#searchbar').keyup(function() {
       var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-      
       $messages.show().filter(function() {
         var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
         return !~text.indexOf(val);
@@ -159,6 +169,10 @@ var MessageBank = React.createClass({displayName: "MessageBank",
 
     if (allTextLines.length === 0) { return; }
 
+    // Use Random.org to generate IDs for us so that we don't have 
+    // redundancies.
+    // TODO: Consider alternatives that are local so we don't have to jump
+    // everywhere for our services.
     var randomOrgRequest = {
       "jsonrpc": "2.0",
       "method": "generateStrings",
@@ -236,13 +250,10 @@ var MessageBank = React.createClass({displayName: "MessageBank",
 
 module.exports = MessageBank;
 
-},{"./MessageCard.jsx":5}],5:[function(require,module,exports){
+},{"./MessageCard.jsx":6}],6:[function(require,module,exports){
 var MessageCard = React.createClass({displayName: "MessageCard",
 
-  componentDidMount: function() {
-    // console.log(this.props.cardId);    
-  },
-
+  // Handle collecting data for a drag.
   dragStart: function(ev) {
     var _this = this;
 
@@ -268,7 +279,7 @@ var MessageCard = React.createClass({displayName: "MessageCard",
 
 module.exports = MessageCard;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var ContentEditable = require('../../ContentEditable.jsx');
 
 var LogicCard = React.createClass({displayName: "LogicCard",
@@ -281,7 +292,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
       cardId: "",
       parentCardId: _this.props.parentCardId,
       childrenCards: {},
-      childrenCardIds: [],
+      childrenCardIds: [], // For easy reference later on.
       speaker: "",
       message: ""
     };
@@ -313,6 +324,8 @@ var LogicCard = React.createClass({displayName: "LogicCard",
       _this.state.childrenCards[cardIndex].parentCardId = nextState.cardId;
 
       // Add to child id list if it's not present.
+      // FIXME: This seems buggy as you can add more than one child
+      // and never be able to remove them.
       console.log(_this.state.childrenCardIds
         .indexOf(_this.state.childrenCards[cardIndex].cardId));
       if (_this.state.childrenCardIds
@@ -322,17 +335,19 @@ var LogicCard = React.createClass({displayName: "LogicCard",
       }
     }
 
+    // TODO: Figure out what this for loop does.
     for (var i = 0; i < _this.state.childrenCardIds.length; i++) {
       if (_this.state.childrenCardIds[i] === "") {
         _this.state.childrenCardIds.splice(i, 1);
       }
     }
 
-    // Update parent to have childId.
+    // Update parent to have childCardId.
     _this.props.onChildCreate(_this);
   },
 
   componentWillUnmount: function() {
+    // Make sure to remove any bound event listeners.
     $(GlobalEvents).off('tree:save');
   },
 
@@ -340,11 +355,14 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     ev.preventDefault();
   },
 
+  // Creates a new card.
   handleAdd: function() {
     var _this = this;
     var uniqueDateKey = Date.now();
 
     _this.state.childrenCards[uniqueDateKey] = {
+      // The key is important for React.
+      // It also helps us identify cards who don't have an assigned cardId yet.
       key: uniqueDateKey,
       cardId: "",
       parentCardId: _this.state.cardId
@@ -359,6 +377,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     var childCardKey = childContext.props.cardKey;
     var childContextId = childContext.state.cardId;
 
+    // TODO: Figure out what this if statement does.
     if (_this.state.childrenCards[childCardKey].cardId !== childContextId) {
       _this.state.childrenCards[childCardKey].cardId = childContextId;
       _this.setState(_this.state);
@@ -373,6 +392,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
   },
 
   // Pass the context back to the parent.
+  // deleteChildCard does the actual work. This just bridges the command.
   deleteCard: function() {
     this.props.deleteCard(this);
   },
@@ -383,6 +403,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     _this.setState(_this.state);
   },
 
+  // Handle collecting information when dropping a card from the messageBank.
   handleDrop: function(ev) {
     ev.preventDefault();
     var _this = this;
@@ -395,12 +416,15 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     _this.setState(_this.state);
   },
 
+  // Manually save contentEditable changes to React state since React doesn't
+  // automatically handle this for us.
   handleCEChange: function(ev) {
     var _this = this;
     _this.state[ev.target.sourceState] = ev.target.value;
     _this.setState(_this.setState);
   },
 
+  // Save the card into the ProcessedTree.
   saveTree: function(ev) {
     var _this = this;
 
@@ -420,6 +444,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     }
   },
 
+  // Manually add a ChildCardId if multiple parents point to one child.
   addChildId: function() {
     var _this = this;
     var newChildId = window.prompt("Add a child ID:");
@@ -439,6 +464,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
     var childrenCardViews = {};
 
+    // Produce the nested child LogicCards.
     for (childIndex in _this.state.childrenCards) {
       childrenCardViews[childIndex] = (
         React.createElement(LogicCard, {
@@ -453,6 +479,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     }
 
     // Toggle depending on visibility.
+    // TODO: Package or shorten for cleaner code.
     if (_this.state.visible === true) {
       childrenTreeStyle = classNames({
         'tree-new-level': true,
@@ -535,7 +562,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
 module.exports = LogicCard;
 
-},{"../../ContentEditable.jsx":2}],7:[function(require,module,exports){
+},{"../../ContentEditable.jsx":3}],8:[function(require,module,exports){
 var LogicCard = require('./LogicCard.jsx');
 
 var Tree = React.createClass({displayName: "Tree",
@@ -564,4 +591,4 @@ var Tree = React.createClass({displayName: "Tree",
 
 module.exports = Tree;
 
-},{"./LogicCard.jsx":6}]},{},[1]);
+},{"./LogicCard.jsx":7}]},{},[2]);
