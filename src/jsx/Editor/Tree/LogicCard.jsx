@@ -7,7 +7,11 @@ var LogicCard = React.createClass({
 
     return {
       visible: true,
-      cardId: "",
+
+      // TODO: Unknown consequences.
+      // cardId: "",
+      cardId: _this.props.cardId || "",
+      
       parentCardId: _this.props.parentCardId,
       childrenCards: {},
       childrenCardIds: [], // For easy reference later on.

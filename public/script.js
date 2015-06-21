@@ -224,6 +224,19 @@ var MessageBank = React.createClass({displayName: "MessageBank",
       "Download final conversion.");
   },
 
+  loadTree: function() {
+
+    // TODO: Upload the document.
+    // Choose the root as the entry point.
+    // Render the root and each child accordingly.
+    // Recursively call the render.
+    // Pop the already rendered nodes out of the equation 
+    // for faster processing.
+
+        
+    
+  },
+
   render: function() {
     var _this = this;
 
@@ -239,6 +252,7 @@ var MessageBank = React.createClass({displayName: "MessageBank",
       React.createElement("div", {id: "message-bank"}, 
         React.createElement("button", {onClick: _this.triggerSaveTree}, "Trigger Save"), 
         React.createElement("button", {onClick: _this.downloadTree}, "Download"), 
+        React.createElement("button", {onClick: _this.loadTree}, "Load"), 
         React.createElement("div", {id: "download-link"}), 
         React.createElement("input", {type: "text", id: "searchbar", placeholder: "Search: "}), 
         React.createElement("div", null, messageCards)
@@ -289,7 +303,11 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
     return {
       visible: true,
-      cardId: "",
+
+      // TODO: Unknown consequences.
+      // cardId: "",
+      cardId: _this.props.cardId || "",
+      
       parentCardId: _this.props.parentCardId,
       childrenCards: {},
       childrenCardIds: [], // For easy reference later on.
@@ -566,27 +584,33 @@ module.exports = LogicCard;
 var LogicCard = require('./LogicCard.jsx');
 
 var Tree = React.createClass({displayName: "Tree",
-
   getInitialState: function() {
+    var uniqueDateKey = Date.now();
     return {
+      uniqueDateKey: uniqueDateKey
     };
+  },
+
+  resetTree: function(childContext) {
+    console.log("Resetting the tree.");
+    var _this = this;
+    _this.replaceState(_this.getInitialState());
   },
 
   render: function() {
     var _this = this;
-    var uniqueDateKey = Date.now();
-
     return (
       React.createElement("div", {id: "tree-display"}, 
         React.createElement(LogicCard, {
-          parentCardId: "root", 
-          deleteCard: function() {return;}, 
+          key: _this.state.uniqueDateKey, 
+          parentCardId: "null", 
+          cardId: "root", 
+          deleteCard: _this.resetTree, 
           onChildCreate: function() {return;}, 
-          ref: uniqueDateKey})
+          ref: _this.state.uniqueDateKey})
       )
     );
   }
-
 });
 
 module.exports = Tree;

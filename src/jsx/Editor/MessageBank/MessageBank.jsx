@@ -116,6 +116,19 @@ var MessageBank = React.createClass({
       "Download final conversion.");
   },
 
+  loadTree: function() {
+
+    // TODO: Upload the document.
+    // Choose the root as the entry point.
+    // Render the root and each child accordingly.
+    // Recursively call the render.
+    // Pop the already rendered nodes out of the equation 
+    // for faster processing.
+
+        
+    
+  },
+
   render: function() {
     var _this = this;
 
@@ -131,6 +144,7 @@ var MessageBank = React.createClass({
       <div id="message-bank">
         <button onClick={_this.triggerSaveTree}>Trigger Save</button>
         <button onClick={_this.downloadTree}>Download</button>
+        <button onClick={_this.loadTree}>Load</button>
         <div id="download-link"></div>
         <input type="text" id="searchbar" placeholder="Search: "></input>
         <div>{messageCards}</div>
