@@ -126,8 +126,8 @@ var MessageBank = React.createClass({
     // for faster processing.
 
     // Delete all current history of cards.
-    $(GlobalEvents).trigger('tree:clear');
-    
+    $(GlobalEvents).trigger('tree:load');
+
   },
 
   render: function() {

@@ -10,14 +10,16 @@ var Tree = React.createClass({
 
   componentDidMount: function() {
     var _this = this;
-    $(GlobalEvents).on('tree:clear', function(ev) {
+    $(GlobalEvents).on('tree:load', function(ev) {
       _this.resetTree();
+
+      // Now load the file.
     });
   },
   
   componentWillUnmount: function () {
     var _this = this;
-    $(GlobalEvents).off('tree:clear');
+    $(GlobalEvents).off('tree:load');
   },
 
   resetTree: function(childContext) {
