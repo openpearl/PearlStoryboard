@@ -146,6 +146,16 @@ var MessageBank = React.createClass({
         <button onClick={_this.triggerSaveTree}>Trigger Save</button>
         <button onClick={_this.downloadTree}>Download</button>
         <button onClick={_this.loadTree}>Load</button>
+
+        <form
+          encType="multipart/form-data"
+          action="/files/processedTree"
+          method="post"
+        > 
+          <input type="file" name="file"></input>
+          <input type="submit" value="Submit"></input>
+        </form>
+
         <div id="download-link"></div>
         <input type="text" id="searchbar" placeholder="Search: "></input>
         <div>{messageCards}</div>

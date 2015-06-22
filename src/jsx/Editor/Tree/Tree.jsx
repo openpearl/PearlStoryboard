@@ -14,6 +14,8 @@ var Tree = React.createClass({
       _this.resetTree();
 
       // Now load the file.
+      // ProcessedTree =  
+
     });
   },
   

@@ -254,6 +254,16 @@ var MessageBank = React.createClass({displayName: "MessageBank",
         React.createElement("button", {onClick: _this.triggerSaveTree}, "Trigger Save"), 
         React.createElement("button", {onClick: _this.downloadTree}, "Download"), 
         React.createElement("button", {onClick: _this.loadTree}, "Load"), 
+
+        React.createElement("form", {
+          encType: "multipart/form-data", 
+          action: "/files/processedTree", 
+          method: "post"
+        }, 
+          React.createElement("input", {type: "file", name: "file"}), 
+          React.createElement("input", {type: "submit", value: "Submit"})
+        ), 
+
         React.createElement("div", {id: "download-link"}), 
         React.createElement("input", {type: "text", id: "searchbar", placeholder: "Search: "}), 
         React.createElement("div", null, messageCards)
@@ -598,6 +608,8 @@ var Tree = React.createClass({displayName: "Tree",
       _this.resetTree();
 
       // Now load the file.
+      // ProcessedTree =  
+
     });
   },
   
