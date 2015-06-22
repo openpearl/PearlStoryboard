@@ -50,10 +50,6 @@ var MessageBank = React.createClass({
       "Download final conversion.");
   },
 
-  resetTree: function() {
-    $(GlobalEvents).trigger('tree:reset');
-  },
-
   render: function() {
     var _this = this;
 
@@ -66,7 +62,6 @@ var MessageBank = React.createClass({
       <div id="message-bank">
         <button onClick={_this.triggerSaveTree}>Trigger Save</button>
         <button onClick={_this.downloadTree}>Download</button>
-        <button onClick={_this.resetTree}>Reset</button>
 
         <form
           encType="multipart/form-data"

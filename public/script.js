@@ -197,10 +197,6 @@ var MessageBank = React.createClass({displayName: "MessageBank",
       "Download final conversion.");
   },
 
-  resetTree: function() {
-    $(GlobalEvents).trigger('tree:reset');
-  },
-
   render: function() {
     var _this = this;
 
@@ -213,7 +209,6 @@ var MessageBank = React.createClass({displayName: "MessageBank",
       React.createElement("div", {id: "message-bank"}, 
         React.createElement("button", {onClick: _this.triggerSaveTree}, "Trigger Save"), 
         React.createElement("button", {onClick: _this.downloadTree}, "Download"), 
-        React.createElement("button", {onClick: _this.resetTree}, "Reset"), 
 
         React.createElement("form", {
           encType: "multipart/form-data", 
@@ -266,11 +261,12 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     var uuid = guid();
 
     return {
-      visible: true,
       cardId: _this.props.cardId || uuid,
-      parentCardIds: [],
-      childrenCards: {},
       childrenCardIds: [], // For easy reference later on.
+      childrenCards: {},
+
+      visible: true,
+      highlight: false,
       speaker: "",
       message: ""
     };
@@ -287,7 +283,6 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     for (i in childrenCardIds) {
       var uuid = guid();
       _this.state.childrenCards[uuid] = {
-        key: uuid,
         cardId: childrenCardIds[i]
       };
     }
@@ -313,12 +308,8 @@ var LogicCard = React.createClass({displayName: "LogicCard",
   componentWillUpdate: function(nextProps, nextState) {
     var _this = this;
 
-    // Update children to have parentCardIds and vise versa.
+    // Update parent to have new children not created by itself.
     for (i in _this.state.childrenCards) {
-      pushIfUnique(
-        _this.state.childrenCards[i].parentCardIds, 
-        nextState.cardId
-      );
       pushIfUnique(
         _this.state.childrenCardIds,
         _this.state.childrenCards[i].cardId
@@ -327,57 +318,30 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
     // TODO: Refactor this for cleaner code.
     // Remove any random zero-length strings from childrenCardIds.
-    for (var i = 0; i < _this.state.childrenCardIds.length; i++) {
-      if (_this.state.childrenCardIds[i] === "") {
-        _this.state.childrenCardIds.splice(i, 1);
-      }
-    }
-
-    // Update parent to have childCardId.
-    _this.props.onChildCreate(_this);
+    // for (var i = 0; i < _this.state.childrenCardIds.length; i++) {
+    //   if (_this.state.childrenCardIds[i] === "") {
+    //     _this.state.childrenCardIds.splice(i, 1);
+    //   }
+    // }
   },
 
   componentWillUnmount: function() {
-    // Make sure to remove any bound event listeners.
     $(GlobalEvents).off('tree:save');
   },
 
-  preventDefault: function(ev) {
-    ev.preventDefault();
-  },
+  preventDefault: function(ev) { ev.preventDefault(); },
 
   // Creates a new card.
   handleAdd: function() {
     var _this = this;
-    var uniqueDateKey = Date.now();
+    var uuid = guid();
 
-    _this.state.childrenCards[uniqueDateKey] = {
-      // The key is important for React.
-      // It also helps us identify cards who don't have an assigned cardId yet.
-      key: uniqueDateKey,
-      cardId: "",
-      parentCardIds: _this.state.cardId
-    };
-
+    _this.state.childrenCards[uuid] = { cardId: uuid };
     _this.setState(_this.state);
-  },
-
-  handleChildCreate: function(childContext) {
-    var _this = this;
-
-    var childCardKey = childContext.props.cardKey;
-    var childContextId = childContext.state.cardId;
-
-    // TODO: Figure out what this if statement does.
-    if (_this.state.childrenCards[childCardKey].cardId !== childContextId) {
-      _this.state.childrenCards[childCardKey].cardId = childContextId;
-      _this.setState(_this.state);
-    }
   },
 
   hideChildren: function() {
     var _this = this;
-
     _this.state.visible = !_this.state.visible;
     _this.setState(_this.state);
   },
@@ -390,8 +354,15 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
   deleteChildCard: function(childCard) {
     var _this = this;
-    delete _this.state.childrenCards[childCard.props.cardKey]; 
+    delete _this.state.childrenCards[childCard.props.CardId]; 
     _this.setState(_this.state);
+  },
+
+  // Handle connecting parent to child.
+  dragStart: function(ev) {
+    var _this = this;
+    var data = { childCardId: _this.state.cardId };
+    ev.dataTransfer.setData('text', JSON.stringify(data));
   },
 
   // Handle collecting information when dropping a card from the messageBank.
@@ -403,21 +374,16 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     try { data = JSON.parse(ev.dataTransfer.getData('text')); }
     catch (e) { return; }
 
-    if (data.parentCardId) {
-      if (_this.state.parentCardIds.indexOf(data.parentCardId) > -1) {
-        return;
-      }
-      $(GlobalEvents).trigger("lc_" + data.parentCardId, 
-        [{childCardId: _this.state.cardId}]);
-
-      _this.state.parentCardIds.push(data.parentCardId);
-      _this.setState(_this.state);
-      return;
-    }
-
-    _this.state.cardId = data.bankCardId;
     _this.state.message = data.message;
     _this.setState(_this.state);
+  },
+
+  handleMouseEnter: function(ev) {
+    ev.preventDefault();
+  },
+
+  handleMouseLeave: function(ev) {
+    ev.preventDefault();
   },
 
   // Manually save contentEditable changes to React state since React doesn't
@@ -425,7 +391,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
   handleCEChange: function(ev) {
     var _this = this;
     _this.state[ev.target.sourceState] = ev.target.value;
-    _this.setState(_this.setState);
+    _this.setState(_this.state);
   },
 
   // Save the card into the ProcessedTree.
@@ -433,34 +399,19 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     var _this = this;
 
     // TODO: Naive and requires cleanup in the future.
-    var uniqueArray = [];
-    uniqueArray = _this.state.childrenCardIds.filter(function(item, pos) {
-      return _this.state.childrenCardIds.indexOf(item) == pos;
-    });
-    _this.state.childrenCardIds = uniqueArray;
+    // Makes sure that the saved result only contains unique children.
+    // var uniqueArray = [];
+    // uniqueArray = _this.state.childrenCardIds.filter(function(item, pos) {
+    //   return _this.state.childrenCardIds.indexOf(item) == pos;
+    // });
+    // _this.state.childrenCardIds = uniqueArray;
 
     ProcessedTree[_this.state.cardId] = {
       cardId: _this.state.cardId,
-      parentCardIds: _this.state.parentCardIds,
       childrenCardIds: _this.state.childrenCardIds,
       speaker: _this.state.speaker,
       message: _this.state.message
     }
-  },
-
-  // Manually add a ChildCardId if multiple parents point to one child.
-  addChildId: function() {
-    var _this = this;
-    var newChildId = window.prompt("Add a child ID:");
-    _this.state.childrenCardIds.push(newChildId);
-    _this.setState(_this.state);
-  },
-
-  // Handle connecting parent to child.
-  dragStart: function(ev) {
-    var _this = this;
-    var data = { parentCardId: _this.state.cardId };
-    ev.dataTransfer.setData('text', JSON.stringify(data));
   },
 
   render: function() {
@@ -479,13 +430,10 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     for (childIndex in _this.state.childrenCards) {
       childrenCardViews[childIndex] = (
         React.createElement(LogicCard, {
-          key: _this.state.childrenCards[childIndex].key, 
-          ref: _this.state.childrenCards[childIndex].key, 
-          cardKey: _this.state.childrenCards[childIndex].key, 
-          parentCardIds: _this.state.cardId, 
+          key: _this.state.childrenCards[childIndex].cardId, 
+          ref: _this.state.childrenCards[childIndex].cardId, 
           cardId: _this.state.childrenCards[childIndex].cardId, 
-          deleteCard: _this.deleteChildCard, 
-          onChildCreate: _this.handleChildCreate}
+          deleteCard: _this.deleteChildCard}
         )
       );
     }
@@ -530,15 +478,15 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     return (
       React.createElement("div", {className: "logic-card-block", id: "testing"}, 
         React.createElement("div", {className: "logic-card", draggable: "true", 
-          onDragStart: _this.dragStart}, 
+          onDragStart: _this.dragStart, 
+          onMouseEnter: _this.handleMouseEnter, 
+          onMouseLeave: _this.handleMouseLeave}, 
           React.createElement("div", {className: "logic-card-content", 
             onDragOver: _this.preventDefault, 
             onDrop: _this.handleDrop}, 
-            React.createElement("span", null, "Parent ID: "), 
-            React.createElement("div", null, _this.state.parentCardIds), 
             React.createElement("span", null, "ID: "), 
             React.createElement("div", null, _this.state.cardId), 
-            React.createElement("span", {onClick: _this.addChildId}, "Children IDs: "), 
+            React.createElement("span", null, "Children IDs: "), 
             React.createElement("div", null, _this.state.childrenCardIds), 
             React.createElement("span", null, "Speaker: "), 
             React.createElement(ContentEditable, {html: _this.state.speaker, 
@@ -580,22 +528,10 @@ var LogicCard = require('./LogicCard.jsx');
 
 var Tree = React.createClass({displayName: "Tree",
   getInitialState: function() {
-    var uniqueDateKey = Date.now();
+    var uuid = guid();
     return {
-      uniqueDateKey: uniqueDateKey
+      uuid: uuid
     };
-  },
-
-  componentDidMount: function() {
-    var _this = this;
-    $(GlobalEvents).on('tree:reset', function(ev) {
-      _this.resetTree();
-    });
-  },
-  
-  componentWillUnmount: function () {
-    var _this = this;
-    $(GlobalEvents).off('tree:reset');
   },
 
   resetTree: function(childContext) {
@@ -610,12 +546,11 @@ var Tree = React.createClass({displayName: "Tree",
     return (
       React.createElement("div", {id: "tree-display"}, 
         React.createElement(LogicCard, {
-          key: _this.state.uniqueDateKey, 
-          parentCardId: "null", 
+          key: _this.state.uuid, 
+          ref: _this.state.uuid, 
           cardId: "root", 
           deleteCard: _this.resetTree, 
-          onChildCreate: function() {return;}, 
-          ref: _this.state.uniqueDateKey})
+          onChildCreate: function() {return;}})
       )
     );
   }

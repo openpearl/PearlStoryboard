@@ -2,22 +2,10 @@ var LogicCard = require('./LogicCard.jsx');
 
 var Tree = React.createClass({
   getInitialState: function() {
-    var uniqueDateKey = Date.now();
+    var uuid = guid();
     return {
-      uniqueDateKey: uniqueDateKey
+      uuid: uuid
     };
-  },
-
-  componentDidMount: function() {
-    var _this = this;
-    $(GlobalEvents).on('tree:reset', function(ev) {
-      _this.resetTree();
-    });
-  },
-  
-  componentWillUnmount: function () {
-    var _this = this;
-    $(GlobalEvents).off('tree:reset');
   },
 
   resetTree: function(childContext) {
@@ -32,12 +20,11 @@ var Tree = React.createClass({
     return (
       <div id="tree-display">
         <LogicCard
-          key={_this.state.uniqueDateKey} 
-          parentCardId="null"
+          key={_this.state.uuid} 
+          ref={_this.state.uuid}
           cardId="root"
           deleteCard={_this.resetTree}
-          onChildCreate={function() {return;}}
-          ref={_this.state.uniqueDateKey}/>
+          onChildCreate={function() {return;}} />
       </div>
     );
   }
