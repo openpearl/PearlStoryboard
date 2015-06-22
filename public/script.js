@@ -23,6 +23,17 @@ $.fn.attachDragger = function(){
 module.exports = $.fn.attachDragger;
 
 },{}],2:[function(require,module,exports){
+module.exports = function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '_' + s4() + '_' + s4() + '_' +
+    s4() + '_' + s4() + s4() + s4();
+}
+
+},{}],3:[function(require,module,exports){
 require('./dragTree.js');
 
 // React Router requirements.
@@ -33,8 +44,12 @@ var RouteHandler = window.ReactRouter.RouteHandler;
 // Global event system.
 GlobalEvents = {};
 
-// Holder for the processed tree document.
-ProcessedTree = {};
+// GUID Generator.
+guid = require('./guid.js');
+
+// Utility scripts.
+utils = require('./utils.js');
+pushIfUnique = utils.pushIfUnique;
 
 var App = React.createClass({displayName: "App",
   render: function() {
@@ -52,11 +67,35 @@ var routes = (
   )
 );
 
-Router.run(routes, function (Handler) {
-  React.render(React.createElement(Handler, null), document.getElementById('content'));
+// Holder for the processed tree document.
+ProcessedTree = {};
+$.ajax({
+  type: "GET",
+  url: "files/input.json",
+  dataType: "json",
+  success: function(data) {
+    ProcessedTree = data;
+
+    Router.run(routes, function (Handler) {
+      React.render(React.createElement(Handler, null), document.getElementById('content'));
+    });
+  }
 });
 
-},{"../jsx/Editor/Editor.jsx":4,"./dragTree.js":1}],3:[function(require,module,exports){
+},{"../jsx/Editor/Editor.jsx":6,"./dragTree.js":1,"./guid.js":2,"./utils.js":4}],4:[function(require,module,exports){
+module.exports = {
+  pushIfUnique: function(currentArray, queuedItem) {
+    var found = $.inArray(queuedItem, currentArray);
+    if (found >= 0) {
+      return;
+    } else {
+      // Element was not found, add it.
+      currentArray.push(queuedItem);
+    }
+  }
+}
+
+},{}],5:[function(require,module,exports){
 var ContentEditable = React.createClass({displayName: "ContentEditable",
 	render: function(){
 		return React.createElement("div", {
@@ -86,7 +125,7 @@ var ContentEditable = React.createClass({displayName: "ContentEditable",
 
 module.exports = ContentEditable;
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var MessageBank = require("./MessageBank/MessageBank.jsx");
 var Tree = require("./Tree/Tree.jsx");
 
@@ -105,46 +144,26 @@ var Editor = React.createClass({displayName: "Editor",
 
 module.exports = Editor;
 
-},{"./MessageBank/MessageBank.jsx":5,"./Tree/Tree.jsx":8}],5:[function(require,module,exports){
+},{"./MessageBank/MessageBank.jsx":7,"./Tree/Tree.jsx":10}],7:[function(require,module,exports){
 var MessageCard = require('./MessageCard.jsx');
 
 var MessageBank = React.createClass({displayName: "MessageBank",
 
   getInitialState: function () {
-    return {
-      messageBank: {}
-    };
+    return { messageBank: [] };
   },
 
   componentDidMount: function() {
     var _this = this;
-
-    // Load the message.json file, which is a processed version of message.csv
     $.ajax({
       type: "GET",
-      url: "files/messages.json",
-      dataType: "json",
+      url: "files/messages.csv",
+      dataType: "text",
       success: function(data) {
-        console.log("messages.json loaded.");
-
-        _this.setState({
-          messageBank: data
-        })
-        _this.bindSearch(); // Allow for the list to be searchable.
-      },
-
-      // If no message.json file found, reprocess message.csv
-      // TODO: Package this so that we don't get a hugely nested callback.
-      error: function() {
-        $.ajax({
-          type: "GET",
-          url: "files/messages.csv",
-          dataType: "text",
-          success: function(data) {
-            console.log("messages.csv loaded.");
-            _this.getRandomIDs(data);
-          }
-        });
+        console.log("messages.csv loaded.");
+        _this.state.messageBank = data.split(/\r\n|\n/);
+        _this.setState(_this.state);
+        _this.bindSearch();
       }
     });
   },
@@ -160,59 +179,13 @@ var MessageBank = React.createClass({displayName: "MessageBank",
     });
   },
 
-  getRandomIDs: function(allText) {
-    console.log("Getting random IDs.");
-
-    var _this = this;
-    var allTextLines = allText.split(/\r\n|\n/);
-    var allTextLinesLength = allTextLines.length;
-
-    if (allTextLines.length === 0) { return; }
-
-    // Use Random.org to generate IDs for us so that we don't have 
-    // redundancies.
-    // TODO: Consider alternatives that are local so we don't have to jump
-    // everywhere for our services.
-    var randomOrgRequest = {
-      "jsonrpc": "2.0",
-      "method": "generateStrings",
-      "params": {
-        "apiKey": "5b278ac6-92aa-429e-8fda-37bd41245594",
-        "n": allTextLinesLength,
-        "length": 7,
-        "characters": "abcdefghijklmnopqrstuvwxyz",
-        "replacement": false
-      },
-      "id": 18197
-    }
-
-    var randomOrgUrl = "https://api.random.org/json-rpc/1/invoke";
-    $.post(randomOrgUrl, JSON.stringify(randomOrgRequest), function (data) {
-
-      console.log("Bits used: " + data.result.bitsUsed);
-      console.log("Bits left: " + data.result.bitsLeft);
-      console.log("Requests left: " +data.result.requestsLeft);
-
-      var randomIDs = data.result.random.data;
-      var messagesJson = {};
-
-      for (var i = 0; i < randomIDs.length; i++) {
-        messagesJson[ randomIDs[i] ] = allTextLines[i];
-      }
-
-      console.log(messagesJson)
-      _this.setDownloadLink(messagesJson, "messages.json", 
-        "Download 1st conversion.");
-    });
-  },
-
   setDownloadLink: function(messagesJson, downloadName, linkMessage) {
-    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(messagesJson));
+    var data = "text/json;charset=utf-8," 
+      + encodeURIComponent(JSON.stringify(messagesJson));
 
     $('#download-link').empty();
     $('<a href="data:' + data + '" download=' + downloadName + '>'
-      + linkMessage
-      + '</a>').appendTo('#download-link');
+      + linkMessage + '</a>').appendTo('#download-link');
   },
 
   triggerSaveTree: function() {
@@ -228,40 +201,40 @@ var MessageBank = React.createClass({displayName: "MessageBank",
     var _this = this;
 
     var messageCards = [];
-    for (var id in _this.state.messageBank) {
-      messageCards.push(
-        React.createElement(MessageCard, {key: id, cardId: id, 
-          message: _this.state.messageBank[id]})
-      );
+    for (var i in _this.state.messageBank) {
+      messageCards.push(React.createElement(MessageCard, {message: _this.state.messageBank[i]}));
     }
 
     return (
       React.createElement("div", {id: "message-bank"}, 
         React.createElement("button", {onClick: _this.triggerSaveTree}, "Trigger Save"), 
         React.createElement("button", {onClick: _this.downloadTree}, "Download"), 
+
+        React.createElement("form", {
+          encType: "multipart/form-data", 
+          action: "/files/processedTree", 
+          method: "post"}, 
+          React.createElement("input", {type: "file", name: "file"}), 
+          React.createElement("input", {type: "submit", value: "Submit"})
+        ), 
+
         React.createElement("div", {id: "download-link"}), 
         React.createElement("input", {type: "text", id: "searchbar", placeholder: "Search: "}), 
         React.createElement("div", null, messageCards)
       )
     );
   }
-  
 });
 
 module.exports = MessageBank;
 
-},{"./MessageCard.jsx":6}],6:[function(require,module,exports){
+},{"./MessageCard.jsx":8}],8:[function(require,module,exports){
 var MessageCard = React.createClass({displayName: "MessageCard",
 
   // Handle collecting data for a drag.
   dragStart: function(ev) {
     var _this = this;
-
-    var data = {
-      bankCardId: _this.props.cardId,
-      message: _this.props.message
-    }
-
+    var data = { message: _this.props.message };
     ev.dataTransfer.setData('text', JSON.stringify(data));
   },
 
@@ -270,7 +243,6 @@ var MessageCard = React.createClass({displayName: "MessageCard",
     return (
       React.createElement("div", {className: "message-card", draggable: "true", 
         onDragStart: _this.dragStart}, 
-        React.createElement("i", null, _this.props.cardId), 
         React.createElement("div", null, _this.props.message)
       )
     );
@@ -279,114 +251,97 @@ var MessageCard = React.createClass({displayName: "MessageCard",
 
 module.exports = MessageCard;
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var ContentEditable = require('../../ContentEditable.jsx');
 
 var LogicCard = React.createClass({displayName: "LogicCard",
 
   getInitialState: function() {
     var _this = this;
+    var uuid = guid();
 
     return {
-      visible: true,
-      cardId: "",
-      parentCardId: _this.props.parentCardId,
-      childrenCards: {},
+      cardId: _this.props.cardId || uuid,
       childrenCardIds: [], // For easy reference later on.
+      childrenCards: {},
+
+      visible: true,
+      highlight: false,
       speaker: "",
       message: ""
     };
   },
 
-  componentDidMount: function() {
+  componentWillMount: function() {
     var _this = this;
-    $(GlobalEvents).on('tree:save', function(ev) {
-      console.log("Event triggered.");
-      _this.saveTree();
-    });
+
+    // Exit if not found in ProcessedTree.
+    if (ProcessedTree[_this.state.cardId] === undefined) { return; }
+    
+    // Now load the children of the card from the ProcessedTree.
+    var childrenCardIds = ProcessedTree[_this.state.cardId].childrenCardIds;
+    for (i in childrenCardIds) {
+      var uuid = guid();
+      _this.state.childrenCards[uuid] = {
+        cardId: childrenCardIds[i]
+      };
+    }
+
+    // Now merge the current state with ProcessedTree.
+    for (var attrname in ProcessedTree[_this.state.cardId]) {
+      _this.state[attrname] = ProcessedTree[_this.state.cardId][attrname];
+    }
+
+    _this.setState(_this.state);
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    var _this = this;    
-
-    // Updates the parentCardId property if the parent gets new ID.
-    if (nextProps.parentCardId) {
-      _this.state.parentCardId = nextProps.parentCardId;
-      _this.setState(_this.state);
-    }
+  componentDidMount: function() {
+    var _this = this;
+    
+    // Save current state to the ProcessedTree.
+    $(GlobalEvents).on('tree:save', function(ev) {
+      console.log("tree:save triggered.");
+      _this.saveTree();
+    });
   },
 
   componentWillUpdate: function(nextProps, nextState) {
     var _this = this;
 
-    // Update children to have parentCardId.
-    for (cardIndex in _this.state.childrenCards) {
-      _this.state.childrenCards[cardIndex].parentCardId = nextState.cardId;
-
-      // Add to child id list if it's not present.
-      // FIXME: This seems buggy as you can add more than one child
-      // and never be able to remove them.
-      console.log(_this.state.childrenCardIds
-        .indexOf(_this.state.childrenCards[cardIndex].cardId));
-      if (_this.state.childrenCardIds
-        .indexOf(_this.state.childrenCards[cardIndex].cardId) <= 1) {
-        _this.state.childrenCardIds
-          .push(_this.state.childrenCards[cardIndex].cardId);
-      }
+    // Update parent to have new children not created by itself.
+    for (i in _this.state.childrenCards) {
+      pushIfUnique(
+        _this.state.childrenCardIds,
+        _this.state.childrenCards[i].cardId
+      );
     }
 
-    // TODO: Figure out what this for loop does.
-    for (var i = 0; i < _this.state.childrenCardIds.length; i++) {
-      if (_this.state.childrenCardIds[i] === "") {
-        _this.state.childrenCardIds.splice(i, 1);
-      }
-    }
-
-    // Update parent to have childCardId.
-    _this.props.onChildCreate(_this);
+    // TODO: Refactor this for cleaner code.
+    // Remove any random zero-length strings from childrenCardIds.
+    // for (var i = 0; i < _this.state.childrenCardIds.length; i++) {
+    //   if (_this.state.childrenCardIds[i] === "") {
+    //     _this.state.childrenCardIds.splice(i, 1);
+    //   }
+    // }
   },
 
   componentWillUnmount: function() {
-    // Make sure to remove any bound event listeners.
     $(GlobalEvents).off('tree:save');
   },
 
-  preventDefault: function(ev) {
-    ev.preventDefault();
-  },
+  preventDefault: function(ev) { ev.preventDefault(); },
 
   // Creates a new card.
   handleAdd: function() {
     var _this = this;
-    var uniqueDateKey = Date.now();
+    var uuid = guid();
 
-    _this.state.childrenCards[uniqueDateKey] = {
-      // The key is important for React.
-      // It also helps us identify cards who don't have an assigned cardId yet.
-      key: uniqueDateKey,
-      cardId: "",
-      parentCardId: _this.state.cardId
-    };
-
+    _this.state.childrenCards[uuid] = { cardId: uuid };
     _this.setState(_this.state);
-  },
-
-  handleChildCreate: function(childContext) {
-    var _this = this;
-
-    var childCardKey = childContext.props.cardKey;
-    var childContextId = childContext.state.cardId;
-
-    // TODO: Figure out what this if statement does.
-    if (_this.state.childrenCards[childCardKey].cardId !== childContextId) {
-      _this.state.childrenCards[childCardKey].cardId = childContextId;
-      _this.setState(_this.state);
-    }
   },
 
   hideChildren: function() {
     var _this = this;
-
     _this.state.visible = !_this.state.visible;
     _this.setState(_this.state);
   },
@@ -399,8 +354,15 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
   deleteChildCard: function(childCard) {
     var _this = this;
-    delete _this.state.childrenCards[childCard.props.cardKey]; 
+    delete _this.state.childrenCards[childCard.props.CardId]; 
     _this.setState(_this.state);
+  },
+
+  // Handle connecting parent to child.
+  dragStart: function(ev) {
+    var _this = this;
+    var data = { childCardId: _this.state.cardId };
+    ev.dataTransfer.setData('text', JSON.stringify(data));
   },
 
   // Handle collecting information when dropping a card from the messageBank.
@@ -411,9 +373,17 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
     try { data = JSON.parse(ev.dataTransfer.getData('text')); }
     catch (e) { return; }
-    _this.state.cardId = data.bankCardId;
+
     _this.state.message = data.message;
     _this.setState(_this.state);
+  },
+
+  handleMouseEnter: function(ev) {
+    ev.preventDefault();
+  },
+
+  handleMouseLeave: function(ev) {
+    ev.preventDefault();
   },
 
   // Manually save contentEditable changes to React state since React doesn't
@@ -421,7 +391,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
   handleCEChange: function(ev) {
     var _this = this;
     _this.state[ev.target.sourceState] = ev.target.value;
-    _this.setState(_this.setState);
+    _this.setState(_this.state);
   },
 
   // Save the card into the ProcessedTree.
@@ -429,27 +399,19 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     var _this = this;
 
     // TODO: Naive and requires cleanup in the future.
-    var uniqueArray = [];
-    uniqueArray = _this.state.childrenCardIds.filter(function(item, pos) {
-      return _this.state.childrenCardIds.indexOf(item) == pos;
-    });
-    _this.state.childrenCardIds = uniqueArray;
+    // Makes sure that the saved result only contains unique children.
+    // var uniqueArray = [];
+    // uniqueArray = _this.state.childrenCardIds.filter(function(item, pos) {
+    //   return _this.state.childrenCardIds.indexOf(item) == pos;
+    // });
+    // _this.state.childrenCardIds = uniqueArray;
 
     ProcessedTree[_this.state.cardId] = {
       cardId: _this.state.cardId,
-      parentCardId: _this.state.parentCardId,
       childrenCardIds: _this.state.childrenCardIds,
       speaker: _this.state.speaker,
       message: _this.state.message
     }
-  },
-
-  // Manually add a ChildCardId if multiple parents point to one child.
-  addChildId: function() {
-    var _this = this;
-    var newChildId = window.prompt("Add a child ID:");
-    _this.state.childrenCardIds.push(newChildId);
-    _this.setState(_this.state);
   },
 
   render: function() {
@@ -468,12 +430,10 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     for (childIndex in _this.state.childrenCards) {
       childrenCardViews[childIndex] = (
         React.createElement(LogicCard, {
-          key: _this.state.childrenCards[childIndex].key, 
-          ref: _this.state.childrenCards[childIndex].key, 
-          cardKey: _this.state.childrenCards[childIndex].key, 
-          parentCardId: _this.state.cardId, 
-          deleteCard: _this.deleteChildCard, 
-          onChildCreate: _this.handleChildCreate}
+          key: _this.state.childrenCards[childIndex].cardId, 
+          ref: _this.state.childrenCards[childIndex].cardId, 
+          cardId: _this.state.childrenCards[childIndex].cardId, 
+          deleteCard: _this.deleteChildCard}
         )
       );
     }
@@ -517,15 +477,16 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
     return (
       React.createElement("div", {className: "logic-card-block", id: "testing"}, 
-        React.createElement("div", {className: "logic-card"}, 
+        React.createElement("div", {className: "logic-card", draggable: "true", 
+          onDragStart: _this.dragStart, 
+          onMouseEnter: _this.handleMouseEnter, 
+          onMouseLeave: _this.handleMouseLeave}, 
           React.createElement("div", {className: "logic-card-content", 
             onDragOver: _this.preventDefault, 
             onDrop: _this.handleDrop}, 
-            React.createElement("span", null, "Parent ID: "), 
-            React.createElement("div", null, _this.state.parentCardId), 
             React.createElement("span", null, "ID: "), 
             React.createElement("div", null, _this.state.cardId), 
-            React.createElement("span", {onClick: _this.addChildId}, "Children IDs: "), 
+            React.createElement("span", null, "Children IDs: "), 
             React.createElement("div", null, _this.state.childrenCardIds), 
             React.createElement("span", null, "Speaker: "), 
             React.createElement(ContentEditable, {html: _this.state.speaker, 
@@ -562,33 +523,39 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
 module.exports = LogicCard;
 
-},{"../../ContentEditable.jsx":3}],8:[function(require,module,exports){
+},{"../../ContentEditable.jsx":5}],10:[function(require,module,exports){
 var LogicCard = require('./LogicCard.jsx');
 
 var Tree = React.createClass({displayName: "Tree",
-
   getInitialState: function() {
+    var uuid = guid();
     return {
+      uuid: uuid
     };
+  },
+
+  resetTree: function(childContext) {
+    console.log("Resetting the tree.");
+    var _this = this;
+    ProcessedTree = {};
+    _this.replaceState(_this.getInitialState());
   },
 
   render: function() {
     var _this = this;
-    var uniqueDateKey = Date.now();
-
     return (
       React.createElement("div", {id: "tree-display"}, 
         React.createElement(LogicCard, {
-          parentCardId: "root", 
-          deleteCard: function() {return;}, 
-          onChildCreate: function() {return;}, 
-          ref: uniqueDateKey})
+          key: _this.state.uuid, 
+          ref: _this.state.uuid, 
+          cardId: "root", 
+          deleteCard: _this.resetTree, 
+          onChildCreate: function() {return;}})
       )
     );
   }
-
 });
 
 module.exports = Tree;
 
-},{"./LogicCard.jsx":7}]},{},[2]);
+},{"./LogicCard.jsx":9}]},{},[3]);
