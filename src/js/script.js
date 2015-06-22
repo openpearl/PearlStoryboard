@@ -8,6 +8,9 @@ var RouteHandler = window.ReactRouter.RouteHandler;
 // Global event system.
 GlobalEvents = {};
 
+// GUID Generator.
+guid = require('./guid.js');
+
 var App = React.createClass({
   render: function() {
     return (

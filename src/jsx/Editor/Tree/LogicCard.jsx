@@ -20,6 +20,31 @@ var LogicCard = React.createClass({
     };
   },
 
+  componentWillMount: function() {
+    var _this = this;
+    console.log(_this.state.cardId);
+    if (ProcessedTree[_this.state.cardId] === undefined) { return; }
+    var childrenCardIds = ProcessedTree[_this.state.cardId].childrenCardIds;
+    console.log(childrenCardIds);
+
+    for (i in childrenCardIds) {
+      var uuid = guid();
+      _this.state.childrenCards[uuid] = {
+        key: uuid,
+        cardId: childrenCardIds[i],
+        parentCardId: _this.state.cardId
+      };
+    }
+
+    // Now merge the current state with ProcessedTree.
+    for (var attrname in ProcessedTree[_this.state.cardId]) {
+      _this.state[attrname] = ProcessedTree[_this.state.cardId][attrname];
+    }
+
+    console.log(_this.state);
+    _this.setState(_this.state);
+  },
+
   componentDidMount: function() {
     var _this = this;
     $(GlobalEvents).on('tree:save', function(ev) {
@@ -193,7 +218,8 @@ var LogicCard = React.createClass({
           key={_this.state.childrenCards[childIndex].key}
           ref={_this.state.childrenCards[childIndex].key}
           cardKey={_this.state.childrenCards[childIndex].key}
-          parentCardId={_this.state.cardId} 
+          parentCardId={_this.state.cardId}
+          cardId={_this.state.childrenCards[childIndex].cardId} 
           deleteCard={_this.deleteChildCard}
           onChildCreate={_this.handleChildCreate}
         />
