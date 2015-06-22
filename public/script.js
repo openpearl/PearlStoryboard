@@ -33,9 +33,6 @@ var RouteHandler = window.ReactRouter.RouteHandler;
 // Global event system.
 GlobalEvents = {};
 
-// Holder for the processed tree document.
-ProcessedTree = {};
-
 var App = React.createClass({displayName: "App",
   render: function() {
     return (
@@ -52,8 +49,19 @@ var routes = (
   )
 );
 
-Router.run(routes, function (Handler) {
-  React.render(React.createElement(Handler, null), document.getElementById('content'));
+// Holder for the processed tree document.
+ProcessedTree = {};
+$.ajax({
+  type: "GET",
+  url: "files/input.json",
+  dataType: "json",
+  success: function(data) {
+    ProcessedTree = data;
+
+    Router.run(routes, function (Handler) {
+      React.render(React.createElement(Handler, null), document.getElementById('content'));
+    });
+  }
 });
 
 },{"../jsx/Editor/Editor.jsx":4,"./dragTree.js":1}],3:[function(require,module,exports){

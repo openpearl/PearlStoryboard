@@ -8,9 +8,6 @@ var RouteHandler = window.ReactRouter.RouteHandler;
 // Global event system.
 GlobalEvents = {};
 
-// Holder for the processed tree document.
-ProcessedTree = {};
-
 var App = React.createClass({
   render: function() {
     return (
@@ -27,6 +24,17 @@ var routes = (
   </Route>
 );
 
-Router.run(routes, function (Handler) {
-  React.render(<Handler/>, document.getElementById('content'));
+// Holder for the processed tree document.
+ProcessedTree = {};
+$.ajax({
+  type: "GET",
+  url: "files/input.json",
+  dataType: "json",
+  success: function(data) {
+    ProcessedTree = data;
+
+    Router.run(routes, function (Handler) {
+      React.render(<Handler/>, document.getElementById('content'));
+    });
+  }
 });

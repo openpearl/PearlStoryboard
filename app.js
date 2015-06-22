@@ -32,7 +32,8 @@ app.use(multer({
     // console.log("I'm here!");
     // return filename+Date.now();
 
-    return filename;
+    return 'input';
+    // return filename;
   },
   onFileUploadStart: function (file) {
     console.log(file.originalname + ' is starting ...');
