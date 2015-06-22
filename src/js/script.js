@@ -11,6 +11,10 @@ GlobalEvents = {};
 // GUID Generator.
 guid = require('./guid.js');
 
+// Utility scripts.
+utils = require('./utils.js');
+pushIfUnique = utils.pushIfUnique;
+
 var App = React.createClass({
   render: function() {
     return (

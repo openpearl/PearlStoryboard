@@ -4,15 +4,12 @@ var LogicCard = React.createClass({
 
   getInitialState: function() {
     var _this = this;
+    var uuid = guid();
 
     return {
       visible: true,
-
-      // TODO: Unknown consequences.
-      // cardId: "",
-      cardId: _this.props.cardId || "",
-      
-      parentCardId: _this.props.parentCardId,
+      cardId: _this.props.cardId || uuid,
+      parentCardIds: [],
       childrenCards: {},
       childrenCardIds: [], // For easy reference later on.
       speaker: "",
@@ -22,17 +19,17 @@ var LogicCard = React.createClass({
 
   componentWillMount: function() {
     var _this = this;
-    console.log(_this.state.cardId);
-    if (ProcessedTree[_this.state.cardId] === undefined) { return; }
-    var childrenCardIds = ProcessedTree[_this.state.cardId].childrenCardIds;
-    console.log(childrenCardIds);
 
+    // Exit if not found in ProcessedTree.
+    if (ProcessedTree[_this.state.cardId] === undefined) { return; }
+    
+    // Now load the children of the card from the ProcessedTree.
+    var childrenCardIds = ProcessedTree[_this.state.cardId].childrenCardIds;
     for (i in childrenCardIds) {
       var uuid = guid();
       _this.state.childrenCards[uuid] = {
         key: uuid,
-        cardId: childrenCardIds[i],
-        parentCardId: _this.state.cardId
+        cardId: childrenCardIds[i]
       };
     }
 
@@ -41,48 +38,36 @@ var LogicCard = React.createClass({
       _this.state[attrname] = ProcessedTree[_this.state.cardId][attrname];
     }
 
-    console.log(_this.state);
     _this.setState(_this.state);
   },
 
   componentDidMount: function() {
     var _this = this;
+    
+    // Save current state to the ProcessedTree.
     $(GlobalEvents).on('tree:save', function(ev) {
-      console.log("Event triggered.");
+      console.log("tree:save triggered.");
       _this.saveTree();
     });
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    var _this = this;    
-
-    // Updates the parentCardId property if the parent gets new ID.
-    if (nextProps.parentCardId) {
-      _this.state.parentCardId = nextProps.parentCardId;
-      _this.setState(_this.state);
-    }
   },
 
   componentWillUpdate: function(nextProps, nextState) {
     var _this = this;
 
-    // Update children to have parentCardId.
-    for (cardIndex in _this.state.childrenCards) {
-      _this.state.childrenCards[cardIndex].parentCardId = nextState.cardId;
-
-      // Add to child id list if it's not present.
-      // FIXME: This seems buggy as you can add more than one child
-      // and never be able to remove them.
-      console.log(_this.state.childrenCardIds
-        .indexOf(_this.state.childrenCards[cardIndex].cardId));
-      if (_this.state.childrenCardIds
-        .indexOf(_this.state.childrenCards[cardIndex].cardId) <= 1) {
-        _this.state.childrenCardIds
-          .push(_this.state.childrenCards[cardIndex].cardId);
-      }
+    // Update children to have parentCardIds and vise versa.
+    for (i in _this.state.childrenCards) {
+      pushIfUnique(
+        _this.state.childrenCards[i].parentCardIds, 
+        nextState.cardId
+      );
+      pushIfUnique(
+        _this.state.childrenCardIds,
+        _this.state.childrenCards[i].cardId
+      );
     }
 
-    // TODO: Figure out what this for loop does.
+    // TODO: Refactor this for cleaner code.
+    // Remove any random zero-length strings from childrenCardIds.
     for (var i = 0; i < _this.state.childrenCardIds.length; i++) {
       if (_this.state.childrenCardIds[i] === "") {
         _this.state.childrenCardIds.splice(i, 1);
@@ -112,7 +97,7 @@ var LogicCard = React.createClass({
       // It also helps us identify cards who don't have an assigned cardId yet.
       key: uniqueDateKey,
       cardId: "",
-      parentCardId: _this.state.cardId
+      parentCardIds: _this.state.cardId
     };
 
     _this.setState(_this.state);
@@ -158,6 +143,19 @@ var LogicCard = React.createClass({
 
     try { data = JSON.parse(ev.dataTransfer.getData('text')); }
     catch (e) { return; }
+
+    if (data.parentCardId) {
+      if (_this.state.parentCardIds.indexOf(data.parentCardId) > -1) {
+        return;
+      }
+      $(GlobalEvents).trigger("lc_" + data.parentCardId, 
+        [{childCardId: _this.state.cardId}]);
+
+      _this.state.parentCardIds.push(data.parentCardId);
+      _this.setState(_this.state);
+      return;
+    }
+
     _this.state.cardId = data.bankCardId;
     _this.state.message = data.message;
     _this.setState(_this.state);
@@ -184,7 +182,7 @@ var LogicCard = React.createClass({
 
     ProcessedTree[_this.state.cardId] = {
       cardId: _this.state.cardId,
-      parentCardId: _this.state.parentCardId,
+      parentCardIds: _this.state.parentCardIds,
       childrenCardIds: _this.state.childrenCardIds,
       speaker: _this.state.speaker,
       message: _this.state.message
@@ -197,6 +195,13 @@ var LogicCard = React.createClass({
     var newChildId = window.prompt("Add a child ID:");
     _this.state.childrenCardIds.push(newChildId);
     _this.setState(_this.state);
+  },
+
+  // Handle connecting parent to child.
+  dragStart: function(ev) {
+    var _this = this;
+    var data = { parentCardId: _this.state.cardId };
+    ev.dataTransfer.setData('text', JSON.stringify(data));
   },
 
   render: function() {
@@ -218,7 +223,7 @@ var LogicCard = React.createClass({
           key={_this.state.childrenCards[childIndex].key}
           ref={_this.state.childrenCards[childIndex].key}
           cardKey={_this.state.childrenCards[childIndex].key}
-          parentCardId={_this.state.cardId}
+          parentCardIds={_this.state.cardId}
           cardId={_this.state.childrenCards[childIndex].cardId} 
           deleteCard={_this.deleteChildCard}
           onChildCreate={_this.handleChildCreate}
@@ -265,12 +270,13 @@ var LogicCard = React.createClass({
 
     return (
       <div className="logic-card-block" id="testing" >
-        <div className="logic-card">
+        <div className="logic-card" draggable="true" 
+          onDragStart={_this.dragStart}>
           <div className="logic-card-content" 
             onDragOver={_this.preventDefault}
             onDrop={_this.handleDrop}>
             <span>Parent ID: </span>
-            <div>{_this.state.parentCardId}</div>
+            <div>{_this.state.parentCardIds}</div>
             <span>ID: </span>
             <div>{_this.state.cardId}</div>
             <span onClick={_this.addChildId}>Children IDs: </span>
