@@ -3,7 +3,25 @@ var LogicCard = require('./LogicCard.jsx');
 var Tree = React.createClass({
 
   componentDidMount: function() {
+    console.log("Tree component did mount.");
     var _this = this;
+
+    // Draw the connectors.
+    var currentTree = GlbTreeCtrl.getTree();
+    console.log(currentTree);
+    for (i in currentTree) {
+      var cardIDSelector = '#' + currentTree[i].cardID;
+      var childrenCardIDs = currentTree[i].childrenCardIDs;
+      for (j in childrenCardIDs) {
+        var childIDSelector = '#' + childrenCardIDs[j];
+
+        console.log("Drawing lines!");
+        console.log(cardIDSelector);
+        console.log(childIDSelector);
+        jsPlumb.connect(cardIDSelector, childIDSelector);
+      }
+    }
+
     $(GlobalEvents).on('global_tree:changed', function(ev) {
       _this.forceUpdate();
     });
@@ -21,20 +39,22 @@ var Tree = React.createClass({
   render: function() {
     var _this = this;
 
-    // Draw out all the logic cards from the GlobalTree.
+    // Draw out all the logic cards from the currentTree.
     logicCardViews = {};
-    for (i in GlobalTree) {
+
+    var currentTree = GlbTreeCtrl.getTree();
+    for (i in currentTree) {
       logicCardViews[i] = 
         <LogicCard
-          key={GlobalTree[i].cardID}
-          ref={GlobalTree[i].cardID}
+          key={currentTree[i].cardID}
+          ref={currentTree[i].cardID}
           
-          cardID={GlobalTree[i].cardID}
-          childrenCardIDs={GlobalTree[i].childrenCardIDs}
-          parentCardIDs={GlobalTree[i].parentCardIDs}
+          cardID={currentTree[i].cardID}
+          childrenCardIDs={currentTree[i].childrenCardIDs}
+          parentCardIDs={currentTree[i].parentCardIDs}
 
-          speaker={GlobalTree[i].speaker}
-          message={GlobalTree[i].message}
+          speaker={currentTree[i].speaker}
+          message={currentTree[i].message}
         />
     }
 

@@ -19,6 +19,10 @@ var LogicCard = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    
+  },
+
   preventDefault: function(ev) { ev.preventDefault(); },
 
   // Creates a new card.
@@ -43,7 +47,7 @@ var LogicCard = React.createClass({
   },
 
   deleteCard: function() {
-    GlbTreeCtrl.deleteLogicCard(_this.state.cardID);
+    GlbTreeCtrl.deleteLogicCard(this.state.cardID);
   },
 
   // Handle collecting information when dropping a card from the messageBank.
@@ -114,9 +118,8 @@ var LogicCard = React.createClass({
     }
 
     return (
-      <div className="logic-card-block" id="testing" >
-        <div className="logic-card" draggable="true" 
-          onDragStart={_this.dragStart}
+      <div className="logic-card-block" id={_this.state.cardID}>
+        <div className="logic-card" 
           onMouseEnter={_this.handleMouseEnter}
           onMouseLeave={_this.handleMouseLeave}>
           <div className="logic-card-content" 

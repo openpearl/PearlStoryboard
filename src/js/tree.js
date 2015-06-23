@@ -14,6 +14,7 @@ var GlobalTree = {
 
 var GlbTreeCtrl = {
   getTree: getTree,
+  setTree: setTree,
   clearTree: clearTree,
   getLogicCard: getLogicCard,
   setLogicCard: setLogicCard,
@@ -21,13 +22,20 @@ var GlbTreeCtrl = {
   toggleVisibility: toggleVisibility
 };
 
+var $GlobalEvents = $(GlobalEvents);
+
 function getTree() {
   return GlobalTree;
 }
 
+function setTree(inputTree) {
+  GlobalTree = inputTree;
+  $GlobalEvents.trigger("global_tree:changed");
+}
+
 function clearTree() {
   GlobalTree = {};
-  $(GlobalEvents).trigger("global_tree:changed");
+  $GlobalEvents.trigger("global_tree:changed");
 }
 
 function getLogicCard(logicCardID) {
@@ -36,7 +44,7 @@ function getLogicCard(logicCardID) {
 
 function setLogicCard(logicCard) {
   GlobalTree[logicCard[cardID]] = logicCard;
-  $(GlobalEvents).trigger("global_tree:changed");
+  $GlobalEvents.trigger("global_tree:changed");
 }
 
 function deleteLogicCard(logicCardID) {
@@ -59,7 +67,7 @@ function deleteLogicCard(logicCardID) {
 
   // Delete and then notify.
   delete GlobalTree[logicCardID];
-  $(GlobalEvents).trigger("global_tree:changed");
+  $GlobalEvents.trigger("global_tree:changed");
 }
 
 function toggleVisibility(logicCardID) {
@@ -75,7 +83,7 @@ function toggleVisibility(logicCardID) {
   }
 
   // Callback.
-  $(GlobalEvents).trigger("global_tree:changed");
+  $GlobalEvents.trigger("global_tree:changed");
 }
 
 module.exports = GlbTreeCtrl;

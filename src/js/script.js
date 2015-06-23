@@ -31,7 +31,7 @@ $.ajax({
   url: "files/input.json",
   dataType: "json",
   success: function(data) {
-    GlobalTree = data;
+    GlbTreeCtrl.setTree(data);
 
     Router.run(routes, function (Handler) {
       React.render(<Handler/>, document.getElementById('content'));
