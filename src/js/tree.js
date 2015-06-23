@@ -13,7 +13,7 @@ var GlobalTree = {
 };
 
 var GlbTreeCtrl = {
-  getTree: getTree;
+  getTree: getTree,
   clearTree: clearTree,
   getLogicCard: getLogicCard,
   setLogicCard: setLogicCard,

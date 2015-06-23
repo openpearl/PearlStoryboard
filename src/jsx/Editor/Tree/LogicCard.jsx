@@ -12,7 +12,7 @@ var LogicCard = React.createClass({
       parentCardIDs: _this.props.parentCardIDs || [],
 
       speaker: _this.props.speaker || "",
-      message: _this.props.message || ""
+      message: _this.props.message || "",
 
       visible: true,
       highlight: false,
@@ -39,14 +39,10 @@ var LogicCard = React.createClass({
   },
 
   toggleVisibility: function() {
-    var _this = this;
     GlbTreeCtrl.toggleVisibility(_this.state.cardID);
   },
 
-  // Pass the context back to the parent.
   deleteCard: function() {
-    // TODO: Remove from Global Tree.
-    // Unmount instance of tree from the tree container.
     GlbTreeCtrl.deleteLogicCard(_this.state.cardID);
   },
 
@@ -59,8 +55,9 @@ var LogicCard = React.createClass({
     try { data = JSON.parse(ev.dataTransfer.getData('text')); }
     catch (e) { return; }
 
-    _this.state.message = data.message;
-    _this.setState(_this.state);
+    var card = GlbTreeCtrl.getLogicCard(_this.state.cardID);
+    card.message = data.message;
+    GlbTreeCtrl.setLogicCard(card);
   },
 
   handleMouseEnter: function(ev) {
@@ -69,28 +66,6 @@ var LogicCard = React.createClass({
 
   handleMouseLeave: function(ev) {
     ev.preventDefault();
-  },
-
-  // Manually save contentEditable changes to React state since React doesn't
-  // automatically handle this for us.
-  handleCEChange: function(ev) {
-    var _this = this;
-    _this.state[ev.target.sourceState] = ev.target.value;
-    _this.setState(_this.state);
-  },
-
-  // Save the card into the GlobalTree.
-  saveTree: function(ev) {
-    var _this = this;
-
-    // TODO: Move this somewhere else besides here.
-    GlobalTree[_this.state.cardID] = {
-      cardID: _this.state.cardID,
-      parentCardIDs: _this.state.parentCardIDs,
-      childrenCardIDs: _this.state.childrenCardIDs,
-      speaker: _this.state.speaker,
-      message: _this.state.message
-    }
   },
 
   render: function() {
@@ -153,11 +128,9 @@ var LogicCard = React.createClass({
             <div>{_this.state.childrenCardIDs}</div>
             <span>Speaker: </span>
             <ContentEditable html={_this.state.speaker} 
-              onChange={_this.handleCEChange}
               sourceState="speaker" />
             <span>Message: </span>
             <ContentEditable html={_this.state.message} 
-              onChange={_this.handleCEChange}
               sourceState="message" />
             <div className="card-buttons-container">
               <div className="add-card-button" onClick={_this.handleAdd}>
