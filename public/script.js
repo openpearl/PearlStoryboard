@@ -68,13 +68,23 @@ var routes = (
 );
 
 // Holder for the processed tree document.
-ProcessedTree = {};
+GlobalTree = {
+  setLogicCard: function(logicCard) {
+    $(GlobalEvents).trigger("global_tree:changed");
+    this[logicCard[cardId]] = logicCard;
+  },
+  getLogicCard: function(logicCardId) {
+    return this[logicCardId];
+  }
+};
+
+// Start rendering React only when documents have been loaded.
 $.ajax({
   type: "GET",
   url: "files/input.json",
   dataType: "json",
   success: function(data) {
-    ProcessedTree = data;
+    GlobalTree = data;
 
     Router.run(routes, function (Handler) {
       React.render(React.createElement(Handler, null), document.getElementById('content'));
@@ -473,6 +483,12 @@ var Tree = React.createClass({displayName: "Tree",
 
   render: function() {
     var _this = this;
+
+    // Draw out all the logic cards from the GlobalTree.
+
+
+
+
     return (
       React.createElement("div", {id: "tree-display"}, 
         React.createElement(LogicCard, {

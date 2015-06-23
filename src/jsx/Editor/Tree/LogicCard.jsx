@@ -7,29 +7,16 @@ var LogicCard = React.createClass({
     var uuid = guid();
 
     return {
-      cardId: _this.props.cardId || uuid,
-      childrenCardIds: [],
-      parentCardIds: [],
+      cardID: _this.props.cardID || uuid,
+      childrenCardIDs: _this.props.childrenCardIDs || [],
+      parentCardIDs: _this.props.parentCardIDs || [],
+
+      speaker: _this.props.speaker || "",
+      message: _this.props.message || ""
 
       visible: true,
       highlight: false,
-      speaker: "",
-      message: ""
     };
-  },
-
-  componentDidMount: function() {
-    var _this = this;
-    
-    // Save current state to the GlobalTree.
-    $(GlobalEvents).on('tree:save', function(ev) {
-      console.log("tree:save triggered.");
-      _this.saveTree();
-    });
-  },
-
-  componentWillUnmount: function() {
-    $(GlobalEvents).off('tree:save');
   },
 
   preventDefault: function(ev) { ev.preventDefault(); },
@@ -39,33 +26,28 @@ var LogicCard = React.createClass({
     var _this = this;
     var uuid = guid();
 
-    // TODO: Create a new Logic card and save it into the GlobalTree.
-
-    _this.setState(_this.state);
+    // Creates a new Logic card and save it into the GlobalTree.
+    GlbTreeCtrl.setLogicCard({
+      cardID: uuid,
+      childrenCardIDs: [],
+      parentCardIDs: [],
+      speaker: "",
+      message: "",
+      visible: true,
+      highlight: false
+    });
   },
 
-  hideChildren: function() {
+  toggleVisibility: function() {
     var _this = this;
-    _this.state.visible = !_this.state.visible;
-
-    // TODO: Search through the tree and hide all children as well.
-
-    _this.setState(_this.state);
+    GlbTreeCtrl.toggleVisibility(_this.state.cardID);
   },
 
   // Pass the context back to the parent.
-  // removeChildCardId does the actual work. This just bridges the command.
   deleteCard: function() {
     // TODO: Remove from Global Tree.
     // Unmount instance of tree from the tree container.
-  },
-
-  removeChildCardId: function(childCard) {
-    var _this = this;
-
-    // TODO: Remove from childrenCardIds array.
-
-    _this.setState(_this.state);
+    GlbTreeCtrl.deleteLogicCard(_this.state.cardID);
   },
 
   // Handle collecting information when dropping a card from the messageBank.
@@ -102,10 +84,10 @@ var LogicCard = React.createClass({
     var _this = this;
 
     // TODO: Move this somewhere else besides here.
-    GlobalTree[_this.state.cardId] = {
-      cardId: _this.state.cardId,
-      parentCardIds: _this.state.parentCardIds,
-      childrenCardIds: _this.state.childrenCardIds,
+    GlobalTree[_this.state.cardID] = {
+      cardID: _this.state.cardID,
+      parentCardIDs: _this.state.parentCardIDs,
+      childrenCardIDs: _this.state.childrenCardIDs,
       speaker: _this.state.speaker,
       message: _this.state.message
     }
@@ -150,7 +132,7 @@ var LogicCard = React.createClass({
     } else {
       newOrAddButton = <i className="fa fa-plus"></i>;
       hideButton = (
-        <div className="hide-card-button" onClick={_this.hideChildren}>
+        <div className="hide-card-button" onClick={_this.toggleVisibility}>
           <i className={hideButtonStyle}></i>
         </div>
       );
@@ -166,9 +148,9 @@ var LogicCard = React.createClass({
             onDragOver={_this.preventDefault}
             onDrop={_this.handleDrop}>
             <span>ID: </span>
-            <div>{_this.state.cardId}</div>
+            <div>{_this.state.cardID}</div>
             <span>Children IDs: </span>
-            <div>{_this.state.childrenCardIds}</div>
+            <div>{_this.state.childrenCardIDs}</div>
             <span>Speaker: </span>
             <ContentEditable html={_this.state.speaker} 
               onChange={_this.handleCEChange}
