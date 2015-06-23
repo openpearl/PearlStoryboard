@@ -81,12 +81,6 @@ html {
     cursor: -webkit-grabbing;
     cursor: grabbing; }
 
-.tree-new-level {
-  margin-left: 20px;
-  display: inline-block;
-  white-space: nowrap;
-  vertical-align: top; }
-
 .logic-card {
   width: 300px;
   display: inline-block;

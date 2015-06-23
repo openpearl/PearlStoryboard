@@ -8,8 +8,8 @@ var LogicCard = React.createClass({
 
     return {
       cardId: _this.props.cardId || uuid,
-      childrenCardIds: [], // For easy reference later on.
-      childrenCards: {},
+      childrenCardIds: [],
+      parentCardIds: [],
 
       visible: true,
       highlight: false,
@@ -18,57 +18,14 @@ var LogicCard = React.createClass({
     };
   },
 
-  componentWillMount: function() {
-    var _this = this;
-
-    // Exit if not found in ProcessedTree.
-    if (ProcessedTree[_this.state.cardId] === undefined) { return; }
-    
-    // Now load the children of the card from the ProcessedTree.
-    var childrenCardIds = ProcessedTree[_this.state.cardId].childrenCardIds;
-    for (i in childrenCardIds) {
-      var uuid = guid();
-      _this.state.childrenCards[uuid] = {
-        cardId: childrenCardIds[i]
-      };
-    }
-
-    // Now merge the current state with ProcessedTree.
-    for (var attrname in ProcessedTree[_this.state.cardId]) {
-      _this.state[attrname] = ProcessedTree[_this.state.cardId][attrname];
-    }
-
-    _this.setState(_this.state);
-  },
-
   componentDidMount: function() {
     var _this = this;
     
-    // Save current state to the ProcessedTree.
+    // Save current state to the GlobalTree.
     $(GlobalEvents).on('tree:save', function(ev) {
       console.log("tree:save triggered.");
       _this.saveTree();
     });
-  },
-
-  componentWillUpdate: function(nextProps, nextState) {
-    var _this = this;
-
-    // Update parent to have new children not created by itself.
-    for (i in _this.state.childrenCards) {
-      pushIfUnique(
-        _this.state.childrenCardIds,
-        _this.state.childrenCards[i].cardId
-      );
-    }
-
-    // TODO: Refactor this for cleaner code.
-    // Remove any random zero-length strings from childrenCardIds.
-    // for (var i = 0; i < _this.state.childrenCardIds.length; i++) {
-    //   if (_this.state.childrenCardIds[i] === "") {
-    //     _this.state.childrenCardIds.splice(i, 1);
-    //   }
-    // }
   },
 
   componentWillUnmount: function() {
@@ -82,33 +39,33 @@ var LogicCard = React.createClass({
     var _this = this;
     var uuid = guid();
 
-    _this.state.childrenCards[uuid] = { cardId: uuid };
+    // TODO: Create a new Logic card and save it into the GlobalTree.
+
     _this.setState(_this.state);
   },
 
   hideChildren: function() {
     var _this = this;
     _this.state.visible = !_this.state.visible;
+
+    // TODO: Search through the tree and hide all children as well.
+
     _this.setState(_this.state);
   },
 
   // Pass the context back to the parent.
-  // deleteChildCard does the actual work. This just bridges the command.
+  // removeChildCardId does the actual work. This just bridges the command.
   deleteCard: function() {
-    this.props.deleteCard(this);
+    // TODO: Remove from Global Tree.
+    // Unmount instance of tree from the tree container.
   },
 
-  deleteChildCard: function(childCard) {
+  removeChildCardId: function(childCard) {
     var _this = this;
-    delete _this.state.childrenCards[childCard.props.CardId]; 
+
+    // TODO: Remove from childrenCardIds array.
+
     _this.setState(_this.state);
-  },
-
-  // Handle connecting parent to child.
-  dragStart: function(ev) {
-    var _this = this;
-    var data = { childCardId: _this.state.cardId };
-    ev.dataTransfer.setData('text', JSON.stringify(data));
   },
 
   // Handle collecting information when dropping a card from the messageBank.
@@ -140,20 +97,14 @@ var LogicCard = React.createClass({
     _this.setState(_this.state);
   },
 
-  // Save the card into the ProcessedTree.
+  // Save the card into the GlobalTree.
   saveTree: function(ev) {
     var _this = this;
 
-    // TODO: Naive and requires cleanup in the future.
-    // Makes sure that the saved result only contains unique children.
-    // var uniqueArray = [];
-    // uniqueArray = _this.state.childrenCardIds.filter(function(item, pos) {
-    //   return _this.state.childrenCardIds.indexOf(item) == pos;
-    // });
-    // _this.state.childrenCardIds = uniqueArray;
-
-    ProcessedTree[_this.state.cardId] = {
+    // TODO: Move this somewhere else besides here.
+    GlobalTree[_this.state.cardId] = {
       cardId: _this.state.cardId,
+      parentCardIds: _this.state.parentCardIds,
       childrenCardIds: _this.state.childrenCardIds,
       speaker: _this.state.speaker,
       message: _this.state.message
@@ -170,25 +121,10 @@ var LogicCard = React.createClass({
     var childrenTreeStyle;
     var hideButtonStyle;
 
-    var childrenCardViews = {};
-
-    // Produce the nested child LogicCards.
-    for (childIndex in _this.state.childrenCards) {
-      childrenCardViews[childIndex] = (
-        <LogicCard
-          key={_this.state.childrenCards[childIndex].cardId}
-          ref={_this.state.childrenCards[childIndex].cardId}
-          cardId={_this.state.childrenCards[childIndex].cardId}
-          deleteCard={_this.deleteChildCard}
-        />
-      );
-    }
-
     // Toggle depending on visibility.
     // TODO: Package or shorten for cleaner code.
     if (_this.state.visible === true) {
       childrenTreeStyle = classNames({
-        'tree-new-level': true,
         'hide': false
       });
       hideButtonStyle = classNames({
@@ -198,7 +134,6 @@ var LogicCard = React.createClass({
       });
     } else {
       childrenTreeStyle = classNames({
-        'tree-new-level': true,
         'hide': true
       });
       hideButtonStyle = classNames({
@@ -257,11 +192,6 @@ var LogicCard = React.createClass({
             </div>
           </div>
         </div>
-
-        <div className={childrenTreeStyle}>
-          {childrenCardViews}
-        </div>
-
       </div>
     );
   }
