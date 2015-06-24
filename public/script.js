@@ -516,28 +516,31 @@ var Tree = React.createClass({displayName: "Tree",
     console.log("Tree component did mount.");
     var _this = this;
 
-    // jsPlumb.ready(function() {
-    //   var logicCardReferences = document.querySelectorAll(".logic-card");
-    //   jsPlumb.setContainer(document.getElementById("tree-display"));
-    //   jsPlumb.draggable(logicCardReferences);
+    jsPlumb.ready(function() {
 
-    //   // TODO: Package into function so that this can be recalled.
-    //   // Draw the connectors.
-    //   var currentTree = GlbTreeCtrl.getTree();
-    //   for (i in currentTree) {
-    //     var cardIDSelector = '#' + currentTree[i].cardID;
-    //     var cardIDNode = jsPlumb.getSelector(cardIDSelector)[0];
+      console.log("I'm doing a jsPlumb.");
 
-    //     var childrenCardIDs = currentTree[i].childrenCardIDs;
-    //     for (j in childrenCardIDs) {
-    //       var childIDSelector = '#' + childrenCardIDs[j];
-    //       var childIDNode = jsPlumb.getSelector(childIDSelector)[0];
-    //       jsPlumb.connect({
-    //         source: cardIDNode, 
-    //         target: childIDNode
-    //       });
-    //     }
-    //   }
+      var logicCardReferences = document.querySelectorAll(".logic-card");
+      jsPlumb.setContainer(document.getElementById("tree-display"));
+      jsPlumb.draggable(logicCardReferences);
+
+      // TODO: Package into function so that this can be recalled.
+      // Draw the connectors.
+      var currentTree = GlbTreeCtrl.getTree();
+      for (i in currentTree) {
+        var cardIDSelector = '#' + currentTree[i].cardID;
+        var cardIDNode = jsPlumb.getSelector(cardIDSelector)[0];
+
+        var childrenCardIDs = currentTree[i].childrenCardIDs;
+        for (j in childrenCardIDs) {
+          var childIDSelector = '#' + childrenCardIDs[j];
+          var childIDNode = jsPlumb.getSelector(childIDSelector)[0];
+          jsPlumb.connect({
+            source: cardIDNode, 
+            target: childIDNode
+          });
+        }
+      }
 
     //   // Panzoom.
     //   $treeDisplay = $("#tree-display");
@@ -563,7 +566,7 @@ var Tree = React.createClass({displayName: "Tree",
     //     console.log(scale);
     //     jsPlumb.setZoom(scale);
     //   });
-    // });
+    });
 
     $(GlobalEvents).on('global_tree:changed', function(ev) {
       console.log("The tree changed.");
