@@ -32,6 +32,11 @@ var MessageBank = React.createClass({
     });
   },
 
+  toggleBank: function(){
+    console.log("Toggling bank.");
+    $("#message-bank").toggle();
+  },
+
   setDownloadLink: function(messagesJson, downloadName, linkMessage) {
     var data = "text/json;charset=utf-8," 
       + encodeURIComponent(JSON.stringify(messagesJson));
@@ -59,21 +64,37 @@ var MessageBank = React.createClass({
     }
 
     return (
-      <div id="message-bank">
-        <button onClick={_this.triggerSaveTree}>Trigger Save</button>
-        <button onClick={_this.downloadTree}>Download</button>
+      <div>
+        <div id="button-storage">
+      
+          <div className="bt-menu" onClick={_this.toggleBank}>
+            <i className="fa fa-bars"></i>
+          </div>
 
-        <form
-          encType="multipart/form-data"
-          action="/files/processedTree"
-          method="post" > 
-          <input type="file" name="file"></input>
-          <input type="submit" value="Submit"></input>
-        </form>
+          <div className="bt-menu">
+            <i className="fa fa-floppy-o"></i>
+          </div>
 
-        <div id="download-link"></div>
-        <input type="text" id="searchbar" placeholder="Search: "></input>
-        <div>{messageCards}</div>
+          <div className="bt-menu" onClick={_this.downloadTree}>
+            <i className="fa fa-download"></i>
+          </div>
+
+          <form
+            encType="multipart/form-data"
+            action="  /files/processedTree"
+            method="post" > 
+            <input type="file" name="file"></input>
+            <input type="submit"><i className="fa fa-upload"></i></input>
+          </form>
+      
+          <div id="download-link"></div>
+        </div>
+
+        <div id="message-bank">
+          <input type="text" id="searchbar" placeholder="Search: "></input>
+          <div>{messageCards}</div>
+        </div>
+      
       </div>
     );
   }

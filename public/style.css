@@ -1,8 +1,12 @@
+@charset "UTF-8";
 /**
  * google-material-color v1.1.0
  * https://github.com/danlevan/google-material-color
  */
-#message-bank, .message-card, .logic-card-content, .add-card-button, .hide-card-button, .delete-card-button {
+.bt-menu:active {
+  box-shadow: none !important; }
+
+#message-bank, .bt-menu:hover, .message-card, .logic-card-content, .add-card-button, .hide-card-button, .delete-card-button {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); }
 
 .message-card:hover, .add-card-button:hover, .hide-card-button:hover, .delete-card-button:hover {
@@ -46,20 +50,59 @@ html {
 
 #message-bank {
   background-color: #4285f4;
-  width: -webkit-min-content;
-  width: -moz-min-content;
-  width: min-content;
+  position: absolute;
+  z-index: 999;
   padding: 20px;
   height: 100%;
   -webkit-flex-shrink: 0;
       -ms-flex-negative: 0;
           flex-shrink: 0;
-  overflow: scroll;
+  overflow-y: scroll;
   white-space: normal; }
 
+#message-bank::-webkit-scrollbar {
+  width: 5px; }
+
+#message-bank::-webkit-scrollbar-track {
+  box-shadow: none;
+  border-radius: 5px; }
+
+#message-bank::-webkit-scrollbar-thumb {
+  box-shadow: none;
+  border-radius: 5px;
+  background-color: white; }
+
+#button-storage {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  position: absolute;
+  background-color: #4285f4;
+  z-index: 999999; }
+
+.bt-menu {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 3px;
+  margin-right: 10px;
+  font-size: 24px; }
+  .bt-menu:hover {
+    cursor: pointer; }
+
+​
 #searchbar {
   width: 300px;
-  height: 30px; }
+  height: 30px;
+  width: 100%; }
 
 .message-card {
   width: 300px;
@@ -69,17 +112,19 @@ html {
   border-radius: 3px; }
 
 #tree-display {
-  padding: 20px;
-  white-space: nowrap;
+  position: absolute;
+  background-color: red;
   width: 100%;
   height: 100%;
+  transition: all 100ms linear;
   overflow: scroll; }
+  #tree-display::-webkit-scrollbar {
+    width: 0px;
+    height: 0px; }
 
 .logic-card {
   width: 300px;
   position: absolute;
-  display: inline-block;
-  vertical-align: top;
   background-color: white; }
 
 .logic-card-content {

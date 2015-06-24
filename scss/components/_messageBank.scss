@@ -2,18 +2,68 @@ $sidebar-content: 300px;
 
 #message-bank {
   background-color: $blue;
-  width: min-content;
+  position: absolute;
+  z-index: 999;
+
   padding: 20px;
   height: 100%;
   flex-shrink: 0;
-  overflow: scroll;
+  overflow-y: scroll;
   white-space: normal;
   @extend %sh1;
 }
 
+#message-bank::-webkit-scrollbar {
+  width: 5px;
+}
+
+#message-bank::-webkit-scrollbar-track {
+  box-shadow: none;
+  border-radius: 5px;
+}
+
+#message-bank::-webkit-scrollbar-thumb {
+  box-shadow: none;
+  border-radius: 5px;
+  background-color: white;
+}
+
+#button-storage {
+  display: flex;
+  position: absolute;
+  background-color: $blue;
+  z-index: 999999;
+}
+
+.bt-menu {
+  // background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 3px;
+  margin-right: 10px;
+
+
+  font-size: 24px;
+
+  &:hover {
+    @extend %sh1;
+    cursor: pointer;
+  }
+
+  &:active {
+    @extend %sh0;
+
+  }
+}
+​
 #searchbar {
   width: $sidebar-content;
   height: 30px;
+  width: 100%;
 }
 
 .message-card {

@@ -143,14 +143,17 @@ module.exports = GlbTreeCtrl;
 
 },{}],4:[function(require,module,exports){
 // Set jsPlumb defaults.
-jsPlumb.importDefaults({
-  PaintStyle : {
-    lineWidth:13,
-    strokeStyle: 'rgba(200,0,0,0.5)'
-  },
-  DragOptions : { cursor: "crosshair" },
-  Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
-  EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }]
+jsPlumb.ready(function() {
+  jsPlumb.importDefaults({
+    PaintStyle : {
+      lineWidth:13,
+      strokeStyle: 'rgba(200,0,0,0.5)'
+    },
+    DragOptions : { cursor: "crosshair" },
+    Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
+    EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }],
+    Anchors : ["BottomCenter", "TopCenter"]
+  });
 });
 
 module.exports = {
@@ -249,6 +252,11 @@ var MessageBank = React.createClass({displayName: "MessageBank",
     });
   },
 
+  toggleBank: function(){
+    console.log("Toggling bank.");
+    $("#message-bank").toggle();
+  },
+
   setDownloadLink: function(messagesJson, downloadName, linkMessage) {
     var data = "text/json;charset=utf-8," 
       + encodeURIComponent(JSON.stringify(messagesJson));
@@ -276,21 +284,37 @@ var MessageBank = React.createClass({displayName: "MessageBank",
     }
 
     return (
-      React.createElement("div", {id: "message-bank"}, 
-        React.createElement("button", {onClick: _this.triggerSaveTree}, "Trigger Save"), 
-        React.createElement("button", {onClick: _this.downloadTree}, "Download"), 
+      React.createElement("div", null, 
+        React.createElement("div", {id: "button-storage"}, 
+      
+          React.createElement("div", {className: "bt-menu", onClick: _this.toggleBank}, 
+            React.createElement("i", {className: "fa fa-bars"})
+          ), 
 
-        React.createElement("form", {
-          encType: "multipart/form-data", 
-          action: "/files/processedTree", 
-          method: "post"}, 
-          React.createElement("input", {type: "file", name: "file"}), 
-          React.createElement("input", {type: "submit", value: "Submit"})
+          React.createElement("div", {className: "bt-menu"}, 
+            React.createElement("i", {className: "fa fa-floppy-o"})
+          ), 
+
+          React.createElement("div", {className: "bt-menu", onClick: _this.downloadTree}, 
+            React.createElement("i", {className: "fa fa-download"})
+          ), 
+
+          React.createElement("form", {
+            encType: "multipart/form-data", 
+            action: "  /files/processedTree", 
+            method: "post"}, 
+            React.createElement("input", {type: "file", name: "file"}), 
+            React.createElement("input", {type: "submit"}, React.createElement("i", {className: "fa fa-upload"}))
+          ), 
+      
+          React.createElement("div", {id: "download-link"})
         ), 
 
-        React.createElement("div", {id: "download-link"}), 
-        React.createElement("input", {type: "text", id: "searchbar", placeholder: "Search: "}), 
-        React.createElement("div", null, messageCards)
+        React.createElement("div", {id: "message-bank"}, 
+          React.createElement("input", {type: "text", id: "searchbar", placeholder: "Search: "}), 
+          React.createElement("div", null, messageCards)
+        )
+      
       )
     );
   }
@@ -490,16 +514,12 @@ var Tree = React.createClass({displayName: "Tree",
     var _this = this;
 
     jsPlumb.ready(function() {
-
-      // Make logic cards draggable.
       var logicCardReferences = document.querySelectorAll(".logic-card");
       jsPlumb.setContainer(document.getElementById("tree-display"));
       jsPlumb.draggable(logicCardReferences);
 
-
       // Draw the connectors.
       var currentTree = GlbTreeCtrl.getTree();
-      console.log(currentTree);
       for (i in currentTree) {
         var cardIDSelector = '#' + currentTree[i].cardID;
         var cardIDNode = jsPlumb.getSelector(cardIDSelector)[0];
@@ -508,11 +528,6 @@ var Tree = React.createClass({displayName: "Tree",
         for (j in childrenCardIDs) {
           var childIDSelector = '#' + childrenCardIDs[j];
           var childIDNode = jsPlumb.getSelector(childIDSelector)[0];
-
-          // console.log("Drawing lines!");
-          // console.log(cardIDNode);
-          // console.log(childIDNode);
-
           jsPlumb.connect({
             source: cardIDNode, 
             target: childIDNode
@@ -533,6 +548,9 @@ var Tree = React.createClass({displayName: "Tree",
   resetTree: function(childContext) {
     console.log("Resetting the tree.");
     GlbTreeCtrl.resetTree();
+  },
+
+  zoom: function(ev) {
   },
 
   render: function() {
@@ -557,7 +575,11 @@ var Tree = React.createClass({displayName: "Tree",
         )
     }
 
-    return (React.createElement("div", {id: "tree-display"}, logicCardViews));
+    return (
+      React.createElement("div", {id: "tree-display", onWheel: _this.zoom}, 
+        logicCardViews
+      )
+    );
   }
   
 });
