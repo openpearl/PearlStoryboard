@@ -5,8 +5,7 @@ module.exports = function guid() {
       .toString(16)
       .substring(1);
   }
-  return s4() + s4() + '_' + s4() + '_' + s4() + '_' +
-    s4() + '_' + s4() + s4() + s4();
+  return 'uuid_' + s4() + s4() + s4() + s4();
 }
 
 },{}],2:[function(require,module,exports){
@@ -443,36 +442,35 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     }
 
     return (
-      React.createElement("div", {className: "logic-card-block", id: _this.state.cardID}, 
-        React.createElement("div", {className: "logic-card", 
-          onMouseEnter: _this.handleMouseEnter, 
-          onMouseLeave: _this.handleMouseLeave}, 
-          React.createElement("div", {className: "logic-card-content", 
-            onDragOver: _this.preventDefault, 
-            onDrop: _this.handleDrop}, 
-            React.createElement("span", null, "ID: "), 
-            React.createElement("div", null, _this.state.cardID), 
-            React.createElement("span", null, "Children IDs: "), 
-            React.createElement("div", null, _this.state.childrenCardIDs), 
-            React.createElement("span", null, "Speaker: "), 
-            React.createElement(ContentEditable, {html: _this.state.speaker, 
-              sourceState: "speaker"}), 
-            React.createElement("span", null, "Message: "), 
-            React.createElement(ContentEditable, {html: _this.state.message, 
-              sourceState: "message"}), 
-            React.createElement("div", {className: "card-buttons-container"}, 
-              React.createElement("div", {className: "add-card-button", onClick: _this.handleAdd}, 
-                newOrAddButton
-              ), 
+      React.createElement("div", {className: "logic-card", 
+        id: _this.state.cardID, 
+        onMouseEnter: _this.handleMouseEnter, 
+        onMouseLeave: _this.handleMouseLeave}, 
+        React.createElement("div", {className: "logic-card-content", 
+          onDragOver: _this.preventDefault, 
+          onDrop: _this.handleDrop}, 
+          React.createElement("span", null, "ID: "), 
+          React.createElement("div", null, _this.state.cardID), 
+          React.createElement("span", null, "Children IDs: "), 
+          React.createElement("div", null, _this.state.childrenCardIDs), 
+          React.createElement("span", null, "Speaker: "), 
+          React.createElement(ContentEditable, {html: _this.state.speaker, 
+            sourceState: "speaker"}), 
+          React.createElement("span", null, "Message: "), 
+          React.createElement(ContentEditable, {html: _this.state.message, 
+            sourceState: "message"}), 
+          React.createElement("div", {className: "card-buttons-container"}, 
+            React.createElement("div", {className: "add-card-button", onClick: _this.handleAdd}, 
+              newOrAddButton
+            ), 
 
-              hideButton, 
+            hideButton, 
 
-              React.createElement("div", {className: "delete-card-button", 
-                onClick: _this.deleteCard}, 
-                React.createElement("i", {className: "fa fa-times"})
-              )
-
+            React.createElement("div", {className: "delete-card-button", 
+              onClick: _this.deleteCard}, 
+              React.createElement("i", {className: "fa fa-times"})
             )
+
           )
         )
       )
@@ -491,21 +489,37 @@ var Tree = React.createClass({displayName: "Tree",
     console.log("Tree component did mount.");
     var _this = this;
 
-    // Draw the connectors.
-    var currentTree = GlbTreeCtrl.getTree();
-    console.log(currentTree);
-    for (i in currentTree) {
-      var cardIDSelector = '#' + currentTree[i].cardID;
-      var childrenCardIDs = currentTree[i].childrenCardIDs;
-      for (j in childrenCardIDs) {
-        var childIDSelector = '#' + childrenCardIDs[j];
+    jsPlumb.ready(function() {
 
-        console.log("Drawing lines!");
-        console.log(cardIDSelector);
-        console.log(childIDSelector);
-        jsPlumb.connect(cardIDSelector, childIDSelector);
+      // Make logic cards draggable.
+      var logicCardReferences = document.querySelectorAll(".logic-card");
+      jsPlumb.setContainer(document.getElementById("tree-display"));
+      jsPlumb.draggable(logicCardReferences);
+
+
+      // Draw the connectors.
+      var currentTree = GlbTreeCtrl.getTree();
+      console.log(currentTree);
+      for (i in currentTree) {
+        var cardIDSelector = '#' + currentTree[i].cardID;
+        var cardIDNode = jsPlumb.getSelector(cardIDSelector)[0];
+
+        var childrenCardIDs = currentTree[i].childrenCardIDs;
+        for (j in childrenCardIDs) {
+          var childIDSelector = '#' + childrenCardIDs[j];
+          var childIDNode = jsPlumb.getSelector(childIDSelector)[0];
+
+          // console.log("Drawing lines!");
+          // console.log(cardIDNode);
+          // console.log(childIDNode);
+
+          jsPlumb.connect({
+            source: cardIDNode, 
+            target: childIDNode
+          });
+        }
       }
-    }
+    });
 
     $(GlobalEvents).on('global_tree:changed', function(ev) {
       _this.forceUpdate();

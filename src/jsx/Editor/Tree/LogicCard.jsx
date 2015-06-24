@@ -118,36 +118,35 @@ var LogicCard = React.createClass({
     }
 
     return (
-      <div className="logic-card-block" id={_this.state.cardID}>
-        <div className="logic-card" 
-          onMouseEnter={_this.handleMouseEnter}
-          onMouseLeave={_this.handleMouseLeave}>
-          <div className="logic-card-content" 
-            onDragOver={_this.preventDefault}
-            onDrop={_this.handleDrop}>
-            <span>ID: </span>
-            <div>{_this.state.cardID}</div>
-            <span>Children IDs: </span>
-            <div>{_this.state.childrenCardIDs}</div>
-            <span>Speaker: </span>
-            <ContentEditable html={_this.state.speaker} 
-              sourceState="speaker" />
-            <span>Message: </span>
-            <ContentEditable html={_this.state.message} 
-              sourceState="message" />
-            <div className="card-buttons-container">
-              <div className="add-card-button" onClick={_this.handleAdd}>
-                {newOrAddButton}
-              </div>
-
-              {hideButton}
-
-              <div className="delete-card-button" 
-                onClick={_this.deleteCard}>
-                <i className="fa fa-times"></i>
-              </div>
-
+      <div className="logic-card"
+        id={_this.state.cardID} 
+        onMouseEnter={_this.handleMouseEnter}
+        onMouseLeave={_this.handleMouseLeave}>
+        <div className="logic-card-content" 
+          onDragOver={_this.preventDefault}
+          onDrop={_this.handleDrop}>
+          <span>ID: </span>
+          <div>{_this.state.cardID}</div>
+          <span>Children IDs: </span>
+          <div>{_this.state.childrenCardIDs}</div>
+          <span>Speaker: </span>
+          <ContentEditable html={_this.state.speaker} 
+            sourceState="speaker" />
+          <span>Message: </span>
+          <ContentEditable html={_this.state.message} 
+            sourceState="message" />
+          <div className="card-buttons-container">
+            <div className="add-card-button" onClick={_this.handleAdd}>
+              {newOrAddButton}
             </div>
+
+            {hideButton}
+
+            <div className="delete-card-button" 
+              onClick={_this.deleteCard}>
+              <i className="fa fa-times"></i>
+            </div>
+
           </div>
         </div>
       </div>

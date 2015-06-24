@@ -5,20 +5,21 @@
   height: 100%;
   overflow: scroll;
 
-  &:hover {
-    cursor: grab;
-  }
+  // &:hover {
+  //   cursor: grab;
+  // }
 
-  &:active {
-    cursor: grabbing;
-  }
+  // &:active {
+  //   cursor: grabbing;
+  // }
 }
 
 .logic-card {
   width: 300px;
+  position: absolute;
   display: inline-block;
   vertical-align:top;
-  margin-bottom: 20px;
+  // margin-bottom: 20px;
   background-color: white;
 }
 

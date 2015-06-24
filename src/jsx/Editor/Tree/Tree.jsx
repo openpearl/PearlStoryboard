@@ -6,21 +6,37 @@ var Tree = React.createClass({
     console.log("Tree component did mount.");
     var _this = this;
 
-    // Draw the connectors.
-    var currentTree = GlbTreeCtrl.getTree();
-    console.log(currentTree);
-    for (i in currentTree) {
-      var cardIDSelector = '#' + currentTree[i].cardID;
-      var childrenCardIDs = currentTree[i].childrenCardIDs;
-      for (j in childrenCardIDs) {
-        var childIDSelector = '#' + childrenCardIDs[j];
+    jsPlumb.ready(function() {
 
-        console.log("Drawing lines!");
-        console.log(cardIDSelector);
-        console.log(childIDSelector);
-        jsPlumb.connect(cardIDSelector, childIDSelector);
+      // Make logic cards draggable.
+      var logicCardReferences = document.querySelectorAll(".logic-card");
+      jsPlumb.setContainer(document.getElementById("tree-display"));
+      jsPlumb.draggable(logicCardReferences);
+
+
+      // Draw the connectors.
+      var currentTree = GlbTreeCtrl.getTree();
+      console.log(currentTree);
+      for (i in currentTree) {
+        var cardIDSelector = '#' + currentTree[i].cardID;
+        var cardIDNode = jsPlumb.getSelector(cardIDSelector)[0];
+
+        var childrenCardIDs = currentTree[i].childrenCardIDs;
+        for (j in childrenCardIDs) {
+          var childIDSelector = '#' + childrenCardIDs[j];
+          var childIDNode = jsPlumb.getSelector(childIDSelector)[0];
+
+          // console.log("Drawing lines!");
+          // console.log(cardIDNode);
+          // console.log(childIDNode);
+
+          jsPlumb.connect({
+            source: cardIDNode, 
+            target: childIDNode
+          });
+        }
       }
-    }
+    });
 
     $(GlobalEvents).on('global_tree:changed', function(ev) {
       _this.forceUpdate();
