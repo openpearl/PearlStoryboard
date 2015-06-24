@@ -43,6 +43,8 @@ function getLogicCard(logicCardID) {
 }
 
 function setLogicCard(logicCard) {
+  console.log("Setting the logic card.");
+
   GlobalTree[logicCard.cardID] = logicCard;
   $GlobalEvents.trigger("global_tree:changed");
 }

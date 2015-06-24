@@ -19,10 +19,6 @@ var LogicCard = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-    
-  },
-
   preventDefault: function(ev) { ev.preventDefault(); },
 
   // Creates a new card.
@@ -53,14 +49,19 @@ var LogicCard = React.createClass({
   // Handle collecting information when dropping a card from the messageBank.
   handleDrop: function(ev) {
     ev.preventDefault();
+    console.log("Something was dropped!");
+
     var _this = this;
     var data;
 
     try { data = JSON.parse(ev.dataTransfer.getData('text')); }
     catch (e) { return; }
 
+    console.log(data);
     var card = GlbTreeCtrl.getLogicCard(_this.state.cardID);
     card.message = data.message;
+    console.log(card);
+
     GlbTreeCtrl.setLogicCard(card);
   },
 
