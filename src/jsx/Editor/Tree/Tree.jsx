@@ -27,6 +27,31 @@ var Tree = React.createClass({
           });
         }
       }
+
+      // Panzoom.
+      $treeDisplay = $("#tree-display");
+      $panzoom = $("#tree-display").panzoom();
+      $panzoom.parent().on('mousewheel.focal', function( e ) {
+        e.preventDefault();
+        // e.stopPropagation();
+        var delta = e.delta || e.originalEvent.wheelDelta;
+        var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+        console.log(delta);
+
+        $panzoom.panzoom('zoom', zoomOut, {
+          increment: 0.1,
+          animate: false,
+          focal: e
+        });
+
+        // Get the current scale.
+        var matrix = $treeDisplay.panzoom("getMatrix");
+        var a = matrix[0];
+        var b = matrix[1];
+        var scale = Math.sqrt(a*a + b*b);
+        console.log(scale);
+        jsPlumb.setZoom(scale);
+      });
     });
 
     $(GlobalEvents).on('global_tree:changed', function(ev) {
@@ -69,12 +94,13 @@ var Tree = React.createClass({
     }
 
     return (
-      <div id="tree-display" onWheel={_this.zoom}>
-        {logicCardViews}
+      <div id="tree-screen">
+        <div id="tree-display" onWheel={_this.zoom}>
+          {logicCardViews}
+        </div>
       </div>
     );
   }
-  
 });
 
 module.exports = Tree;

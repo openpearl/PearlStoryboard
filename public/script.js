@@ -96,7 +96,7 @@ function getLogicCard(logicCardID) {
 }
 
 function setLogicCard(logicCard) {
-  GlobalTree[logicCard[cardID]] = logicCard;
+  GlobalTree[logicCard.cardID] = logicCard;
   $GlobalEvents.trigger("global_tree:changed");
 }
 
@@ -534,6 +534,31 @@ var Tree = React.createClass({displayName: "Tree",
           });
         }
       }
+
+      // Panzoom.
+      $treeDisplay = $("#tree-display");
+      $panzoom = $("#tree-display").panzoom();
+      $panzoom.parent().on('mousewheel.focal', function( e ) {
+        e.preventDefault();
+        // e.stopPropagation();
+        var delta = e.delta || e.originalEvent.wheelDelta;
+        var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+        console.log(delta);
+
+        $panzoom.panzoom('zoom', zoomOut, {
+          increment: 0.1,
+          animate: false,
+          focal: e
+        });
+
+        // Get the current scale.
+        var matrix = $treeDisplay.panzoom("getMatrix");
+        var a = matrix[0];
+        var b = matrix[1];
+        var scale = Math.sqrt(a*a + b*b);
+        console.log(scale);
+        jsPlumb.setZoom(scale);
+      });
     });
 
     $(GlobalEvents).on('global_tree:changed', function(ev) {
@@ -576,12 +601,13 @@ var Tree = React.createClass({displayName: "Tree",
     }
 
     return (
-      React.createElement("div", {id: "tree-display", onWheel: _this.zoom}, 
-        logicCardViews
+      React.createElement("div", {id: "tree-screen"}, 
+        React.createElement("div", {id: "tree-display", onWheel: _this.zoom}, 
+          logicCardViews
+        )
       )
     );
   }
-  
 });
 
 module.exports = Tree;
