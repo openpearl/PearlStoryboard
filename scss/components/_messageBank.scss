@@ -1,21 +1,8 @@
-$sidebar-content: 300px;
-
-#sidebar {
-  position: absolute;
-  display: flex;
-
-  z-index: 999;
-  height: 100%;
-
-}
-
 #message-bank {
   background-color: $blue;
-  flex: 1;
-
   padding: 20px;
   height: 100%;
-  width: 350px;
+  width: 100%;
   overflow-y: scroll;
   white-space: normal;
   @extend %sh1;
@@ -34,38 +21,6 @@ $sidebar-content: 300px;
   box-shadow: none;
   border-radius: 5px;
   background-color: white;
-}
-
-#button-storage {
-  display: flex;
-  flex-direction: column;
-  background-color: $blue;
-  height: min-content;
-  @extend %sh1;
-}
-
-#hiddenForm {
-    display:block;
-    height:0;
-    width:0;
-    visibility: hidden;
-}
-
-.bt-menu {
-  // background-color: black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 40px;
-  height: 40px;
-
-  font-size: 24px;
-
-  &:hover {
-    cursor: pointer;
-    background-color: rgba(255, 255, 255, .5);
-  }
 }
 
 #searchBarNew {

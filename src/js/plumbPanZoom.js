@@ -65,6 +65,9 @@ module.exports = {
   panzoom: function() {
     // Panzoom.
     $treeDisplay = $("#tree-display");
+    // $panzoom = $("#tree-display").panzoom("option", {
+    //   disablePan: true
+    // });
     $panzoom = $("#tree-display").panzoom();
     $panzoom.parent().on('mousewheel.focal', function( e ) {
       e.preventDefault();
@@ -79,14 +82,25 @@ module.exports = {
         focal: e
       });
 
+      // FIXME: This is problematic.
       // Get the current scale.
-      var matrix = $treeDisplay.panzoom("getMatrix");
-      var a = matrix[0];
-      var b = matrix[1];
-      var scale = Math.sqrt(a*a + b*b);
-      // console.log(scale);
-      jsPlumb.setZoom(scale);
+      // var matrix = $treeDisplay.panzoom("getMatrix");
+      // var zoomLevel = matrix[0];
+
+      // console.log(zoomLevel);
+      // jsPlumb.setZoom(zoomLevel);
+    });
+
+    $("#tree-screen").mousedown(function(){
+        $(this).mousemove(function(e){
+          console.log(e);
+          console.log(e.deltaX);
+          console.log(e.deltaY);
+
+        });
+    });
+    $("#tree-screen").mouseup(function(){
+        $(this).unbind("mousemove");
     });
   }
-
 };

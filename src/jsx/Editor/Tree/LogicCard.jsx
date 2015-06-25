@@ -1,5 +1,3 @@
-var ContentEditable = require('../../ContentEditable.jsx');
-
 var LogicCard = React.createClass({
 
   getInitialState: function() {
@@ -165,11 +163,7 @@ var LogicCard = React.createClass({
           onDragOver={_this.preventDefault}
           onDrop={_this.handleDrop}>
           <span>Speaker: </span>
-          <ContentEditable html={_this.state.speaker} 
-            sourceState="speaker" />
           <span>Message: </span>
-          <ContentEditable html={_this.state.message} 
-            sourceState="message" />
           <div className="card-buttons-container">
             <div className="add-card-button" onClick={_this.handleAdd}>
               {newOrAddButton}

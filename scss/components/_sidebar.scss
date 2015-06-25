@@ -1,0 +1,49 @@
+#sidebar {
+  position: absolute;
+  display: flex;
+  z-index: 999;
+  height: 100%;
+}
+
+#sidebar-col1 {
+  flex: 1;
+  height: 100%;
+  width: 350px;
+}
+
+#content-editor {
+  background-color: yellow;
+  width: 100%;
+}
+
+#button-storage {
+  display: flex;
+  flex-direction: column;
+  background-color: $blue;
+  height: min-content;
+  @extend %sh1;
+}
+
+#hiddenForm {
+    display:block;
+    height:0;
+    width:0;
+    visibility: hidden;
+}
+
+.bt-menu {
+  // background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  font-size: 24px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, .5);
+  }
+}

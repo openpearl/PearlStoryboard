@@ -76,6 +76,9 @@ module.exports = {
   panzoom: function() {
     // Panzoom.
     $treeDisplay = $("#tree-display");
+    // $panzoom = $("#tree-display").panzoom("option", {
+    //   disablePan: true
+    // });
     $panzoom = $("#tree-display").panzoom();
     $panzoom.parent().on('mousewheel.focal', function( e ) {
       e.preventDefault();
@@ -90,16 +93,27 @@ module.exports = {
         focal: e
       });
 
+      // FIXME: This is problematic.
       // Get the current scale.
-      var matrix = $treeDisplay.panzoom("getMatrix");
-      var a = matrix[0];
-      var b = matrix[1];
-      var scale = Math.sqrt(a*a + b*b);
-      // console.log(scale);
-      jsPlumb.setZoom(scale);
+      // var matrix = $treeDisplay.panzoom("getMatrix");
+      // var zoomLevel = matrix[0];
+
+      // console.log(zoomLevel);
+      // jsPlumb.setZoom(zoomLevel);
+    });
+
+    $("#tree-screen").mousedown(function(){
+        $(this).mousemove(function(e){
+          console.log(e);
+          console.log(e.deltaX);
+          console.log(e.deltaY);
+
+        });
+    });
+    $("#tree-screen").mouseup(function(){
+        $(this).unbind("mousemove");
     });
   }
-
 };
 
 },{}],3:[function(require,module,exports){
@@ -149,7 +163,7 @@ $.ajax({
   }
 });
 
-},{"../jsx/Editor/Editor.jsx":7,"./guid.js":1,"./tree.js":4,"./utils.js":5}],4:[function(require,module,exports){
+},{"../jsx/Editor/Editor.jsx":6,"./guid.js":1,"./tree.js":4,"./utils.js":5}],4:[function(require,module,exports){
 // Holder for the processed tree document.
 var GlobalTree = {
   // Requirements:
@@ -303,37 +317,7 @@ module.exports = {
 }
 
 },{}],6:[function(require,module,exports){
-var ContentEditable = React.createClass({displayName: "ContentEditable",
-	render: function(){
-		return React.createElement("div", {
-			onInput: this.emitChange, 
-			onBlur: this.emitChange, 
-			contentEditable: true, 
-			dangerouslySetInnerHTML: {__html: this.props.html}});
-	},
-	shouldComponentUpdate: function(nextProps){
-		return nextProps.html !== this.getDOMNode().innerHTML;
-	},
-	emitChange: function(){
-		var html = this.getDOMNode().innerHTML;
-		if (this.props.onChange && html !== this.lastHtml) {
-
-			this.props.onChange({
-				target: {
-					value: html,
-					// Determines which source the content is from.
-					sourceState: this.props.sourceState
-				}
-			});
-		}
-		this.lastHtml = html;
-	}
-});
-
-module.exports = ContentEditable;
-
-},{}],7:[function(require,module,exports){
-var MessageBank = require("./MessageBank/MessageBank.jsx");
+var Sidebar = require("./Sidebar/Sidebar.jsx");
 var Tree = require("./Tree/Tree.jsx");
 
 var Editor = React.createClass({displayName: "Editor",
@@ -341,7 +325,7 @@ var Editor = React.createClass({displayName: "Editor",
   render: function() {
     return (
       React.createElement("div", {id: "editor-page"}, 
-        React.createElement(MessageBank, null), 
+        React.createElement(Sidebar, null), 
         React.createElement(Tree, null)
       )
     );
@@ -351,7 +335,23 @@ var Editor = React.createClass({displayName: "Editor",
 
 module.exports = Editor;
 
-},{"./MessageBank/MessageBank.jsx":8,"./Tree/Tree.jsx":11}],8:[function(require,module,exports){
+},{"./Sidebar/Sidebar.jsx":10,"./Tree/Tree.jsx":12}],7:[function(require,module,exports){
+var ContentEditor = React.createClass({displayName: "ContentEditor",
+
+  render: function() {
+    return (
+      React.createElement("div", {id: "content-editor"}, 
+        React.createElement("div", {id: "ce-speaker", contentEditable: true}), 
+        React.createElement("div", {id: "ce-message", contentEditable: true})
+      )
+    );
+  }
+
+});
+
+module.exports = ContentEditor;
+
+},{}],8:[function(require,module,exports){
 var MessageCard = require('./MessageCard.jsx');
 
 var MessageBank = React.createClass({displayName: "MessageBank",
@@ -373,16 +373,7 @@ var MessageBank = React.createClass({displayName: "MessageBank",
         _this.setState(_this.state);
         _this.bindSearch();
       }
-    });
-
-    $("#fileUpload").change(function() {
-      $("#hiddenForm").submit();
-    });
-
-    // Bind the file upload button to upload once file is selected.
-    // document.getElementById("file").onchange = function() {
-    //   document.getElementById("form").submit();
-    // };
+    });  
   },
 
   bindSearch: function() {
@@ -396,24 +387,6 @@ var MessageBank = React.createClass({displayName: "MessageBank",
     });
   },
 
-  toggleBank: function(){
-    console.log("Toggling bank.");
-    $("#message-bank").toggle(100);
-  },
-
-  triggerSaveTree: function() {
-    $(GlobalEvents).trigger('tree:save');
-  },
-
-  downloadTree: function(ev) {
-    ev.preventDefault();
-    window.open('files/input.json', '_blank');
-  },
-
-  uploadTree: function() {
-    $("#fileUpload").click();
-  },
-
   render: function() {
     var _this = this;
 
@@ -425,40 +398,9 @@ var MessageBank = React.createClass({displayName: "MessageBank",
     }
 
     return (
-      React.createElement("div", {id: "sidebar"}, 
-
-        React.createElement("div", {id: "message-bank"}, 
-          React.createElement("input", {id: "searchBarNew", type: "text", placeholder: "Search: "}), 
-          React.createElement("div", null, messageCards)
-        ), 
-
-        React.createElement("div", {id: "button-storage"}, 
-          React.createElement("div", {className: "bt-menu", onClick: _this.toggleBank}, 
-            React.createElement("i", {className: "fa fa-bars"})
-          ), 
-
-          React.createElement("div", {className: "bt-menu"}, 
-            React.createElement("i", {className: "fa fa-floppy-o"})
-          ), 
-
-          React.createElement("div", {className: "bt-menu", onClick: _this.downloadTree}, 
-            React.createElement("i", {className: "fa fa-download"})
-          ), 
-
-          React.createElement("div", {className: "bt-menu", onClick: _this.uploadTree}, 
-            React.createElement("i", {className: "fa fa-upload"})
-          ), 
-
-          React.createElement("form", {
-            id: "hiddenForm", 
-            encType: "multipart/form-data", 
-            action: "  /files/processedTree", 
-            method: "post"}, 
-            React.createElement("input", {type: "file", name: "file", id: "fileUpload"})
-          )
-
-        )
-
+      React.createElement("div", {id: "message-bank"}, 
+        React.createElement("input", {id: "searchBarNew", type: "text", placeholder: "Search: "}), 
+        React.createElement("div", null, messageCards)
       )
     );
   }
@@ -490,8 +432,81 @@ var MessageCard = React.createClass({displayName: "MessageCard",
 module.exports = MessageCard;
 
 },{}],10:[function(require,module,exports){
-var ContentEditable = require('../../ContentEditable.jsx');
+var MessageBank = require('./MessageBank/MessageBank.jsx');
+var ContentEditor = require('./ContentEditor.jsx');
 
+var Sidebar = React.createClass({displayName: "Sidebar",
+
+  componentDidMount: function() {
+    $("#fileUpload").change(function() {
+      $("#hiddenForm").submit();
+    });
+  },
+
+  toggleBank: function(){
+    console.log("Toggling bank.");
+    $("#sidebar-col1").toggle(100);
+  },
+
+  triggerSaveTree: function() {
+    $(GlobalEvents).trigger('tree:save');
+  },
+
+  downloadTree: function(ev) {
+    ev.preventDefault();
+    window.open('files/input.json', '_blank');
+  },
+
+  uploadTree: function() {
+    $("#fileUpload").click();
+  },
+
+  render: function() {
+    var _this = this;
+
+    return (
+      React.createElement("div", {id: "sidebar"}, 
+
+        React.createElement("div", {id: "sidebar-col1"}, 
+          React.createElement(ContentEditor, null), 
+          React.createElement(MessageBank, null)
+        ), 
+
+        React.createElement("div", {id: "button-storage"}, 
+          React.createElement("div", {className: "bt-menu", onClick: _this.toggleBank}, 
+            React.createElement("i", {className: "fa fa-bars"})
+          ), 
+
+          React.createElement("div", {className: "bt-menu"}, 
+            React.createElement("i", {className: "fa fa-floppy-o"})
+          ), 
+
+          React.createElement("div", {className: "bt-menu", onClick: _this.downloadTree}, 
+            React.createElement("i", {className: "fa fa-download"})
+          ), 
+
+          React.createElement("div", {className: "bt-menu", onClick: _this.uploadTree}, 
+            React.createElement("i", {className: "fa fa-upload"})
+          ), 
+
+          React.createElement("form", {
+            id: "hiddenForm", 
+            encType: "multipart/form-data", 
+            action: "  /files/processedTree", 
+            method: "post"}, 
+            React.createElement("input", {type: "file", name: "file", id: "fileUpload"})
+          )
+
+        )
+      )
+    );
+  }
+
+});
+
+module.exports = Sidebar;
+
+},{"./ContentEditor.jsx":7,"./MessageBank/MessageBank.jsx":8}],11:[function(require,module,exports){
 var LogicCard = React.createClass({displayName: "LogicCard",
 
   getInitialState: function() {
@@ -657,11 +672,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
           onDragOver: _this.preventDefault, 
           onDrop: _this.handleDrop}, 
           React.createElement("span", null, "Speaker: "), 
-          React.createElement(ContentEditable, {html: _this.state.speaker, 
-            sourceState: "speaker"}), 
           React.createElement("span", null, "Message: "), 
-          React.createElement(ContentEditable, {html: _this.state.message, 
-            sourceState: "message"}), 
           React.createElement("div", {className: "card-buttons-container"}, 
             React.createElement("div", {className: "add-card-button", onClick: _this.handleAdd}, 
               newOrAddButton
@@ -683,7 +694,7 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
 module.exports = LogicCard;
 
-},{"../../ContentEditable.jsx":6}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var plumbPanZoom = require('../../../js/plumbPanZoom.js');
 var LogicCard = require('./LogicCard.jsx');
 
@@ -764,4 +775,4 @@ var Tree = React.createClass({displayName: "Tree",
 
 module.exports = Tree;
 
-},{"../../../js/plumbPanZoom.js":2,"./LogicCard.jsx":10}]},{},[3]);
+},{"../../../js/plumbPanZoom.js":2,"./LogicCard.jsx":11}]},{},[3]);
