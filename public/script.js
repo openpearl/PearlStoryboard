@@ -38,7 +38,7 @@ module.exports = {
     jsPlumb.draggable(logicCardReferences);
 
     // Draw the connectors.
-    var currentTree = GlbTreeCtrl.getTree();
+    var currentTree = GTC.getTree();
     for (i in currentTree) {
       var cardIDSelector = '#' + currentTree[i].cardID;
       var cardIDNode = jsPlumb.getSelector(cardIDSelector)[0];
@@ -102,7 +102,7 @@ var RouteHandler = window.ReactRouter.RouteHandler;
 var Editor = require('../jsx/Editor/Editor.jsx');
 
 GlobalEvents = {}; // Global event system.
-GlbTreeCtrl = require('./tree.js');
+GTC = require('./tree.js');
 
 var App = React.createClass({displayName: "App",
   render: function() {
@@ -124,8 +124,7 @@ $.ajax({
   url: "files/input.json",
   dataType: "json",
   success: function(data) {
-    GlbTreeCtrl.setTree(data);
-
+    GTC.setTree(data).refresh();
     Router.run(routes, function (Handler) {
       React.render(React.createElement(Handler, null), document.getElementById('content'));
     });
@@ -147,17 +146,45 @@ var GlobalTree = {
   // highlight: false,
 };
 
-var GlbTreeCtrl = {
+// var GlbTreeCtrl = {
+//   refresh: refresh,
+
+//   getTree: getTree,
+//   setTree: setTree,
+//   clearTree: clearTree,
+
+//   getLogicCard: getLogicCard,
+//   setLogicCard: setLogicCard,
+//   deleteLogicCard: deleteLogicCard,
+
+//   toggleVisibility: toggleVisibility
+// };
+
+var $GlobalEvents = $(GlobalEvents);
+
+var GlbTreeProto = function GlbTreeProto() {};
+GlbTreeProto.prototype = {
+  refresh: refresh,
+
   getTree: getTree,
   setTree: setTree,
   clearTree: clearTree,
+
   getLogicCard: getLogicCard,
   setLogicCard: setLogicCard,
   deleteLogicCard: deleteLogicCard,
+
   toggleVisibility: toggleVisibility
 };
 
-var $GlobalEvents = $(GlobalEvents);
+var GlbTreeCtrl = function GlbTreeCtrl() {
+  return new GlbTreeProto();
+}
+
+function refresh() {
+  $GlobalEvents.trigger("global_tree:changed");
+  return this;
+}
 
 function getTree() {
   return GlobalTree;
@@ -165,12 +192,12 @@ function getTree() {
 
 function setTree(inputTree) {
   GlobalTree = inputTree;
-  $GlobalEvents.trigger("global_tree:changed");
+  return this;
 }
 
 function clearTree() {
   GlobalTree = {};
-  $GlobalEvents.trigger("global_tree:changed");
+  return this;
 }
 
 function getLogicCard(logicCardID) {
@@ -179,9 +206,8 @@ function getLogicCard(logicCardID) {
 
 function setLogicCard(logicCard) {
   console.log("Setting the logic card.");
-
   GlobalTree[logicCard.cardID] = logicCard;
-  $GlobalEvents.trigger("global_tree:changed");
+  return this;
 }
 
 function deleteLogicCard(logicCardID) {
@@ -204,7 +230,8 @@ function deleteLogicCard(logicCardID) {
 
   // Delete and then notify.
   delete GlobalTree[logicCardID];
-  $GlobalEvents.trigger("global_tree:changed");
+
+  return this;
 }
 
 function toggleVisibility(logicCardID) {
@@ -220,10 +247,10 @@ function toggleVisibility(logicCardID) {
   }
 
   // Callback.
-  $GlobalEvents.trigger("global_tree:changed");
+  return this;
 }
 
-module.exports = GlbTreeCtrl;
+module.exports = GlbTreeCtrl();
 
 },{}],5:[function(require,module,exports){
 module.exports = {
@@ -449,23 +476,24 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     var uuid = guid();
 
     // Creates a new Logic card and save it into the GlobalTree.
-    GlbTreeCtrl.setLogicCard({
+    GTC.setLogicCard({
       cardID: uuid,
       childrenCardIDs: [],
-      parentCardIDs: [],
+      parentCardIDs: [_this.state.cardID],
       speaker: "",
       message: "",
       visible: true,
       highlight: false
-    });
+    }).refresh();
+
   },
 
   toggleVisibility: function() {
-    GlbTreeCtrl.toggleVisibility(_this.state.cardID);
+    GTC.toggleVisibility(_this.state.cardID).refresh();
   },
 
   deleteCard: function() {
-    GlbTreeCtrl.deleteLogicCard(this.state.cardID);
+    GTC.deleteLogicCard(this.state.cardID).refresh();
   },
 
   // Handle collecting information when dropping a card from the messageBank.
@@ -480,11 +508,11 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     catch (e) { return; }
 
     console.log(data);
-    var card = GlbTreeCtrl.getLogicCard(_this.state.cardID);
+    var card = GTC.getLogicCard(_this.state.cardID);
     card.message = data.message;
     console.log(card);
 
-    GlbTreeCtrl.setLogicCard(card);
+    GTC.setLogicCard(card).refresh();
   },
 
   handleMouseEnter: function(ev) {
@@ -611,7 +639,7 @@ var Tree = React.createClass({displayName: "Tree",
 
   resetTree: function(childContext) {
     console.log("Resetting the tree.");
-    GlbTreeCtrl.resetTree();
+    GTC.resetTree().refresh();
   },
 
   zoom: function(ev) {
@@ -625,7 +653,7 @@ var Tree = React.createClass({displayName: "Tree",
     // Draw out all the logic cards from the currentTree.
     logicCardViews = {};
 
-    var currentTree = GlbTreeCtrl.getTree();
+    var currentTree = GTC.getTree();
     for (i in currentTree) {
 
       // This uuid is different from the cardID; otherwise the virtual DOM

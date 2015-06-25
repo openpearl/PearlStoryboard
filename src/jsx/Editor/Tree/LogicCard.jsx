@@ -27,23 +27,24 @@ var LogicCard = React.createClass({
     var uuid = guid();
 
     // Creates a new Logic card and save it into the GlobalTree.
-    GlbTreeCtrl.setLogicCard({
+    GTC.setLogicCard({
       cardID: uuid,
       childrenCardIDs: [],
-      parentCardIDs: [],
+      parentCardIDs: [_this.state.cardID],
       speaker: "",
       message: "",
       visible: true,
       highlight: false
-    });
+    }).refresh();
+
   },
 
   toggleVisibility: function() {
-    GlbTreeCtrl.toggleVisibility(_this.state.cardID);
+    GTC.toggleVisibility(_this.state.cardID).refresh();
   },
 
   deleteCard: function() {
-    GlbTreeCtrl.deleteLogicCard(this.state.cardID);
+    GTC.deleteLogicCard(this.state.cardID).refresh();
   },
 
   // Handle collecting information when dropping a card from the messageBank.
@@ -58,11 +59,11 @@ var LogicCard = React.createClass({
     catch (e) { return; }
 
     console.log(data);
-    var card = GlbTreeCtrl.getLogicCard(_this.state.cardID);
+    var card = GTC.getLogicCard(_this.state.cardID);
     card.message = data.message;
     console.log(card);
 
-    GlbTreeCtrl.setLogicCard(card);
+    GTC.setLogicCard(card).refresh();
   },
 
   handleMouseEnter: function(ev) {

@@ -15,7 +15,7 @@ var RouteHandler = window.ReactRouter.RouteHandler;
 var Editor = require('../jsx/Editor/Editor.jsx');
 
 GlobalEvents = {}; // Global event system.
-GlbTreeCtrl = require('./tree.js');
+GTC = require('./tree.js');
 
 var App = React.createClass({
   render: function() {
@@ -37,8 +37,7 @@ $.ajax({
   url: "files/input.json",
   dataType: "json",
   success: function(data) {
-    GlbTreeCtrl.setTree(data);
-
+    GTC.setTree(data).refresh();
     Router.run(routes, function (Handler) {
       React.render(<Handler/>, document.getElementById('content'));
     });

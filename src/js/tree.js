@@ -12,17 +12,45 @@ var GlobalTree = {
   // highlight: false,
 };
 
-var GlbTreeCtrl = {
+// var GlbTreeCtrl = {
+//   refresh: refresh,
+
+//   getTree: getTree,
+//   setTree: setTree,
+//   clearTree: clearTree,
+
+//   getLogicCard: getLogicCard,
+//   setLogicCard: setLogicCard,
+//   deleteLogicCard: deleteLogicCard,
+
+//   toggleVisibility: toggleVisibility
+// };
+
+var $GlobalEvents = $(GlobalEvents);
+
+var GlbTreeProto = function GlbTreeProto() {};
+GlbTreeProto.prototype = {
+  refresh: refresh,
+
   getTree: getTree,
   setTree: setTree,
   clearTree: clearTree,
+
   getLogicCard: getLogicCard,
   setLogicCard: setLogicCard,
   deleteLogicCard: deleteLogicCard,
+
   toggleVisibility: toggleVisibility
 };
 
-var $GlobalEvents = $(GlobalEvents);
+var GlbTreeCtrl = function GlbTreeCtrl() {
+  return new GlbTreeProto();
+}
+
+function refresh() {
+  $GlobalEvents.trigger("global_tree:changed");
+  return this;
+}
 
 function getTree() {
   return GlobalTree;
@@ -30,12 +58,12 @@ function getTree() {
 
 function setTree(inputTree) {
   GlobalTree = inputTree;
-  $GlobalEvents.trigger("global_tree:changed");
+  return this;
 }
 
 function clearTree() {
   GlobalTree = {};
-  $GlobalEvents.trigger("global_tree:changed");
+  return this;
 }
 
 function getLogicCard(logicCardID) {
@@ -44,9 +72,8 @@ function getLogicCard(logicCardID) {
 
 function setLogicCard(logicCard) {
   console.log("Setting the logic card.");
-
   GlobalTree[logicCard.cardID] = logicCard;
-  $GlobalEvents.trigger("global_tree:changed");
+  return this;
 }
 
 function deleteLogicCard(logicCardID) {
@@ -69,7 +96,8 @@ function deleteLogicCard(logicCardID) {
 
   // Delete and then notify.
   delete GlobalTree[logicCardID];
-  $GlobalEvents.trigger("global_tree:changed");
+
+  return this;
 }
 
 function toggleVisibility(logicCardID) {
@@ -85,7 +113,7 @@ function toggleVisibility(logicCardID) {
   }
 
   // Callback.
-  $GlobalEvents.trigger("global_tree:changed");
+  return this;
 }
 
-module.exports = GlbTreeCtrl;
+module.exports = GlbTreeCtrl();

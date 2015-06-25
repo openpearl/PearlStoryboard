@@ -29,7 +29,7 @@ var Tree = React.createClass({
 
   resetTree: function(childContext) {
     console.log("Resetting the tree.");
-    GlbTreeCtrl.resetTree();
+    GTC.resetTree().refresh();
   },
 
   zoom: function(ev) {
@@ -43,7 +43,7 @@ var Tree = React.createClass({
     // Draw out all the logic cards from the currentTree.
     logicCardViews = {};
 
-    var currentTree = GlbTreeCtrl.getTree();
+    var currentTree = GTC.getTree();
     for (i in currentTree) {
 
       // This uuid is different from the cardID; otherwise the virtual DOM
