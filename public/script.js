@@ -85,6 +85,12 @@ module.exports = {
 };
 
 },{}],3:[function(require,module,exports){
+// Disable console.log during production.
+// var console = {};
+// console.log = function(){};
+// console.warn = function(){};
+// window.console = console;
+
 guid = require('./guid.js'); // GUID Generator.
 utils = require('./utils.js'); // Utility scripts.
 pushIfUnique = utils.pushIfUnique;
@@ -346,7 +352,9 @@ var MessageBank = React.createClass({displayName: "MessageBank",
 
     var messageCards = [];
     for (var i in _this.state.messageBank) {
-      messageCards.push(React.createElement(MessageCard, {message: _this.state.messageBank[i]}));
+      var uuid = guid();
+      messageCards.push(React.createElement(MessageCard, {
+        key: uuid, message: _this.state.messageBank[i]}));
     }
 
     return (

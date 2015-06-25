@@ -60,7 +60,9 @@ var MessageBank = React.createClass({
 
     var messageCards = [];
     for (var i in _this.state.messageBank) {
-      messageCards.push(<MessageCard message={_this.state.messageBank[i]} />);
+      var uuid = guid();
+      messageCards.push(<MessageCard 
+        key={uuid} message={_this.state.messageBank[i]} />);
     }
 
     return (

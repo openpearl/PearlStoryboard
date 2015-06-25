@@ -1,3 +1,9 @@
+// Disable console.log during production.
+// var console = {};
+// console.log = function(){};
+// console.warn = function(){};
+// window.console = console;
+
 guid = require('./guid.js'); // GUID Generator.
 utils = require('./utils.js'); // Utility scripts.
 pushIfUnique = utils.pushIfUnique;
