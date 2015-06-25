@@ -91,6 +91,9 @@ module.exports = {
       // jsPlumb.setZoom(zoomLevel);
     });
 
+    $elem.panzoom("pan", 10, -10, { relative: true });
+
+
     $("#tree-screen").mousedown(function(){
         $(this).mousemove(function(e){
           console.log(e);
