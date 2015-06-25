@@ -37,6 +37,9 @@ module.exports = {
     jsPlumb.setContainer(document.getElementById("tree-display"));
     jsPlumb.draggable(logicCardReferences);
 
+    // Clear all existing connections.
+    jsPlumb.detachEveryConnection();
+
     // Draw the connectors.
     var currentTree = GTC.getTree();
     for (i in currentTree) {
@@ -64,7 +67,7 @@ module.exports = {
       // e.stopPropagation();
       var delta = e.delta || e.originalEvent.wheelDelta;
       var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
-      console.log(delta);
+      // console.log(delta);
 
       $panzoom.panzoom('zoom', zoomOut, {
         increment: 0.1,
@@ -77,7 +80,7 @@ module.exports = {
       var a = matrix[0];
       var b = matrix[1];
       var scale = Math.sqrt(a*a + b*b);
-      console.log(scale);
+      // console.log(scale);
       jsPlumb.setZoom(scale);
     });
   }
@@ -181,8 +184,8 @@ function refresh() {
       return this;
     }
 
-    GlobalTree[i].xpos = logicCard.style.top;
-    GlobalTree[i].ypos = logicCard.style.left;
+    GlobalTree[i].xpos = logicCard.style.left;
+    GlobalTree[i].ypos = logicCard.style.top;
   }
 
   $GlobalEvents.trigger("global_tree:changed");
@@ -222,23 +225,31 @@ function deleteLogicCard(logicCardID) {
   var parentCardIDs = GlobalTree[logicCardID].parentCardIDs;
   var childrenCardIDs = GlobalTree[logicCardID].childrenCardIDs;
 
+  console.log(parentCardIDs);
+  console.log(childrenCardIDs);
+
   // Remove the associated ID from parents.
   for (i in parentCardIDs) {
-    var parentCard = GlbTreeCtrl.getLogicCard(parentCardIDs[i]);
-    var index = parentCard.childrenCardIDs.indexOf(logicCardID);
-    if (index > -1) { array.splice(index, 1); }
+    var parentCard = GlobalTree[parentCardIDs[i]];
+    if (parentCard) {
+      var index = parentCard.childrenCardIDs.indexOf(logicCardID);
+      if (index > -1) { parentCard.childrenCardIDs.splice(index, 1); }
+      setLogicCard(parentCard);
+    }
   }
 
   // And do the same for the children.
   for (j in childrenCardIDs) {
-    var childrenCard = GlbTreeCtrl.getLogicCard(childrenCardIDs[i]);
-    var index = childrenCard.parentCardIDs.indexOf(logicCardID);
-    if (index > -1) { array.splice(index, 1); }
+    var childCard = GlobalTree[childrenCardIDs[j]];
+    if (childCard) {
+      var index = childCard.parentCardIDs.indexOf(logicCardID);
+      if (index > -1) { childCard.parentCardIDs.splice(index, 1); }
+      setLogicCard(childCard);
+    }
   }
 
   // Delete and then notify.
   delete GlobalTree[logicCardID];
-
   return this;
 }
 
@@ -491,6 +502,13 @@ var LogicCard = React.createClass({displayName: "LogicCard",
     var _this = this;
     var uuid = guid();
 
+    var logicCard = document.querySelector('#' + _this.state.cardID);
+
+    // var xpos = Number(logicCard.style.top.slice(0,-2));
+    var xpos = logicCard.style.left;
+    var ypos = (Number(logicCard.style.top.slice(0,-2)) + 400).toString() 
+      + 'px';
+
     // Creates a new Logic card and save it into the GlobalTree.
     GTC.setLogicCard({
       cardID: uuid,
@@ -499,7 +517,9 @@ var LogicCard = React.createClass({displayName: "LogicCard",
       speaker: "",
       message: "",
       visible: true,
-      highlight: false
+      highlight: false,
+      xpos: xpos,
+      ypos: ypos
     });
 
     // Add new child ID to the parent's reference.
@@ -599,8 +619,8 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
     // Draw at the correct location.
     var positionCSS = {
-      top: _this.state.xpos,
-      left: _this.state.ypos
+      left: _this.state.xpos,
+      top: _this.state.ypos
     }
 
     return (

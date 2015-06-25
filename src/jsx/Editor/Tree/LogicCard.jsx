@@ -33,6 +33,13 @@ var LogicCard = React.createClass({
     var _this = this;
     var uuid = guid();
 
+    var logicCard = document.querySelector('#' + _this.state.cardID);
+
+    // var xpos = Number(logicCard.style.top.slice(0,-2));
+    var xpos = logicCard.style.left;
+    var ypos = (Number(logicCard.style.top.slice(0,-2)) + 400).toString() 
+      + 'px';
+
     // Creates a new Logic card and save it into the GlobalTree.
     GTC.setLogicCard({
       cardID: uuid,
@@ -41,7 +48,9 @@ var LogicCard = React.createClass({
       speaker: "",
       message: "",
       visible: true,
-      highlight: false
+      highlight: false,
+      xpos: xpos,
+      ypos: ypos
     });
 
     // Add new child ID to the parent's reference.
@@ -141,8 +150,8 @@ var LogicCard = React.createClass({
 
     // Draw at the correct location.
     var positionCSS = {
-      top: _this.state.xpos,
-      left: _this.state.ypos
+      left: _this.state.xpos,
+      top: _this.state.ypos
     }
 
     return (

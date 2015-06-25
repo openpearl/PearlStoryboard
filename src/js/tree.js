@@ -47,8 +47,8 @@ function refresh() {
       return this;
     }
 
-    GlobalTree[i].xpos = logicCard.style.top;
-    GlobalTree[i].ypos = logicCard.style.left;
+    GlobalTree[i].xpos = logicCard.style.left;
+    GlobalTree[i].ypos = logicCard.style.top;
   }
 
   $GlobalEvents.trigger("global_tree:changed");
@@ -88,23 +88,31 @@ function deleteLogicCard(logicCardID) {
   var parentCardIDs = GlobalTree[logicCardID].parentCardIDs;
   var childrenCardIDs = GlobalTree[logicCardID].childrenCardIDs;
 
+  console.log(parentCardIDs);
+  console.log(childrenCardIDs);
+
   // Remove the associated ID from parents.
   for (i in parentCardIDs) {
-    var parentCard = GlbTreeCtrl.getLogicCard(parentCardIDs[i]);
-    var index = parentCard.childrenCardIDs.indexOf(logicCardID);
-    if (index > -1) { array.splice(index, 1); }
+    var parentCard = GlobalTree[parentCardIDs[i]];
+    if (parentCard) {
+      var index = parentCard.childrenCardIDs.indexOf(logicCardID);
+      if (index > -1) { parentCard.childrenCardIDs.splice(index, 1); }
+      setLogicCard(parentCard);
+    }
   }
 
   // And do the same for the children.
   for (j in childrenCardIDs) {
-    var childrenCard = GlbTreeCtrl.getLogicCard(childrenCardIDs[i]);
-    var index = childrenCard.parentCardIDs.indexOf(logicCardID);
-    if (index > -1) { array.splice(index, 1); }
+    var childCard = GlobalTree[childrenCardIDs[j]];
+    if (childCard) {
+      var index = childCard.parentCardIDs.indexOf(logicCardID);
+      if (index > -1) { childCard.parentCardIDs.splice(index, 1); }
+      setLogicCard(childCard);
+    }
   }
 
   // Delete and then notify.
   delete GlobalTree[logicCardID];
-
   return this;
 }
 
