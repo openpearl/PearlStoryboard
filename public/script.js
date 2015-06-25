@@ -375,6 +375,10 @@ var MessageBank = React.createClass({displayName: "MessageBank",
       }
     });
 
+    $("#fileUpload").change(function() {
+      $("#hiddenForm").submit();
+    });
+
     // Bind the file upload button to upload once file is selected.
     // document.getElementById("file").onchange = function() {
     //   document.getElementById("form").submit();
@@ -397,22 +401,17 @@ var MessageBank = React.createClass({displayName: "MessageBank",
     $("#message-bank").toggle();
   },
 
-  setDownloadLink: function(messagesJson, downloadName, linkMessage) {
-    var data = "text/json;charset=utf-8," 
-      + encodeURIComponent(JSON.stringify(messagesJson));
-
-    $('#download-link').empty();
-    $('<a href="data:' + data + '" download=' + downloadName + '>'
-      + linkMessage + '</a>').appendTo('#download-link');
-  },
-
   triggerSaveTree: function() {
     $(GlobalEvents).trigger('tree:save');
   },
 
-  downloadTree: function() {
-    this.setDownloadLink(ProcessedTree, "final.json",
-      "Download final conversion.");
+  downloadTree: function(ev) {
+    ev.preventDefault();
+    window.open('files/input.json', '_blank');
+  },
+
+  uploadTree: function() {
+    $("#fileUpload").click();
   },
 
   render: function() {
@@ -447,7 +446,7 @@ var MessageBank = React.createClass({displayName: "MessageBank",
             React.createElement("i", {className: "fa fa-download"})
           ), 
 
-          React.createElement("div", {className: "bt-menu", onClick: _this.downloadTree}, 
+          React.createElement("div", {className: "bt-menu", onClick: _this.uploadTree}, 
             React.createElement("i", {className: "fa fa-upload"})
           ), 
 
