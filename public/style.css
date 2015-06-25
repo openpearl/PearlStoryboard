@@ -1,12 +1,8 @@
-@charset "UTF-8";
 /**
  * google-material-color v1.1.0
  * https://github.com/danlevan/google-material-color
  */
-.bt-menu:active {
-  box-shadow: none !important; }
-
-#message-bank, .bt-menu:hover, .message-card, .logic-card-content, .add-card-button, .hide-card-button, .delete-card-button {
+#message-bank, #button-storage, .message-card, .logic-card-content, .add-card-button, .hide-card-button, .delete-card-button {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); }
 
 .message-card:hover, .add-card-button:hover, .hide-card-button:hover, .delete-card-button:hover {
@@ -48,15 +44,22 @@ html {
   display: -ms-flexbox;
   display: flex; }
 
+#sidebar {
+  position: absolute;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  z-index: 999;
+  height: 100%; }
+
 #message-bank {
   background-color: #4285f4;
-  position: absolute;
-  z-index: 999;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
   padding: 20px;
   height: 100%;
-  -webkit-flex-shrink: 0;
-      -ms-flex-negative: 0;
-          flex-shrink: 0;
+  width: 350px;
   overflow-y: scroll;
   white-space: normal; }
 
@@ -76,9 +79,19 @@ html {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  position: absolute;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
   background-color: #4285f4;
-  z-index: 999999; }
+  height: -webkit-min-content;
+  height: -moz-min-content;
+  height: min-content; }
+
+#hiddenForm {
+  display: block;
+  height: 0;
+  width: 0;
+  visibility: hidden; }
 
 .bt-menu {
   display: -webkit-flex;
@@ -92,20 +105,18 @@ html {
           justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: 3px;
-  margin-right: 10px;
   font-size: 24px; }
   .bt-menu:hover {
-    cursor: pointer; }
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.5); }
 
-​
-#searchbar {
-  width: 300px;
+#searchBarNew {
+  width: 100% !important;
   height: 30px;
   width: 100%; }
 
 .message-card {
-  width: 300px;
+  width: 100%;
   padding: 10px;
   margin-top: 10px;
   background-color: white;

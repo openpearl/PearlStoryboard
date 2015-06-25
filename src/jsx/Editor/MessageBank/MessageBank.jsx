@@ -8,6 +8,7 @@ var MessageBank = React.createClass({
 
   componentDidMount: function() {
     var _this = this;
+
     $.ajax({
       type: "GET",
       url: "files/messages.csv",
@@ -19,11 +20,16 @@ var MessageBank = React.createClass({
         _this.bindSearch();
       }
     });
+
+    // Bind the file upload button to upload once file is selected.
+    // document.getElementById("file").onchange = function() {
+    //   document.getElementById("form").submit();
+    // };
   },
 
   bindSearch: function() {
     $messages = $(".message-card");
-    $('#searchbar').keyup(function() {
+    $('#searchBarNew').keyup(function() {
       var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
       $messages.show().filter(function() {
         var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
@@ -66,9 +72,15 @@ var MessageBank = React.createClass({
     }
 
     return (
-      <div>
+      <div id="sidebar">
+
+        <div id="message-bank">
+          <div id="download-link"></div>
+          <input id="searchBarNew" type="text" placeholder="Search: "></input>
+          <div>{messageCards}</div>
+        </div>
+
         <div id="button-storage">
-      
           <div className="bt-menu" onClick={_this.toggleBank}>
             <i className="fa fa-bars"></i>
           </div>
@@ -81,22 +93,20 @@ var MessageBank = React.createClass({
             <i className="fa fa-download"></i>
           </div>
 
+          <div className="bt-menu" onClick={_this.downloadTree}>
+            <i className="fa fa-upload"></i>
+          </div>
+
           <form
+            id="hiddenForm"
             encType="multipart/form-data"
             action="  /files/processedTree"
             method="post" > 
-            <input type="file" name="file"></input>
-            <input type="submit"><i className="fa fa-upload"></i></input>
+            <input type="file" name="file" id="fileUpload"></input>
           </form>
-      
-          <div id="download-link"></div>
+
         </div>
 
-        <div id="message-bank">
-          <input type="text" id="searchbar" placeholder="Search: "></input>
-          <div>{messageCards}</div>
-        </div>
-      
       </div>
     );
   }

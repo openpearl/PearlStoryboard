@@ -18,9 +18,13 @@ jsPlumb.ready(function() {
       strokeStyle: 'rgba(200,0,0,0.5)'
     },
     DragOptions : { cursor: "crosshair" },
+    Endpoint: ["Dot", { radius: 7}],
     Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
     EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }],
-    Anchors : ["BottomCenter", "TopCenter"]
+    // Anchor: "Continuous",
+    Anchor: [ "Continuous", { faces:["top","bottom"] }],    
+    // Anchors : ["BottomCenter", "TopCenter"],
+    MaxConnections: 99,
   });
 
 });
@@ -39,6 +43,14 @@ module.exports = {
 
     // Clear all existing connections.
     jsPlumb.detachEveryConnection();
+    jsPlumb.deleteEveryEndpoint();
+    jsPlumb.reset();
+
+    // Set endpoint defaults.
+    var endpointOptions = {
+      isSource: true,
+      reattach: true,
+    }
 
     // Draw the connectors.
     var currentTree = GTC.getTree();
@@ -46,10 +58,13 @@ module.exports = {
       var cardIDSelector = '#' + currentTree[i].cardID;
       var cardIDNode = jsPlumb.getSelector(cardIDSelector)[0];
 
+      // var endpoint = jsPlumb.addEndpoint(cardIDNode, endpointOptions);
+
       var childrenCardIDs = currentTree[i].childrenCardIDs;
       for (j in childrenCardIDs) {
         var childIDSelector = '#' + childrenCardIDs[j];
         var childIDNode = jsPlumb.getSelector(childIDSelector)[0];
+
         jsPlumb.connect({
           source: cardIDNode, 
           target: childIDNode
@@ -347,6 +362,7 @@ var MessageBank = React.createClass({displayName: "MessageBank",
 
   componentDidMount: function() {
     var _this = this;
+
     $.ajax({
       type: "GET",
       url: "files/messages.csv",
@@ -358,11 +374,16 @@ var MessageBank = React.createClass({displayName: "MessageBank",
         _this.bindSearch();
       }
     });
+
+    // Bind the file upload button to upload once file is selected.
+    // document.getElementById("file").onchange = function() {
+    //   document.getElementById("form").submit();
+    // };
   },
 
   bindSearch: function() {
     $messages = $(".message-card");
-    $('#searchbar').keyup(function() {
+    $('#searchBarNew').keyup(function() {
       var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
       $messages.show().filter(function() {
         var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
@@ -405,9 +426,15 @@ var MessageBank = React.createClass({displayName: "MessageBank",
     }
 
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {id: "sidebar"}, 
+
+        React.createElement("div", {id: "message-bank"}, 
+          React.createElement("div", {id: "download-link"}), 
+          React.createElement("input", {id: "searchBarNew", type: "text", placeholder: "Search: "}), 
+          React.createElement("div", null, messageCards)
+        ), 
+
         React.createElement("div", {id: "button-storage"}, 
-      
           React.createElement("div", {className: "bt-menu", onClick: _this.toggleBank}, 
             React.createElement("i", {className: "fa fa-bars"})
           ), 
@@ -420,22 +447,20 @@ var MessageBank = React.createClass({displayName: "MessageBank",
             React.createElement("i", {className: "fa fa-download"})
           ), 
 
+          React.createElement("div", {className: "bt-menu", onClick: _this.downloadTree}, 
+            React.createElement("i", {className: "fa fa-upload"})
+          ), 
+
           React.createElement("form", {
+            id: "hiddenForm", 
             encType: "multipart/form-data", 
             action: "  /files/processedTree", 
             method: "post"}, 
-            React.createElement("input", {type: "file", name: "file"}), 
-            React.createElement("input", {type: "submit"}, React.createElement("i", {className: "fa fa-upload"}))
-          ), 
-      
-          React.createElement("div", {id: "download-link"})
-        ), 
+            React.createElement("input", {type: "file", name: "file", id: "fileUpload"})
+          )
 
-        React.createElement("div", {id: "message-bank"}, 
-          React.createElement("input", {type: "text", id: "searchbar", placeholder: "Search: "}), 
-          React.createElement("div", null, messageCards)
         )
-      
+
       )
     );
   }
@@ -633,10 +658,6 @@ var LogicCard = React.createClass({displayName: "LogicCard",
         React.createElement("div", {className: "logic-card-content", 
           onDragOver: _this.preventDefault, 
           onDrop: _this.handleDrop}, 
-          React.createElement("span", null, "ID: "), 
-          React.createElement("div", null, _this.state.cardID), 
-          React.createElement("span", null, "Children IDs: "), 
-          React.createElement("div", null, _this.state.childrenCardIDs), 
           React.createElement("span", null, "Speaker: "), 
           React.createElement(ContentEditable, {html: _this.state.speaker, 
             sourceState: "speaker"}), 

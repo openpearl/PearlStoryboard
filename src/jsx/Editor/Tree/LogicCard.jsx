@@ -164,10 +164,6 @@ var LogicCard = React.createClass({
         <div className="logic-card-content" 
           onDragOver={_this.preventDefault}
           onDrop={_this.handleDrop}>
-          <span>ID: </span>
-          <div>{_this.state.cardID}</div>
-          <span>Children IDs: </span>
-          <div>{_this.state.childrenCardIDs}</div>
           <span>Speaker: </span>
           <ContentEditable html={_this.state.speaker} 
             sourceState="speaker" />
