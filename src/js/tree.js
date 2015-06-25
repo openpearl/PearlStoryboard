@@ -10,21 +10,10 @@ var GlobalTree = {
 
   // visible: true,
   // highlight: false,
+
+  // xpos: String,
+  // ypos: String,
 };
-
-// var GlbTreeCtrl = {
-//   refresh: refresh,
-
-//   getTree: getTree,
-//   setTree: setTree,
-//   clearTree: clearTree,
-
-//   getLogicCard: getLogicCard,
-//   setLogicCard: setLogicCard,
-//   deleteLogicCard: deleteLogicCard,
-
-//   toggleVisibility: toggleVisibility
-// };
 
 var $GlobalEvents = $(GlobalEvents);
 
@@ -48,6 +37,20 @@ var GlbTreeCtrl = function GlbTreeCtrl() {
 }
 
 function refresh() {
+  // Save positions of all nodes.
+  for (i in GlobalTree) {
+    console.log(i);
+    var logicCard = document.querySelector('#' + i);
+    console.log(logicCard);
+    if (logicCard === null) {
+      $GlobalEvents.trigger("global_tree:changed");
+      return this;
+    }
+
+    GlobalTree[i].xpos = logicCard.style.top;
+    GlobalTree[i].ypos = logicCard.style.left;
+  }
+
   $GlobalEvents.trigger("global_tree:changed");
   return this;
 }
@@ -72,6 +75,11 @@ function getLogicCard(logicCardID) {
 
 function setLogicCard(logicCard) {
   console.log("Setting the logic card.");
+
+  // Update the logic card.
+  var result = GlobalTree[logicCard.cardID] || {};
+  for (key in logicCard) { result[key] = logicCard[key]; }
+
   GlobalTree[logicCard.cardID] = logicCard;
   return this;
 }

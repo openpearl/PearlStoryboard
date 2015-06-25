@@ -16,7 +16,14 @@ var LogicCard = React.createClass({
 
       visible: true,
       highlight: false,
+
+      xpos: _this.props.xpos || "0px",
+      ypos: _this.props.ypos || "0px",
     };
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    console.log("I just updated!");
   },
 
   preventDefault: function(ev) { ev.preventDefault(); },
@@ -35,8 +42,17 @@ var LogicCard = React.createClass({
       message: "",
       visible: true,
       highlight: false
-    }).refresh();
+    });
 
+    // Add new child ID to the parent's reference.
+    var childrenCardIDs = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
+    pushIfUnique(childrenCardIDs, uuid);
+
+    // Bind the child to the parent.
+    GTC.setLogicCard({
+      cardID: _this.state.cardID,
+      childrenCardIDs: childrenCardIDs
+    }).refresh();
   },
 
   toggleVisibility: function() {
@@ -45,6 +61,10 @@ var LogicCard = React.createClass({
 
   deleteCard: function() {
     GTC.deleteLogicCard(this.state.cardID).refresh();
+  },
+
+  handleDrag: function() {
+    console.log("Dragging");
   },
 
   // Handle collecting information when dropping a card from the messageBank.
@@ -119,9 +139,17 @@ var LogicCard = React.createClass({
       );
     }
 
+    // Draw at the correct location.
+    var positionCSS = {
+      top: _this.state.xpos,
+      left: _this.state.ypos
+    }
+
     return (
-      <div className="logic-card"
-        id={_this.state.cardID} 
+      <div className="logic-card" 
+        id={_this.state.cardID}
+        style={positionCSS}
+        onDrag={_this.handleDrag} 
         onMouseEnter={_this.handleMouseEnter}
         onMouseLeave={_this.handleMouseLeave}>
         <div className="logic-card-content" 

@@ -144,21 +144,10 @@ var GlobalTree = {
 
   // visible: true,
   // highlight: false,
+
+  // xpos: String,
+  // ypos: String,
 };
-
-// var GlbTreeCtrl = {
-//   refresh: refresh,
-
-//   getTree: getTree,
-//   setTree: setTree,
-//   clearTree: clearTree,
-
-//   getLogicCard: getLogicCard,
-//   setLogicCard: setLogicCard,
-//   deleteLogicCard: deleteLogicCard,
-
-//   toggleVisibility: toggleVisibility
-// };
 
 var $GlobalEvents = $(GlobalEvents);
 
@@ -182,6 +171,20 @@ var GlbTreeCtrl = function GlbTreeCtrl() {
 }
 
 function refresh() {
+  // Save positions of all nodes.
+  for (i in GlobalTree) {
+    console.log(i);
+    var logicCard = document.querySelector('#' + i);
+    console.log(logicCard);
+    if (logicCard === null) {
+      $GlobalEvents.trigger("global_tree:changed");
+      return this;
+    }
+
+    GlobalTree[i].xpos = logicCard.style.top;
+    GlobalTree[i].ypos = logicCard.style.left;
+  }
+
   $GlobalEvents.trigger("global_tree:changed");
   return this;
 }
@@ -206,6 +209,11 @@ function getLogicCard(logicCardID) {
 
 function setLogicCard(logicCard) {
   console.log("Setting the logic card.");
+
+  // Update the logic card.
+  var result = GlobalTree[logicCard.cardID] || {};
+  for (key in logicCard) { result[key] = logicCard[key]; }
+
   GlobalTree[logicCard.cardID] = logicCard;
   return this;
 }
@@ -262,6 +270,7 @@ module.exports = {
     } else {
       // Element was not found, add it.
       currentArray.push(queuedItem);
+      return currentArray;
     }
   }
   
@@ -465,7 +474,14 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
       visible: true,
       highlight: false,
+
+      xpos: _this.props.xpos || "0px",
+      ypos: _this.props.ypos || "0px",
     };
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    console.log("I just updated!");
   },
 
   preventDefault: function(ev) { ev.preventDefault(); },
@@ -484,8 +500,17 @@ var LogicCard = React.createClass({displayName: "LogicCard",
       message: "",
       visible: true,
       highlight: false
-    }).refresh();
+    });
 
+    // Add new child ID to the parent's reference.
+    var childrenCardIDs = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
+    pushIfUnique(childrenCardIDs, uuid);
+
+    // Bind the child to the parent.
+    GTC.setLogicCard({
+      cardID: _this.state.cardID,
+      childrenCardIDs: childrenCardIDs
+    }).refresh();
   },
 
   toggleVisibility: function() {
@@ -494,6 +519,10 @@ var LogicCard = React.createClass({displayName: "LogicCard",
 
   deleteCard: function() {
     GTC.deleteLogicCard(this.state.cardID).refresh();
+  },
+
+  handleDrag: function() {
+    console.log("Dragging");
   },
 
   // Handle collecting information when dropping a card from the messageBank.
@@ -568,9 +597,17 @@ var LogicCard = React.createClass({displayName: "LogicCard",
       );
     }
 
+    // Draw at the correct location.
+    var positionCSS = {
+      top: _this.state.xpos,
+      left: _this.state.ypos
+    }
+
     return (
       React.createElement("div", {className: "logic-card", 
         id: _this.state.cardID, 
+        style: positionCSS, 
+        onDrag: _this.handleDrag, 
         onMouseEnter: _this.handleMouseEnter, 
         onMouseLeave: _this.handleMouseLeave}, 
         React.createElement("div", {className: "logic-card-content", 
@@ -616,17 +653,17 @@ var Tree = React.createClass({displayName: "Tree",
   componentDidMount: function() {
     console.log("Tree component did mount.");
     var _this = this;
-    var jsPlumbReady = false;
 
     jsPlumb.ready(function() {
       plumbPanZoom.drawConnections();
-      jsPlumbReady = true;
     });
 
     $(GlobalEvents).on('global_tree:changed', function(ev) {
       console.log("The tree changed.");
       _this.forceUpdate();
     });
+
+    plumbPanZoom.panzoom();
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -669,7 +706,10 @@ var Tree = React.createClass({displayName: "Tree",
           parentCardIDs: currentTree[i].parentCardIDs, 
 
           speaker: currentTree[i].speaker, 
-          message: currentTree[i].message}
+          message: currentTree[i].message, 
+
+          xpos: currentTree[i].xpos, 
+          ypos: currentTree[i].ypos}
         )
     }
 

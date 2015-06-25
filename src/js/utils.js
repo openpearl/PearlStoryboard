@@ -7,6 +7,7 @@ module.exports = {
     } else {
       // Element was not found, add it.
       currentArray.push(queuedItem);
+      return currentArray;
     }
   }
   

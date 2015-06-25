@@ -130,8 +130,7 @@ html {
 .logic-card {
   width: 300px;
   position: absolute;
-  background-color: white;
-  margin-left: 300px; }
+  background-color: white; }
 
 .logic-card-content {
   padding: 15px; }

@@ -6,17 +6,17 @@ var Tree = React.createClass({
   componentDidMount: function() {
     console.log("Tree component did mount.");
     var _this = this;
-    var jsPlumbReady = false;
 
     jsPlumb.ready(function() {
       plumbPanZoom.drawConnections();
-      jsPlumbReady = true;
     });
 
     $(GlobalEvents).on('global_tree:changed', function(ev) {
       console.log("The tree changed.");
       _this.forceUpdate();
     });
+
+    plumbPanZoom.panzoom();
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -60,6 +60,9 @@ var Tree = React.createClass({
 
           speaker={currentTree[i].speaker}
           message={currentTree[i].message}
+
+          xpos={currentTree[i].xpos}
+          ypos={currentTree[i].ypos}
         />
     }
 
