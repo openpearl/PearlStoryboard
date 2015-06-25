@@ -44,7 +44,7 @@ var MessageBank = React.createClass({
 
   toggleBank: function(){
     console.log("Toggling bank.");
-    $("#message-bank").toggle();
+    $("#message-bank").toggle(100);
   },
 
   triggerSaveTree: function() {
@@ -74,7 +74,6 @@ var MessageBank = React.createClass({
       <div id="sidebar">
 
         <div id="message-bank">
-          <div id="download-link"></div>
           <input id="searchBarNew" type="text" placeholder="Search: "></input>
           <div>{messageCards}</div>
         </div>

@@ -398,7 +398,7 @@ var MessageBank = React.createClass({displayName: "MessageBank",
 
   toggleBank: function(){
     console.log("Toggling bank.");
-    $("#message-bank").toggle();
+    $("#message-bank").toggle(100);
   },
 
   triggerSaveTree: function() {
@@ -428,7 +428,6 @@ var MessageBank = React.createClass({displayName: "MessageBank",
       React.createElement("div", {id: "sidebar"}, 
 
         React.createElement("div", {id: "message-bank"}, 
-          React.createElement("div", {id: "download-link"}), 
           React.createElement("input", {id: "searchBarNew", type: "text", placeholder: "Search: "}), 
           React.createElement("div", null, messageCards)
         ), 
