@@ -151,8 +151,6 @@ var LogicCard = React.createClass({
       top: _this.state.ypos
     }
 
-    console.log(positionCSS);
-
     return (
       <div className="logic-card" 
         id={_this.state.cardID}

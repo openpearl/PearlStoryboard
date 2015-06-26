@@ -23,25 +23,24 @@ jsPlumb.ready(function() {
 module.exports = {
 
   drawConnections: function() {
-    console.log("I'm doing a plumbInstance.");
-
-
-    plumbInstance.setContainer(document.getElementById("tree-display"));
+    console.log("drawConnections.");
 
     // Clear all existing connections.
     plumbInstance.detachEveryConnection();
     plumbInstance.deleteEveryEndpoint();
     plumbInstance.reset();
 
+    plumbInstance.setContainer(document.getElementById("tree-display"));
+
     // Set endpoint defaults.
-    var endpointOptions = {
-      isSource: true,
-      isTarget: true,
-      reattach: true,
-    }
+    // var endpointOptions = {
+    //   isSource: true,
+    //   isTarget: true,
+    //   reattach: true,
+    // }
 
     // Draw the connectors.
-    plumbInstance.setSuspendDrawing(true);
+    // plumbInstance.setSuspendDrawing(true);
     var currentTree = GTC.getTree();
     for (i in currentTree) {
       var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
@@ -63,16 +62,16 @@ module.exports = {
         var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
         var childIDNode = $(childIDSelector);
 
-        // jsPlumb.makeTarget(childIDNode, {
-        //   anchor:"Continuous",
-        //   endpoint:["Rectangle", { width:40, height:20 }],
-        //   maxConnections: 10,
-        //   onMaxConnections:function(info, originalEvent) {
-        //     console.log("element is ", info.element, "maxConnections is", info.maxConnections); 
-        //   }
-        // });
+        jsPlumb.makeTarget(childIDNode, {
+          anchor:"Continuous",
+          endpoint:["Rectangle", { width:40, height:20 }],
+          maxConnections: 10,
+          onMaxConnections:function(info, originalEvent) {
+            console.log("element is ", info.element, "maxConnections is", info.maxConnections); 
+          }
+        });
 
-        jsPlumb.makeTarget(childIDNode);
+        // jsPlumb.makeTarget(childIDNode);
 
         plumbInstance.connect({
           source: cardIDNode, 
@@ -82,7 +81,7 @@ module.exports = {
       }
     }
 
-    plumbInstance.setSuspendDrawing(false, true);
+    // plumbInstance.setSuspendDrawing(false, true);
 
     var draggables = [];
     for (k in currentTree) {
