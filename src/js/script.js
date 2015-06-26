@@ -32,14 +32,18 @@ var routes = (
 );
 
 // Start rendering React only when documents have been loaded.
-$.ajax({
-  type: "GET",
-  url: "files/input.json",
-  dataType: "json",
-  success: function(data) {
-    GTC.setTree(data).refresh();
-    Router.run(routes, function (Handler) {
-      React.render(<Handler/>, document.getElementById('content'));
-    });
-  }
-});
+refreshTreeView = function() {
+  $.ajax({
+    type: "GET",
+    url: "files/input.json",
+    dataType: "json",
+    success: function(data) {
+      GTC.setTree(data).refresh();
+      Router.run(routes, function (Handler) {
+        React.render(<Handler/>, document.getElementById('content'));
+      });
+    }
+  });
+}
+
+refreshTreeView();

@@ -6,6 +6,10 @@ module.exports = {
       return;
     } else {
       // Element was not found, add it.
+      if (currentArray === undefined) {
+        var currentArray = [];
+      }
+
       currentArray.push(queuedItem);
       return currentArray;
     }

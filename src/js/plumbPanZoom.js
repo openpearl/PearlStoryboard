@@ -10,9 +10,7 @@ jsPlumb.ready(function() {
     Endpoint: ["Dot", { radius: 7}],
     Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
     EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }],
-    // Anchor: "Continuous",
     Anchor: [ "Continuous", { faces:["top","bottom"] }],    
-    // Anchors : ["BottomCenter", "TopCenter"],
     MaxConnections: 99,
   });
 
@@ -67,7 +65,6 @@ module.exports = {
     $treeDisplay = $("#tree-display");
 
     $treeScreen.click(function() {
-      console.log("clicked");
       $treeScreen.trigger('focus');
     });
 
@@ -84,6 +81,10 @@ module.exports = {
       var code = e.keyCode || e.which;
       var panRate = 200;
       switch(code) {
+        // TODO: Refactor the q button to go elsewhere.
+        case 81: // q
+          $(GlobalEvents).trigger("sidebar:toggle");
+          break;
         case 87: // w
           $treeDisplay.panzoom("pan", 0, panRate, { relative: true });
           break;

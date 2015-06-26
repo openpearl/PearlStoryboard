@@ -33,7 +33,6 @@ var LogicCard = React.createClass({
 
     var logicCard = document.querySelector('#' + _this.state.cardID);
 
-    // var xpos = Number(logicCard.style.top.slice(0,-2));
     var xpos = Number(logicCard.style.left.slice(0,-2));
     var ypos = Number(logicCard.style.top.slice(0,-2)) + 400;
 
@@ -52,7 +51,7 @@ var LogicCard = React.createClass({
 
     // Add new child ID to the parent's reference.
     var childrenCardIDs = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
-    pushIfUnique(childrenCardIDs, uuid);
+    childrenCardIDs = pushIfUnique(childrenCardIDs, uuid);
 
     // Bind the child to the parent.
     GTC.setLogicCard({
