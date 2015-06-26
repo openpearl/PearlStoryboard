@@ -65,24 +65,29 @@ module.exports = {
   panzoom: function() {
     // Panzoom.
     $treeDisplay = $("#tree-display");
-    $panzoom = $("#tree-display").panzoom();
+    $panzoom = $treeDisplay.panzoom();
+    $panzoom.panzoom('option', {
+      transition: true,
+      duration: 500,
+      easing: "ease-in-out",
+    });
+    $panzoom.panzoom('transition');
 
     $("#tree-screen").bind("keydown", function(e) {
-      console.log("Key pressed.");
       var code = e.keyCode || e.which;
-      
+      var panRate = 200;
       switch(code) {
         case 87: // w
-          console.log("W was pressed.");
+          $treeDisplay.panzoom("pan", 0, panRate, { relative: true });
           break;
         case 83: // s
-          console.log("S was pressed.");
+          $treeDisplay.panzoom("pan", 0, -panRate, { relative: true });
           break;
         case 65: // a
-          console.log("A was pressed.");
+          $treeDisplay.panzoom("pan", panRate, 0, { relative: true });
           break;
         case 68: // d
-          console.log("D was pressed.");
+          $treeDisplay.panzoom("pan", -panRate, 0, { relative: true });
           break;
         default:
           return;
@@ -110,19 +115,5 @@ module.exports = {
       // console.log(zoomLevel);
       // jsPlumb.setZoom(zoomLevel);
     });
-
-    // $elem.panzoom("pan", 10, -10, { relative: true });
-
-    // $("#tree-screen").mousedown(function(){
-    //   $(this).mousemove(function(e){
-    //     console.log(e);
-    //     console.log(e.deltaX);
-    //     console.log(e.deltaY);
-    //   }
-    // });
-
-    // $("#tree-screen").mouseup(function(){
-    //     $(this).unbind("mousemove");
-    // });
   }
 };

@@ -67,7 +67,7 @@ var Tree = React.createClass({
     }
 
     return (
-      <div id="tree-screen">
+      <div id="tree-screen" tabIndex="1">
         <div id="tree-display" onWheel={_this.zoom}>
           {logicCardViews}
         </div>
