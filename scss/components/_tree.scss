@@ -36,14 +36,14 @@ $big-screen: 300px;
 
 .lc-source {
   @extend %source-sink;
-  top: 0;
+  bottom: 0;
   background-color: red;
 
 }
 
 .lc-sink {
   @extend %source-sink;
-  bottom: 0;
+  top: 0;
   background-color: green;
 
 }

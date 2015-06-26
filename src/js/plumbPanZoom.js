@@ -25,12 +25,8 @@ module.exports = {
   drawConnections: function() {
     console.log("I'm doing a plumbInstance.");
 
-    // Find the parent and all the different nodes.
-    var logicCardReferences = document.querySelectorAll(".logic-card");
-    console.log(logicCardReferences);
 
     plumbInstance.setContainer(document.getElementById("tree-display"));
-    plumbInstance.draggable(logicCardReferences);
 
     // Clear all existing connections.
     plumbInstance.detachEveryConnection();
@@ -45,26 +41,54 @@ module.exports = {
     }
 
     // Draw the connectors.
+    plumbInstance.setSuspendDrawing(true);
     var currentTree = GTC.getTree();
     for (i in currentTree) {
-      var cardIDSelector = '#' + currentTree[i].cardID;
-      var cardIDNode = plumbInstance.getSelector(cardIDSelector)[0];
+      var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
+      var cardIDNode = $(cardIDSelector);
 
-      plumbInstance.setSuspendDrawing(true);
-      var endpoint = plumbInstance.addEndpoint(cardIDNode, endpointOptions);
+      // jsPlumb.makeSource(cardIDNode, {
+      //   anchor:"Continuous",
+      //   endpoint:["Rectangle", { width:40, height:20 }],
+      //   maxConnections: 10,
+      //   onMaxConnections:function(info, originalEvent) {
+      //     console.log("element is ", info.element, "maxConnections is", info.maxConnections); 
+      //   }
+      // });
+
+      jsPlumb.makeSource(cardIDNode);
 
       var childrenCardIDs = currentTree[i].childrenCardIDs;
       for (j in childrenCardIDs) {
-        var childIDSelector = '#' + childrenCardIDs[j];
-        var childIDNode = plumbInstance.getSelector(childIDSelector)[0];
+        var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
+        var childIDNode = $(childIDSelector);
+
+        // jsPlumb.makeTarget(childIDNode, {
+        //   anchor:"Continuous",
+        //   endpoint:["Rectangle", { width:40, height:20 }],
+        //   maxConnections: 10,
+        //   onMaxConnections:function(info, originalEvent) {
+        //     console.log("element is ", info.element, "maxConnections is", info.maxConnections); 
+        //   }
+        // });
+
+        jsPlumb.makeTarget(childIDNode);
 
         plumbInstance.connect({
           source: cardIDNode, 
           target: childIDNode
         });
+
       }
-      plumbInstance.setSuspendDrawing(false, true);
     }
+
+    plumbInstance.setSuspendDrawing(false, true);
+
+    var draggables = [];
+    for (k in currentTree) {
+      draggables.push($('#' + currentTree[k].cardID));
+    }
+    plumbInstance.draggable(draggables);
   },
 
   panzoom: function() {
