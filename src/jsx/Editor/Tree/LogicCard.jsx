@@ -68,10 +68,6 @@ var LogicCard = React.createClass({
     GTC.deleteLogicCard(this.state.cardID).refresh();
   },
 
-  handleDrag: function() {
-    console.log("Dragging");
-  },
-
   // Handle collecting information when dropping a card from the messageBank.
   handleDrop: function(ev) {
     ev.preventDefault();
@@ -89,6 +85,11 @@ var LogicCard = React.createClass({
     console.log(card);
 
     GTC.setLogicCard(card).refresh();
+  },
+
+  handleSelect: function(ev) {
+    ev.preventDefault();
+    console.log("Selected.");
   },
 
   handleMouseEnter: function(ev) {
@@ -156,9 +157,7 @@ var LogicCard = React.createClass({
       <div className="logic-card" 
         id={_this.state.cardID}
         style={positionCSS}
-        onDrag={_this.handleDrag} 
-        onMouseEnter={_this.handleMouseEnter}
-        onMouseLeave={_this.handleMouseLeave}>
+        onClick={_this.handleSelect}>
         <div className="logic-card-content" 
           onDragOver={_this.preventDefault}
           onDrop={_this.handleDrop}>

@@ -77,10 +77,10 @@ function setLogicCard(logicCard) {
   console.log("Setting the logic card.");
 
   // Update the logic card.
-  var result = GlobalTree[logicCard.cardID] || {};
-  for (key in logicCard) { result[key] = logicCard[key]; }
+  var result = {};
+  $.extend(result, GlobalTree[logicCard.cardID], logicCard);
 
-  GlobalTree[logicCard.cardID] = logicCard;
+  GlobalTree[logicCard.cardID] = result;
   return this;
 }
 
