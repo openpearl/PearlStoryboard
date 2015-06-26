@@ -65,10 +65,30 @@ module.exports = {
   panzoom: function() {
     // Panzoom.
     $treeDisplay = $("#tree-display");
-    // $panzoom = $("#tree-display").panzoom("option", {
-    //   disablePan: true
-    // });
     $panzoom = $("#tree-display").panzoom();
+
+    $("#tree-screen").bind("keydown", function(e) {
+      console.log("Key pressed.");
+      var code = e.keyCode || e.which;
+      
+      switch(code) {
+        case 87: // w
+          console.log("W was pressed.");
+          break;
+        case 83: // s
+          console.log("S was pressed.");
+          break;
+        case 65: // a
+          console.log("A was pressed.");
+          break;
+        case 68: // d
+          console.log("D was pressed.");
+          break;
+        default:
+          return;
+      }
+    });
+
     $panzoom.parent().on('mousewheel.focal', function( e ) {
       e.preventDefault();
       // e.stopPropagation();
@@ -91,19 +111,18 @@ module.exports = {
       // jsPlumb.setZoom(zoomLevel);
     });
 
-    $elem.panzoom("pan", 10, -10, { relative: true });
+    // $elem.panzoom("pan", 10, -10, { relative: true });
 
+    // $("#tree-screen").mousedown(function(){
+    //   $(this).mousemove(function(e){
+    //     console.log(e);
+    //     console.log(e.deltaX);
+    //     console.log(e.deltaY);
+    //   }
+    // });
 
-    $("#tree-screen").mousedown(function(){
-        $(this).mousemove(function(e){
-          console.log(e);
-          console.log(e.deltaX);
-          console.log(e.deltaY);
-
-        });
-    });
-    $("#tree-screen").mouseup(function(){
-        $(this).unbind("mousemove");
-    });
+    // $("#tree-screen").mouseup(function(){
+    //     $(this).unbind("mousemove");
+    // });
   }
 };

@@ -15,8 +15,8 @@ var LogicCard = React.createClass({
       visible: true,
       highlight: false,
 
-      xpos: _this.props.xpos || "0px",
-      ypos: _this.props.ypos || "0px",
+      xpos: _this.props.xpos || 0,
+      ypos: _this.props.ypos || 0,
     };
   },
 
@@ -34,9 +34,8 @@ var LogicCard = React.createClass({
     var logicCard = document.querySelector('#' + _this.state.cardID);
 
     // var xpos = Number(logicCard.style.top.slice(0,-2));
-    var xpos = logicCard.style.left;
-    var ypos = (Number(logicCard.style.top.slice(0,-2)) + 400).toString() 
-      + 'px';
+    var xpos = Number(logicCard.style.left.slice(0,-2));
+    var ypos = Number(logicCard.style.top.slice(0,-2)) + 400;
 
     // Creates a new Logic card and save it into the GlobalTree.
     GTC.setLogicCard({
@@ -151,6 +150,8 @@ var LogicCard = React.createClass({
       left: _this.state.xpos,
       top: _this.state.ypos
     }
+
+    console.log(positionCSS);
 
     return (
       <div className="logic-card" 
