@@ -63,8 +63,15 @@ module.exports = {
   },
 
   panzoom: function() {
-    // Panzoom.
+    $treeScreen = $("#tree-screen");
     $treeDisplay = $("#tree-display");
+
+    $treeScreen.click(function() {
+      console.log("clicked");
+      $treeScreen.trigger('focus');
+    });
+
+    // Panzoom.
     $panzoom = $treeDisplay.panzoom();
     $panzoom.panzoom('option', {
       transition: true,
