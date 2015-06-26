@@ -27,6 +27,27 @@ $big-screen: 300px;
   }
 }
 
+%source-sink {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  height: 10px;
+}
+
+.lc-source {
+  @extend %source-sink;
+  top: 0;
+  background-color: red;
+
+}
+
+.lc-sink {
+  @extend %source-sink;
+  bottom: 0;
+  background-color: green;
+
+}
+
 $card-button-size: 40px;
 
 %card-button {

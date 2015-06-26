@@ -161,6 +161,9 @@ var LogicCard = React.createClass({
         <div className="logic-card-content" 
           onDragOver={_this.preventDefault}
           onDrop={_this.handleDrop}>
+          <div className="lc-source"></div>
+          <div className="lc-sink"></div>
+
           <span>Speaker: </span>
           <span>Message: </span>
           <div className="card-buttons-container">

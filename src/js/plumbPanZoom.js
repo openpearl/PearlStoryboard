@@ -1,7 +1,11 @@
+plumbInstance = {};
+
 jsPlumb.ready(function() {
 
+  plumbInstance = jsPlumb.getInstance();
+
   // Set jsPlumb defaults.
-  jsPlumb.importDefaults({
+  plumbInstance.importDefaults({
     PaintStyle : {
       lineWidth:13,
       strokeStyle: 'rgba(200,0,0,0.5)'
@@ -19,23 +23,24 @@ jsPlumb.ready(function() {
 module.exports = {
 
   drawConnections: function() {
-    console.log("I'm doing a jsPlumb.");
+    console.log("I'm doing a plumbInstance.");
 
     // Find the parent and all the different nodes.
     var logicCardReferences = document.querySelectorAll(".logic-card");
     console.log(logicCardReferences);
 
-    jsPlumb.setContainer(document.getElementById("tree-display"));
-    jsPlumb.draggable(logicCardReferences);
+    plumbInstance.setContainer(document.getElementById("tree-display"));
+    plumbInstance.draggable(logicCardReferences);
 
     // Clear all existing connections.
-    jsPlumb.detachEveryConnection();
-    jsPlumb.deleteEveryEndpoint();
-    jsPlumb.reset();
+    plumbInstance.detachEveryConnection();
+    plumbInstance.deleteEveryEndpoint();
+    plumbInstance.reset();
 
     // Set endpoint defaults.
     var endpointOptions = {
       isSource: true,
+      isTarget: true,
       reattach: true,
     }
 
@@ -43,22 +48,22 @@ module.exports = {
     var currentTree = GTC.getTree();
     for (i in currentTree) {
       var cardIDSelector = '#' + currentTree[i].cardID;
-      var cardIDNode = jsPlumb.getSelector(cardIDSelector)[0];
+      var cardIDNode = plumbInstance.getSelector(cardIDSelector)[0];
 
-      jsPlumb.setSuspendDrawing(true);
-      var endpoint = jsPlumb.addEndpoint(cardIDNode, endpointOptions);
+      plumbInstance.setSuspendDrawing(true);
+      var endpoint = plumbInstance.addEndpoint(cardIDNode, endpointOptions);
 
       var childrenCardIDs = currentTree[i].childrenCardIDs;
       for (j in childrenCardIDs) {
         var childIDSelector = '#' + childrenCardIDs[j];
-        var childIDNode = jsPlumb.getSelector(childIDSelector)[0];
+        var childIDNode = plumbInstance.getSelector(childIDSelector)[0];
 
-        jsPlumb.connect({
+        plumbInstance.connect({
           source: cardIDNode, 
           target: childIDNode
         });
       }
-      jsPlumb.setSuspendDrawing(false, true);
+      plumbInstance.setSuspendDrawing(false, true);
     }
   },
 
@@ -123,7 +128,10 @@ module.exports = {
       // var zoomLevel = matrix[0];
 
       // console.log(zoomLevel);
-      // jsPlumb.setZoom(zoomLevel);
+      // plumbInstance.setZoom(Number(zoomLevel), true);
+      // plumbInstance.setZoom(Number(zoomLevel));
+      // console.log(plumbInstance.getZoom());
+      // plumbInstance.setZoom(zoomLevel);
     });
   }
 };
