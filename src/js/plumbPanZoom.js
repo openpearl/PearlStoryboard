@@ -45,7 +45,8 @@ module.exports = {
       var cardIDSelector = '#' + currentTree[i].cardID;
       var cardIDNode = jsPlumb.getSelector(cardIDSelector)[0];
 
-      // var endpoint = jsPlumb.addEndpoint(cardIDNode, endpointOptions);
+      jsPlumb.setSuspendDrawing(true);
+      var endpoint = jsPlumb.addEndpoint(cardIDNode, endpointOptions);
 
       var childrenCardIDs = currentTree[i].childrenCardIDs;
       for (j in childrenCardIDs) {
@@ -57,6 +58,7 @@ module.exports = {
           target: childIDNode
         });
       }
+      jsPlumb.setSuspendDrawing(false, true);
     }
   },
 
