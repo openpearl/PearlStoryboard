@@ -39,9 +39,7 @@ var GlbTreeCtrl = function GlbTreeCtrl() {
 function refresh() {
   // Save positions of all nodes.
   for (i in GlobalTree) {
-    console.log(i);
     var logicCard = document.querySelector('#' + i);
-    console.log(logicCard);
     if (logicCard === null) {
       $GlobalEvents.trigger("global_tree:changed");
       return this;

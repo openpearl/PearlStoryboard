@@ -20,6 +20,7 @@ var Tree = React.createClass({
   },
 
   componentDidUpdate: function(prevProps, prevState) {
+    console.log("Tree componentDidUpdate");
     plumbPanZoom.drawConnections();
   },
 

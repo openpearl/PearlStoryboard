@@ -14,7 +14,8 @@ jsPlumb.ready(function() {
     Endpoint: ["Dot", { radius: 7}],
     Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
     EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }],
-    Anchor: [ "Continuous", { faces:["top","bottom"] }],    
+    Anchor: [ "Continuous", { faces:["top","bottom"] }],
+    Anchors : [ "Bottom", "Top" ],    
     MaxConnections: 99,
   });
 
@@ -24,20 +25,23 @@ module.exports = {
 
   drawConnections: function() {
     console.log("drawConnections.");
+    console.log(plumbInstance.getAllConnections());    
 
     // Clear all existing connections.
     plumbInstance.detachEveryConnection();
     plumbInstance.deleteEveryEndpoint();
     plumbInstance.reset();
 
-    plumbInstance.setContainer(document.getElementById("tree-display"));
+    console.log("Resetting sources and targets.");
+    plumbInstance = plumbInstance.unmakeEverySource().unmakeEveryTarget();
 
-    // Set endpoint defaults.
-    // var endpointOptions = {
-    //   isSource: true,
-    //   isTarget: true,
-    //   reattach: true,
-    // }
+
+    console.log(plumbInstance.getAllConnections());    
+
+    console.log(plumbInstance.getContainer());
+    if (plumbInstance.getContainer() === undefined) {
+      plumbInstance.setContainer(document.getElementById("tree-display"));
+    }
 
     // Draw the connectors.
     // plumbInstance.setSuspendDrawing(true);
@@ -46,24 +50,27 @@ module.exports = {
       var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
       var cardIDNode = $(cardIDSelector);
 
-      // jsPlumb.makeSource(cardIDNode, {
-      //   anchor:"Continuous",
-      //   endpoint:["Rectangle", { width:40, height:20 }],
-      //   maxConnections: 10,
-      //   onMaxConnections:function(info, originalEvent) {
-      //     console.log("element is ", info.element, "maxConnections is", info.maxConnections); 
-      //   }
-      // });
+      plumbInstance.makeSource(cardIDNode, {
+        anchor:"Continuous",
+        endpoint:["Rectangle", { width:40, height:20 }],
+        maxConnections: 10,
+        onMaxConnections:function(info, originalEvent) {
+          console.log("element is ", info.element, "maxConnections is", info.maxConnections); 
+        }
+      });
 
-      jsPlumb.makeSource(cardIDNode);
+      // jsPlumb.makeSource(cardIDNode);
 
       var childrenCardIDs = currentTree[i].childrenCardIDs;
       for (j in childrenCardIDs) {
         var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
         var childIDNode = $(childIDSelector);
 
-        jsPlumb.makeTarget(childIDNode, {
-          anchor:"Continuous",
+        plumbInstance.makeTarget(childIDNode, {
+          isTarget: true,
+          anchor:[ "Assign", { 
+            position:"Fixed"
+          }],
           endpoint:["Rectangle", { width:40, height:20 }],
           maxConnections: 10,
           onMaxConnections:function(info, originalEvent) {
@@ -75,7 +82,8 @@ module.exports = {
 
         plumbInstance.connect({
           source: cardIDNode, 
-          target: childIDNode
+          target: childIDNode,
+          // newConnection: true
         });
 
       }
@@ -86,6 +94,8 @@ module.exports = {
     var draggables = [];
     for (k in currentTree) {
       draggables.push($('#' + currentTree[k].cardID));
+      // draggables.push($('#' + currentTree[k].cardID  + ' .lc-source'));
+      // draggables.push($('#' + currentTree[k].cardID  + ' .lc-sink'));
     }
     plumbInstance.draggable(draggables);
   },
