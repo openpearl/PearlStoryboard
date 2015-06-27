@@ -78,20 +78,14 @@ module.exports = {
 
         plumbInstance.connect({
           source: cardIDNode, 
-          target: childIDNode,
-          // reattach:true
+          target: childIDNode
         });
-
       }
     }
-
-    // plumbInstance.setSuspendDrawing(false, true);
 
     var draggables = [];
     for (k in currentTree) {
       draggables.push($('#' + currentTree[k].cardID));
-      // draggables.push($('#' + currentTree[k].cardID  + ' .lc-source'));
-      // draggables.push($('#' + currentTree[k].cardID  + ' .lc-sink'));
     }
     plumbInstance.draggable(draggables);
   },
@@ -151,16 +145,10 @@ module.exports = {
         focal: e
       });
 
-      // FIXME: This is problematic.
       // Get the current scale.
-      // var matrix = $treeDisplay.panzoom("getMatrix");
-      // var zoomLevel = matrix[0];
-
-      // console.log(zoomLevel);
-      // plumbInstance.setZoom(Number(zoomLevel), true);
-      // plumbInstance.setZoom(Number(zoomLevel));
-      // console.log(plumbInstance.getZoom());
-      // plumbInstance.setZoom(zoomLevel);
+      var matrix = $treeDisplay.panzoom("getMatrix");
+      var zoomLevel = Number(matrix[0]);
+      plumbInstance.setZoom(zoomLevel);
     });
   }
 };
