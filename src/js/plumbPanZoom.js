@@ -19,26 +19,31 @@ jsPlumb.ready(function() {
     MaxConnections: 99,
   });
 
+
+  // jsPlumb.bind('connection', function(info) {
+  //   // Do stuff.
+  //   console.log("jsPlumb connection has detached ", conn);
+  // });
+
+  // console.log("Binding the connection instance.");
+  // plumbInstance.bind("connection", function(conn, ev) {
+  //   console.log("This connection has detached ", conn);
+  // });
+
 });
 
 module.exports = {
 
   drawConnections: function() {
     console.log("drawConnections.");
-    console.log(plumbInstance.getAllConnections());    
 
     // Clear all existing connections.
+    plumbInstance.unbind("connectionDetached");
     plumbInstance.detachEveryConnection();
     plumbInstance.deleteEveryEndpoint();
     plumbInstance.reset();
-
-    console.log("Resetting sources and targets.");
     plumbInstance = plumbInstance.unmakeEverySource().unmakeEveryTarget();
 
-
-    console.log(plumbInstance.getAllConnections());    
-
-    console.log(plumbInstance.getContainer());
     if (plumbInstance.getContainer() === undefined) {
       plumbInstance.setContainer(document.getElementById("tree-display"));
     }
@@ -56,7 +61,8 @@ module.exports = {
         endpoint:["Rectangle", { width:40, height:20 }],
         maxConnections: 10,
         onMaxConnections:function(info, originalEvent) {
-          console.log("element is ", info.element, "maxConnections is", info.maxConnections); 
+          console.log("element is ", info.element, "maxConnections is", 
+            info.maxConnections); 
         }
       });
 
@@ -72,16 +78,25 @@ module.exports = {
           endpoint:["Rectangle", { width:40, height:20 }],
           maxConnections: 10,
           onMaxConnections:function(info, originalEvent) {
-            console.log("element is ", info.element, "maxConnections is", info.maxConnections); 
+            console.log("element is ", info.element, "maxConnections is", 
+              info.maxConnections); 
           }
         });
 
-        plumbInstance.connect({
+        var connection = plumbInstance.connect({
           source: cardIDNode, 
           target: childIDNode
         });
       }
     }
+
+    plumbInstance.bind("connectionDetached", function(conn, ev) {
+      console.log("This connection has detached ", conn);
+    });
+
+    // plumbInstance.bind("connection", function(conn, ev) {
+    //   console.log("This connection has detached ", conn);
+    // });
 
     var draggables = [];
     for (k in currentTree) {
@@ -137,7 +152,6 @@ module.exports = {
       // e.stopPropagation();
       var delta = e.delta || e.originalEvent.wheelDelta;
       var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
-      // console.log(delta);
 
       $panzoom.panzoom('zoom', zoomOut, {
         increment: 0.1,

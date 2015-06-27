@@ -34,7 +34,7 @@ var Sidebar = React.createClass({
       url: "/save",
       data: data,
       success: function() {
-        refreshTreeView();
+        // refreshTreeView();
       }
     });
 
