@@ -51,6 +51,7 @@ module.exports = {
       var cardIDNode = $(cardIDSelector);
 
       plumbInstance.makeSource(cardIDNode, {
+        isSource: true,
         anchor:"Continuous",
         endpoint:["Rectangle", { width:40, height:20 }],
         maxConnections: 10,
@@ -59,8 +60,6 @@ module.exports = {
         }
       });
 
-      // jsPlumb.makeSource(cardIDNode);
-
       var childrenCardIDs = currentTree[i].childrenCardIDs;
       for (j in childrenCardIDs) {
         var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
@@ -68,9 +67,8 @@ module.exports = {
 
         plumbInstance.makeTarget(childIDNode, {
           isTarget: true,
-          anchor:[ "Assign", { 
-            position:"Fixed"
-          }],
+          ConnectionsDetachable: true,
+          anchor:"Continuous",
           endpoint:["Rectangle", { width:40, height:20 }],
           maxConnections: 10,
           onMaxConnections:function(info, originalEvent) {
@@ -78,12 +76,10 @@ module.exports = {
           }
         });
 
-        // jsPlumb.makeTarget(childIDNode);
-
         plumbInstance.connect({
           source: cardIDNode, 
           target: childIDNode,
-          // newConnection: true
+          // reattach:true
         });
 
       }

@@ -31,13 +31,13 @@ $big-screen: 300px;
   width: 100%;
   position: absolute;
   left: 0;
-  height: 10px;
+  height: 20px;
 }
 
 .lc-source {
   @extend %source-sink;
-  // bottom: 0;
-  top: 100px;
+  bottom: 0;
+  // top: 100px;
   background-color: red;
 
 }
