@@ -18,18 +18,6 @@ jsPlumb.ready(function() {
     Anchors : [ "Bottom", "Top" ],    
     MaxConnections: 99,
   });
-
-
-  // jsPlumb.bind('connection', function(info) {
-  //   // Do stuff.
-  //   console.log("jsPlumb connection has detached ", conn);
-  // });
-
-  // console.log("Binding the connection instance.");
-  // plumbInstance.bind("connection", function(conn, ev) {
-  //   console.log("This connection has detached ", conn);
-  // });
-
 });
 
 module.exports = {
@@ -38,6 +26,7 @@ module.exports = {
     console.log("drawConnections.");
 
     // Clear all existing connections.
+    plumbInstance.unbind("connection");
     plumbInstance.unbind("connectionDetached");
     plumbInstance.detachEveryConnection();
     plumbInstance.deleteEveryEndpoint();
@@ -83,20 +72,37 @@ module.exports = {
           }
         });
 
-        var connection = plumbInstance.connect({
+        plumbInstance.connect({
           source: cardIDNode, 
           target: childIDNode
         });
       }
     }
 
-    plumbInstance.bind("connectionDetached", function(conn, ev) {
-      console.log("This connection has detached ", conn);
+    // Bind events to update our models.
+    plumbInstance.bind("connection", function(conn, ev) {
+      console.log("This connection has attached.");
+
+      // Figure out the source and target.
+      var sourceID = $(conn.source).parent().attr('id');
+      var targetID = $(conn.target).parent().attr('id');
+
+      // Fetch the right nodes from the GlobalTree.
+      var source = GTC.getLogicCard(sourceID);
+      var target = GTC.getLogicCard(targetID);
+
+      pushIfUnique(source.childrenCardIDs, targetID);
+      pushIfUnique(target.parentCardIDs, sourceID);
+
+      GTC.setLogicCard(source);
+      GTC.setLogicCard(target).refresh();
     });
 
-    // plumbInstance.bind("connection", function(conn, ev) {
-    //   console.log("This connection has detached ", conn);
-    // });
+    plumbInstance.bind("connectionDetached", function(conn, ev) {
+      console.log("This connection has detached.");
+
+      // Do stuff here. 
+    });
 
     var draggables = [];
     for (k in currentTree) {
