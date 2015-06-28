@@ -45,8 +45,8 @@ function refresh() {
       return this;
     }
 
-    GlobalTree[i].xpos = logicCard.style.left;
-    GlobalTree[i].ypos = logicCard.style.top;
+    GlobalTree[i].xpos = Number(logicCard.style.left.slice(0,-2));
+    GlobalTree[i].ypos = Number(logicCard.style.top.slice(0,-2));
   }
 
   $GlobalEvents.trigger("global_tree:changed");
