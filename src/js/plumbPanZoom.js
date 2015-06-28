@@ -43,7 +43,6 @@ module.exports = {
     for (i in currentTree) {
       var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
       var cardIDNode = $(cardIDSelector);
-
       plumbInstance.makeSource(cardIDNode, {
         isSource: true,
         anchor:"Continuous",
@@ -55,22 +54,28 @@ module.exports = {
         }
       });
 
+      var childIDSelector = '#' + currentTree[i].cardID + ' .lc-sink';
+      var childIDNode = $(childIDSelector);
+      plumbInstance.makeTarget(childIDNode, {
+        isTarget: true,
+        ConnectionsDetachable: true,
+        anchor:"Continuous",
+        endpoint:["Rectangle", { width:40, height:20 }],
+        maxConnections: 10,
+        onMaxConnections:function(info, originalEvent) {
+          console.log("element is ", info.element, "maxConnections is", 
+            info.maxConnections); 
+        }
+      });
+    }
+
+    for (i in currentTree) {
       var childrenCardIDs = currentTree[i].childrenCardIDs;
+      var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
+      var cardIDNode = $(cardIDSelector);
       for (j in childrenCardIDs) {
         var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
         var childIDNode = $(childIDSelector);
-
-        plumbInstance.makeTarget(childIDNode, {
-          isTarget: true,
-          ConnectionsDetachable: true,
-          anchor:"Continuous",
-          endpoint:["Rectangle", { width:40, height:20 }],
-          maxConnections: 10,
-          onMaxConnections:function(info, originalEvent) {
-            console.log("element is ", info.element, "maxConnections is", 
-              info.maxConnections); 
-          }
-        });
 
         plumbInstance.connect({
           source: cardIDNode, 
@@ -101,7 +106,25 @@ module.exports = {
     plumbInstance.bind("connectionDetached", function(conn, ev) {
       console.log("This connection has detached.");
 
-      // Do stuff here. 
+      // Figure out the source and target.
+      var sourceID = $(conn.source).parent().attr('id');
+      var targetID = $(conn.target).parent().attr('id');
+
+      // Fetch the right nodes from the GlobalTree.
+      var source = GTC.getLogicCard(sourceID);
+      var target = GTC.getLogicCard(targetID);
+
+
+      // Get index of IDs.
+      var i = source.childrenCardIDs.indexOf(targetID);
+      var j = target.parentCardIDs.indexOf(sourceID);
+
+      // Remove the ID from the nodes.
+      if (i > -1) { source.childrenCardIDs.splice(i, 1); }
+      if (j > -1) { target.parentCardIDs.splice(j, 1); }
+
+      GTC.setLogicCard(source);
+      GTC.setLogicCard(target);
     });
 
     var draggables = [];
