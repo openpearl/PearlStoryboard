@@ -1,30 +1,77 @@
+var plumbPanZoom = require('../../../js/plumbPanZoom.js');
 var LogicCard = require('./LogicCard.jsx');
 
 var Tree = React.createClass({
-  getInitialState: function() {
-    var uuid = guid();
-    return {
-      uuid: uuid
-    };
+
+  componentDidMount: function() {
+    console.log("Tree component did mount.");
+    var _this = this;
+
+    jsPlumb.ready(function() {
+      plumbPanZoom.drawConnections();
+    });
+
+    $(GlobalEvents).on('global_tree:changed', function(ev) {
+      console.log("The tree changed.");
+      _this.forceUpdate();
+    });
+
+    plumbPanZoom.panzoom();
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    console.log("Tree componentDidUpdate");
+    plumbPanZoom.drawConnections();
+  },
+
+  componentWillUnmount: function() {
+    $(GlobalEvents).off('global_tree:changed');
   },
 
   resetTree: function(childContext) {
     console.log("Resetting the tree.");
-    var _this = this;
-    ProcessedTree = {};
-    _this.replaceState(_this.getInitialState());
+    GTC.resetTree().refresh();
+  },
+
+  zoom: function(ev) {
   },
 
   render: function() {
+    console.log("Re-rendered.");
+
     var _this = this;
-    return (
-      <div id="tree-display">
+
+    // Draw out all the logic cards from the currentTree.
+    logicCardViews = {};
+
+    var currentTree = GTC.getTree();
+    for (i in currentTree) {
+
+      // This uuid is different from the cardID; otherwise the virtual DOM
+      // gets confused.
+      var uuid = guid();
+      logicCardViews[i] = 
         <LogicCard
-          key={_this.state.uuid} 
-          ref={_this.state.uuid}
-          cardId="root"
-          deleteCard={_this.resetTree}
-          onChildCreate={function() {return;}} />
+          key={uuid}
+          ref={currentTree[i].cardID}
+          
+          cardID={currentTree[i].cardID}
+          childrenCardIDs={currentTree[i].childrenCardIDs}
+          parentCardIDs={currentTree[i].parentCardIDs}
+
+          speaker={currentTree[i].speaker}
+          message={currentTree[i].message}
+
+          xpos={currentTree[i].xpos}
+          ypos={currentTree[i].ypos}
+        />
+    }
+
+    return (
+      <div id="tree-screen" tabIndex="1">
+        <div id="tree-display" onWheel={_this.zoom}>
+          {logicCardViews}
+        </div>
       </div>
     );
   }

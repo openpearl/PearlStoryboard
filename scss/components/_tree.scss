@@ -1,45 +1,52 @@
-#tree-display {
-  padding: 20px;
-  white-space:nowrap;
+#tree-screen {
   width: 100%;
   height: 100%;
-  overflow: scroll;
-
-  &:hover {
-    cursor: grab;
-  }
-
-  &:active {
-    cursor: grabbing;
-  }
+  position: absolute;
 }
 
-.logic-card-block {
-}
+$big-screen: 300px;
 
-.tree-new-level {
-  margin-left: 20px;
-  display: inline-block;
-  white-space:nowrap;
-  vertical-align:top;
+#tree-display {
+  -webkit-backface-visibility: initial !important;
+  -webkit-transform-origin: 50% 50%;
 }
 
 .logic-card {
+  @extend %sh1;
   width: 300px;
-  display: inline-block;
-  vertical-align:top;
-  margin-bottom: 20px;
+  height: 300px;
+  position: absolute;
   background-color: white;
 }
 
 .logic-card-content {
-  @extend %sh1;
   padding: 15px;
-
 
   & > [contenteditable] {
     white-space: pre-wrap;
   }
+}
+
+%source-sink {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  height: 20px;
+}
+
+.lc-source {
+  @extend %source-sink;
+  bottom: 0;
+  // top: 100px;
+  background-color: red;
+
+}
+
+.lc-sink {
+  @extend %source-sink;
+  top: 0;
+  background-color: green;
+
 }
 
 $card-button-size: 40px;

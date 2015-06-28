@@ -1,23 +1,37 @@
-$sidebar-content: 300px;
-
 #message-bank {
   background-color: $blue;
-  width: min-content;
   padding: 20px;
   height: 100%;
-  flex-shrink: 0;
-  overflow: scroll;
+  width: 100%;
+  overflow-y: scroll;
   white-space: normal;
   @extend %sh1;
 }
 
-#searchbar {
-  width: $sidebar-content;
+#message-bank::-webkit-scrollbar {
+  width: 5px;
+}
+
+#message-bank::-webkit-scrollbar-track {
+  box-shadow: none;
+  border-radius: 5px;
+}
+
+#message-bank::-webkit-scrollbar-thumb {
+  box-shadow: none;
+  border-radius: 5px;
+  background-color: white;
+}
+
+#searchBarNew {
+  width: 100% !important;
   height: 30px;
+  width: 100%;
 }
 
 .message-card {
-  width: $sidebar-content;
+  width: 100%;
+
   @extend %sh1;
   padding: 10px;
   margin-top: 10px;

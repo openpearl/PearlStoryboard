@@ -1,4 +1,4 @@
-var MessageBank = require("./MessageBank/MessageBank.jsx");
+var Sidebar = require("./Sidebar/Sidebar.jsx");
 var Tree = require("./Tree/Tree.jsx");
 
 var Editor = React.createClass({
@@ -6,7 +6,7 @@ var Editor = React.createClass({
   render: function() {
     return (
       <div id="editor-page">
-        <MessageBank />
+        <Sidebar />
         <Tree />
       </div>
     );
