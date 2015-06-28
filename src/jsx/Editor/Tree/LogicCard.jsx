@@ -88,8 +88,11 @@ var LogicCard = React.createClass({
   },
 
   handleSelect: function(ev) {
+    var _this = this;
     ev.preventDefault();
+
     console.log("Selected.");
+    $(GlobalEvents).trigger("card:selected", [_this.state.cardID]);
   },
 
   handleMouseEnter: function(ev) {
@@ -164,8 +167,6 @@ var LogicCard = React.createClass({
           onDragOver={_this.preventDefault}
           onDrop={_this.handleDrop}>
 
-          <span>Speaker: </span>
-          <span>Message: </span>
           <div className="card-buttons-container">
             <div className="add-card-button" onClick={_this.handleAdd}>
               {newOrAddButton}
