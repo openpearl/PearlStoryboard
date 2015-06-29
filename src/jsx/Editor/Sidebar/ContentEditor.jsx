@@ -4,7 +4,12 @@ var ContentEditor = React.createClass({
     return {
       cardID: "",
       speaker: "",
-      messages: ""
+      messages: "",
+
+      // These are strings because constant conversion is excessive.
+      // Conversion is done later at the save.
+      conditionals: "",
+      callbacks: ""
     };
   },
 
@@ -39,8 +44,13 @@ var ContentEditor = React.createClass({
     var _this = this;
     console.log("Submitting.");
 
+    // Convert the conditionals and callbacks into arrays.
+    if (_this.state.conditionals.splice || _this.state.callbacks.splice) {
+      _this.state.conditionals = _this.state.conditionals.splice(',');
+      _this.state.callbacks = _this.state.callbacks.splice(',');
+    }
+
     // Save the data to the tree.
-    // GTC.setLogicCard(_this.state).refresh();
     GTC.setLogicCard(_this.state).done(function(){
       $(GlobalEvents).trigger(_this.state.cardID + ":changed");
     });
@@ -51,21 +61,35 @@ var ContentEditor = React.createClass({
 
     return (
       <form id="content-editor" onSubmit={_this.handleSubmit}>
+        
         <span>Speaker: </span>
-        <input id="ce-speaker"
+        <textarea id="ce-speaker"
           data-source="speaker" 
           value={_this.state.speaker}
-          onChange={_this.handleFormChange}></input>
+          onChange={_this.handleFormChange}></textarea>
+        
         <span>Messages: </span>
-        <input id="ce-messages" 
+        <textarea id="ce-messages" 
           data-source="messages"
           value={_this.state.messages}
-          onChange={_this.handleFormChange}></input>
+          onChange={_this.handleFormChange}></textarea>
+        
+        <span>Conditionals: </span>
+        <textarea id="ce-conditionals" 
+          data-source="conditionals"
+          value={_this.state.conditionals}
+          onChange={_this.handleFormChange}></textarea>
+        
+        <span>Callbacks: </span>
+        <textarea id="ce-callbacks" 
+          data-source="callbacks"
+          value={_this.state.callbacks}
+          onChange={_this.handleFormChange}></textarea>
         <input type="submit"></input> 
+      
       </form>
     );
   }
-
 });
 
 module.exports = ContentEditor;

@@ -12,6 +12,9 @@ var LogicCard = React.createClass({
       speaker: _this.props.speaker || "",
       messages: _this.props.messages || [],
 
+      conditionals: _this.props.conditionals || [],
+      callbacks: _this.props.conditionals || [],
+
       visible: true,
       highlight: false,
 
@@ -95,7 +98,7 @@ var LogicCard = React.createClass({
 
     console.log(data);
     var card = GTC.getLogicCard(_this.state.cardID);
-    card.messages = data.messages;
+    card.messages = pushIfUnique(card.messages, data.message);
     console.log(card);
 
     GTC.setLogicCard(card).refresh();

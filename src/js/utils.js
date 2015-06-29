@@ -6,7 +6,10 @@ module.exports = {
       return currentArray;
     } else {
       // Element was not found, add it.
-      if (currentArray === undefined) {
+      if (
+        currentArray === undefined || 
+        currentArray === ""
+      ) {
         var currentArray = [];
       }
 
