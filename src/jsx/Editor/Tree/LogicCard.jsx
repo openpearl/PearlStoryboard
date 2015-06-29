@@ -166,19 +166,19 @@ var LogicCard = React.createClass({
         <div className="logic-card-content" 
           onDragOver={_this.preventDefault}
           onDrop={_this.handleDrop}>
+          <b>{_this.state.speaker}</b>: {_this.state.message}
+        </div>
 
-          <div className="card-buttons-container">
-            <div className="add-card-button" onClick={_this.handleAdd}>
-              {newOrAddButton}
-            </div>
+        <div className="card-buttons-container">
+          <div className="add-card-button" onClick={_this.handleAdd}>
+            {newOrAddButton}
+          </div>
 
-            {hideButton}
+          {hideButton}
 
-            <div className="delete-card-button" 
-              onClick={_this.deleteCard}>
-              <i className="fa fa-times"></i>
-            </div>
-
+          <div className="delete-card-button" 
+            onClick={_this.deleteCard}>
+            <i className="fa fa-times"></i>
           </div>
         </div>
       </div>
