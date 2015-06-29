@@ -20,8 +20,22 @@ var LogicCard = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    var _this = this;
+
+    $(GlobalEvents).on(_this.props.cardID + ":changed", function() {
+      _this.state = GTC.getLogicCard(_this.props.cardID);
+      _this.setState(_this.state);
+    });
+  },
+
   componentDidUpdate: function(prevProps, prevState) {
     console.log("I just updated!");
+  },
+
+  componentWillUnmount: function() {
+    var _this = this;
+    $(GlobalEvents).off(_this.props.cardID + ":changed");
   },
 
   preventDefault: function(ev) { ev.preventDefault(); },
