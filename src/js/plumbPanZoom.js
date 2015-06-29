@@ -9,7 +9,7 @@ jsPlumb.ready(function() {
   // Set jsPlumb defaults.
   plumbInstance.importDefaults({
     PaintStyle : {
-      lineWidth:13,
+      lineWidth:5,
       strokeStyle: 'rgba(200,0,0,0.5)'
     },
     DragOptions : { cursor: "crosshair" },
@@ -19,6 +19,7 @@ jsPlumb.ready(function() {
     Anchor: [ "Continuous", { faces:["top","bottom"] }],
     Anchors : [ "Bottom", "Top" ],    
     MaxConnections: 99,
+    Connector: "Straight"
   });
 });
 
@@ -39,36 +40,28 @@ module.exports = {
       plumbInstance.setContainer(document.getElementById("tree-display"));
     }
 
+    // Common endpoint settings.
+    var commEndSettings = {
+      endpoint:["Rectangle", { width:20, height:20 }],
+      maxConnections: 99,
+      anchor: "Continuous",
+      onMaxConnections:function(info, originalEvent) {
+        console.log("element is ", info.element, "maxConnections is", 
+          info.maxConnections); 
+      }
+    }
+
     // Draw the connectors.
     // plumbInstance.setSuspendDrawing(true);
     var currentTree = GTC.getTree();
     for (i in currentTree) {
       var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
       var cardIDNode = $(cardIDSelector);
-      plumbInstance.makeSource(cardIDNode, {
-        isSource: true,
-        anchor:"Continuous",
-        endpoint:["Rectangle", { width:40, height:20 }],
-        maxConnections: 10,
-        onMaxConnections:function(info, originalEvent) {
-          console.log("element is ", info.element, "maxConnections is", 
-            info.maxConnections); 
-        }
-      });
+      plumbInstance.makeSource(cardIDNode, {isSource: true}, commEndSettings);
 
       var childIDSelector = '#' + currentTree[i].cardID + ' .lc-sink';
       var childIDNode = $(childIDSelector);
-      plumbInstance.makeTarget(childIDNode, {
-        isTarget: true,
-        ConnectionsDetachable: true,
-        anchor:"Continuous",
-        endpoint:["Rectangle", { width:40, height:20 }],
-        maxConnections: 10,
-        onMaxConnections:function(info, originalEvent) {
-          console.log("element is ", info.element, "maxConnections is", 
-            info.maxConnections); 
-        }
-      });
+      plumbInstance.makeTarget(childIDNode, {isTarget: true}, commEndSettings);
     }
 
     for (i in currentTree) {
