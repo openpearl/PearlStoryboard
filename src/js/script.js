@@ -48,10 +48,11 @@ refreshTreeView = function() {
 
 refreshTreeView();
 
-var has_disconnected = false;
-$(window).bind('beforeunload', function() {
-  while (!has_disconnected) {
-    GTC.saveTree();
-    return true;
-  }
-});
+// FIXME: Auto-save when the browser closes.
+// var has_disconnected = false;
+// $(window).bind('beforeunload', function() {
+//   while (!has_disconnected) {
+//     GTC.saveTree();
+//     return true;
+//   }
+// });

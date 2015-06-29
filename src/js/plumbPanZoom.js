@@ -1,3 +1,5 @@
+// plumPanZoom.js
+
 plumbInstance = {};
 
 jsPlumb.ready(function() {
@@ -70,12 +72,13 @@ module.exports = {
     }
 
     for (i in currentTree) {
-      var childrenCardIDs = currentTree[i].childrenCardIDs;
       var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
-      var cardIDNode = $(cardIDSelector);
+      var cardIDNode = $(cardIDSelector)[0];
+      
+      var childrenCardIDs = currentTree[i].childrenCardIDs;
       for (j in childrenCardIDs) {
         var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
-        var childIDNode = $(childIDSelector);
+        var childIDNode = $(childIDSelector)[0];
 
         plumbInstance.connect({
           source: cardIDNode, 
@@ -96,11 +99,12 @@ module.exports = {
       var source = GTC.getLogicCard(sourceID);
       var target = GTC.getLogicCard(targetID);
 
-      pushIfUnique(source.childrenCardIDs, targetID);
-      pushIfUnique(target.parentCardIDs, sourceID);
+      source.childrenCardIDs = pushIfUnique(source.childrenCardIDs, targetID);
+      target.parentCardIDs = pushIfUnique(target.parentCardIDs, sourceID);
 
       GTC.setLogicCard(source);
-      GTC.setLogicCard(target).refresh();
+      // GTC.setLogicCard(target).refresh();
+      GTC.setLogicCard(target);
     });
 
     plumbInstance.bind("connectionDetached", function(conn, ev) {
