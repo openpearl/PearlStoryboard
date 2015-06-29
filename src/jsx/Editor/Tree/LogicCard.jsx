@@ -10,7 +10,7 @@ var LogicCard = React.createClass({
       parentCardIDs: _this.props.parentCardIDs || [],
 
       speaker: _this.props.speaker || "",
-      message: _this.props.message || "",
+      messages: _this.props.messages || [],
 
       visible: true,
       highlight: false,
@@ -56,7 +56,7 @@ var LogicCard = React.createClass({
       childrenCardIDs: [],
       parentCardIDs: [_this.state.cardID],
       speaker: "",
-      message: "",
+      messages: "",
       visible: true,
       highlight: false,
       xpos: xpos,
@@ -82,7 +82,7 @@ var LogicCard = React.createClass({
     GTC.deleteLogicCard(this.state.cardID).refresh();
   },
 
-  // Handle collecting information when dropping a card from the messageBank.
+  // Handle collecting information when dropping a card from the messagesBank.
   handleDrop: function(ev) {
     ev.preventDefault();
     console.log("Something was dropped!");
@@ -95,7 +95,7 @@ var LogicCard = React.createClass({
 
     console.log(data);
     var card = GTC.getLogicCard(_this.state.cardID);
-    card.message = data.message;
+    card.messages = data.messages;
     console.log(card);
 
     GTC.setLogicCard(card).refresh();
@@ -180,7 +180,7 @@ var LogicCard = React.createClass({
         <div className="lc-source"></div>
 
         <div className="logic-card-content">
-          <b>{_this.state.speaker}</b>: {_this.state.message}
+          <b>{_this.state.speaker}</b>: {_this.state.messages}
         </div>
 
         <div className="card-buttons-container">

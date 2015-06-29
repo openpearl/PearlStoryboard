@@ -4,7 +4,7 @@ var ContentEditor = React.createClass({
     return {
       cardID: "",
       speaker: "",
-      message: ""
+      messages: ""
     };
   },
 
@@ -17,7 +17,7 @@ var ContentEditor = React.createClass({
       var currentCard = GTC.getLogicCard(cardID);
       _this.state.cardID = cardID;
       _this.state.speaker = currentCard.speaker;
-      _this.state.message = currentCard.message;
+      _this.state.messages = currentCard.messages;
 
       _this.setState(_this.state);
     });
@@ -56,10 +56,10 @@ var ContentEditor = React.createClass({
           data-source="speaker" 
           value={_this.state.speaker}
           onChange={_this.handleFormChange}></input>
-        <span>Message: </span>
-        <input id="ce-message" 
-          data-source="message"
-          value={_this.state.message}
+        <span>Messages: </span>
+        <input id="ce-messages" 
+          data-source="messages"
+          value={_this.state.messages}
           onChange={_this.handleFormChange}></input>
         <input type="submit"></input> 
       </form>

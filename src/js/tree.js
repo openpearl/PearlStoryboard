@@ -6,7 +6,7 @@ var GlobalTree = {
   // parentCardIDs: [String],
 
   // speaker: String,
-  // message: String,
+  // messages: [String],
 
   // visible: true,
   // highlight: false,

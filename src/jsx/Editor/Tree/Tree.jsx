@@ -51,21 +51,13 @@ var Tree = React.createClass({
       // This uuid is different from the cardID; otherwise the virtual DOM
       // gets confused.
       var uuid = guid();
-      logicCardViews[i] = 
-        <LogicCard
-          key={uuid}
-          ref={currentTree[i].cardID}
-          
-          cardID={currentTree[i].cardID}
-          childrenCardIDs={currentTree[i].childrenCardIDs}
-          parentCardIDs={currentTree[i].parentCardIDs}
+      var settings = {}
+      $.extend(settings, currentTree[i], {
+        key: uuid, 
+        ref: currentTree[i].cardID
+      });
 
-          speaker={currentTree[i].speaker}
-          message={currentTree[i].message}
-
-          xpos={currentTree[i].xpos}
-          ypos={currentTree[i].ypos}
-        />
+      logicCardViews[i] = React.createElement(LogicCard, settings);
     }
 
     return (
