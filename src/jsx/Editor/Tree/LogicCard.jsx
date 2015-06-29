@@ -20,8 +20,22 @@ var LogicCard = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    var _this = this;
+
+    $(GlobalEvents).on(_this.props.cardID + ":changed", function() {
+      _this.state = GTC.getLogicCard(_this.props.cardID);
+      _this.setState(_this.state);
+    });
+  },
+
   componentDidUpdate: function(prevProps, prevState) {
     console.log("I just updated!");
+  },
+
+  componentWillUnmount: function() {
+    var _this = this;
+    $(GlobalEvents).off(_this.props.cardID + ":changed");
   },
 
   preventDefault: function(ev) { ev.preventDefault(); },
@@ -158,14 +172,14 @@ var LogicCard = React.createClass({
       <div className="logic-card" 
         id={_this.state.cardID}
         style={positionCSS}
-        onClick={_this.handleSelect}>
+        onClick={_this.handleSelect}
+        onDragOver={_this.preventDefault}
+        onDrop={_this.handleDrop}>
 
         <div className="lc-sink"></div>
         <div className="lc-source"></div>
 
-        <div className="logic-card-content" 
-          onDragOver={_this.preventDefault}
-          onDrop={_this.handleDrop}>
+        <div className="logic-card-content">
           <b>{_this.state.speaker}</b>: {_this.state.message}
         </div>
 

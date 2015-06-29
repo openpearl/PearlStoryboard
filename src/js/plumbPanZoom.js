@@ -1,3 +1,5 @@
+// plumPanZoom.js
+
 plumbInstance = {};
 
 jsPlumb.ready(function() {
@@ -7,7 +9,7 @@ jsPlumb.ready(function() {
   // Set jsPlumb defaults.
   plumbInstance.importDefaults({
     PaintStyle : {
-      lineWidth:13,
+      lineWidth:5,
       strokeStyle: 'rgba(200,0,0,0.5)'
     },
     DragOptions : { cursor: "crosshair" },
@@ -17,6 +19,7 @@ jsPlumb.ready(function() {
     Anchor: [ "Continuous", { faces:["top","bottom"] }],
     Anchors : [ "Bottom", "Top" ],    
     MaxConnections: 99,
+    Connector: "Straight"
   });
 });
 
@@ -37,45 +40,38 @@ module.exports = {
       plumbInstance.setContainer(document.getElementById("tree-display"));
     }
 
+    // Common endpoint settings.
+    var commEndSettings = {
+      endpoint:["Rectangle", { width:20, height:20 }],
+      maxConnections: 99,
+      anchor: "Continuous",
+      onMaxConnections:function(info, originalEvent) {
+        console.log("element is ", info.element, "maxConnections is", 
+          info.maxConnections); 
+      }
+    }
+
     // Draw the connectors.
     // plumbInstance.setSuspendDrawing(true);
     var currentTree = GTC.getTree();
     for (i in currentTree) {
       var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
       var cardIDNode = $(cardIDSelector);
-      plumbInstance.makeSource(cardIDNode, {
-        isSource: true,
-        anchor:"Continuous",
-        endpoint:["Rectangle", { width:40, height:20 }],
-        maxConnections: 10,
-        onMaxConnections:function(info, originalEvent) {
-          console.log("element is ", info.element, "maxConnections is", 
-            info.maxConnections); 
-        }
-      });
+      plumbInstance.makeSource(cardIDNode, {isSource: true}, commEndSettings);
 
       var childIDSelector = '#' + currentTree[i].cardID + ' .lc-sink';
       var childIDNode = $(childIDSelector);
-      plumbInstance.makeTarget(childIDNode, {
-        isTarget: true,
-        ConnectionsDetachable: true,
-        anchor:"Continuous",
-        endpoint:["Rectangle", { width:40, height:20 }],
-        maxConnections: 10,
-        onMaxConnections:function(info, originalEvent) {
-          console.log("element is ", info.element, "maxConnections is", 
-            info.maxConnections); 
-        }
-      });
+      plumbInstance.makeTarget(childIDNode, {isTarget: true}, commEndSettings);
     }
 
     for (i in currentTree) {
-      var childrenCardIDs = currentTree[i].childrenCardIDs;
       var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
-      var cardIDNode = $(cardIDSelector);
+      var cardIDNode = $(cardIDSelector)[0];
+      
+      var childrenCardIDs = currentTree[i].childrenCardIDs;
       for (j in childrenCardIDs) {
         var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
-        var childIDNode = $(childIDSelector);
+        var childIDNode = $(childIDSelector)[0];
 
         plumbInstance.connect({
           source: cardIDNode, 
@@ -96,11 +92,12 @@ module.exports = {
       var source = GTC.getLogicCard(sourceID);
       var target = GTC.getLogicCard(targetID);
 
-      pushIfUnique(source.childrenCardIDs, targetID);
-      pushIfUnique(target.parentCardIDs, sourceID);
+      source.childrenCardIDs = pushIfUnique(source.childrenCardIDs, targetID);
+      target.parentCardIDs = pushIfUnique(target.parentCardIDs, sourceID);
 
       GTC.setLogicCard(source);
-      GTC.setLogicCard(target).refresh();
+      // GTC.setLogicCard(target).refresh();
+      GTC.setLogicCard(target);
     });
 
     plumbInstance.bind("connectionDetached", function(conn, ev) {

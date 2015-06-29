@@ -19,6 +19,7 @@ var $GlobalEvents = $(GlobalEvents);
 
 var GlbTreeProto = function GlbTreeProto() {};
 GlbTreeProto.prototype = {
+  done: done,
   refresh: refresh,
 
   getTree: getTree,
@@ -37,6 +38,10 @@ var GlbTreeCtrl = function GlbTreeCtrl() {
   return new GlbTreeProto();
 }
 
+function done(callback) {
+  callback();
+}
+
 function refresh() {
   savePos();
   $GlobalEvents.trigger("global_tree:changed");
@@ -48,12 +53,13 @@ function savePos() {
   for (i in GlobalTree) {
     var logicCard = document.querySelector('#' + i);
     if (logicCard === null) {
-      $GlobalEvents.trigger("global_tree:changed");
-      return this;
+      // TODO: Figure out what this does.
+      // $GlobalEvents.trigger("global_tree:changed");
+      // return this;
+    } else {
+      GlobalTree[i].xpos = Number(logicCard.style.left.slice(0,-2));
+      GlobalTree[i].ypos = Number(logicCard.style.top.slice(0,-2));
     }
-
-    GlobalTree[i].xpos = Number(logicCard.style.left.slice(0,-2));
-    GlobalTree[i].ypos = Number(logicCard.style.top.slice(0,-2));
   }
 }
 

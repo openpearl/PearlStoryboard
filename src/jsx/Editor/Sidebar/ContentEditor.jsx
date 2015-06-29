@@ -40,7 +40,10 @@ var ContentEditor = React.createClass({
     console.log("Submitting.");
 
     // Save the data to the tree.
-    GTC.setLogicCard(_this.state).refresh();
+    // GTC.setLogicCard(_this.state).refresh();
+    GTC.setLogicCard(_this.state).done(function(){
+      $(GlobalEvents).trigger(_this.state.cardID + ":changed");
+    });
   },
 
   render: function() {
