@@ -8,6 +8,7 @@ var Tree = React.createClass({
     var _this = this;
 
     jsPlumb.ready(function() {
+      // FIXME: Race condition bug.
       plumbPanZoom.drawConnections();
     });
 

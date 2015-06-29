@@ -23,6 +23,7 @@ GlbTreeProto.prototype = {
 
   getTree: getTree,
   setTree: setTree,
+  saveTree: saveTree,
   clearTree: clearTree,
 
   getLogicCard: getLogicCard,
@@ -37,6 +38,12 @@ var GlbTreeCtrl = function GlbTreeCtrl() {
 }
 
 function refresh() {
+  savePos();
+  $GlobalEvents.trigger("global_tree:changed");
+  return this;
+}
+
+function savePos() {
   // Save positions of all nodes.
   for (i in GlobalTree) {
     var logicCard = document.querySelector('#' + i);
@@ -48,9 +55,6 @@ function refresh() {
     GlobalTree[i].xpos = Number(logicCard.style.left.slice(0,-2));
     GlobalTree[i].ypos = Number(logicCard.style.top.slice(0,-2));
   }
-
-  $GlobalEvents.trigger("global_tree:changed");
-  return this;
 }
 
 function getTree() {
@@ -65,6 +69,18 @@ function setTree(inputTree) {
 function clearTree() {
   GlobalTree = {};
   return this;
+}
+
+function saveTree() {
+  var data = GTC.getTree();
+  var _this = this;
+
+  $.ajax({
+    type: "POST",
+    url: "/save",
+    data: data,
+    success: function() { return _this;}
+  });
 }
 
 function getLogicCard(logicCardID) {
