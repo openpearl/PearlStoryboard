@@ -1,92 +1,10 @@
-#tree-display {
-  padding: 20px;
-  white-space:nowrap;
+#tree-screen {
   width: 100%;
   height: 100%;
-  overflow: scroll;
-
-  &:hover {
-    cursor: grab;
-  }
-
-  &:active {
-    cursor: grabbing;
-  }
+  position: absolute;
 }
 
-.logic-card-block {
-}
-
-.tree-new-level {
-  margin-left: 20px;
-  display: inline-block;
-  white-space:nowrap;
-  vertical-align:top;
-}
-
-.logic-card {
-  width: 300px;
-  display: inline-block;
-  vertical-align:top;
-  margin-bottom: 20px;
-  background-color: white;
-}
-
-.logic-card-content {
-  @extend %sh1;
-  padding: 15px;
-
-
-  & > [contenteditable] {
-    white-space: pre-wrap;
-  }
-}
-
-$card-button-size: 40px;
-
-%card-button {
-
-  width: $card-button-size;
-  height: $card-button-size;
-  border-radius: $card-button-size / 2;
-  @extend %sh1;
-
-  background-color: $blue;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 24px;
-
-  &:hover {
-    @extend %sh2;
-    cursor: pointer;
-  }
-}
-
-.card-buttons-container {
-  margin-left: auto;
-  text-align: right;
-  width: 100%;
-  margin-top: 15px;
-
-  display: inline-block;
-
-}
-
-.add-card-button, .hide-card-button, .delete-card-button {
-  float: right;
-  @extend %card-button;
-  margin-left: 10px;
-}
-
-.hide-card-button {
-  background-color: $brown;
-}
-
-.delete-card-button {
-  background-color: $red;
-  float: left;
-  margin-left: 0;
+#tree-display {
+  -webkit-backface-visibility: initial !important;
+  -webkit-transform-origin: 50% 50%;
 }

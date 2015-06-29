@@ -1,68 +1,106 @@
 var LogicCard = React.createClass({
 
   getInitialState: function() {
+    var _this = this;
+    var uuid = guid();
+
     return {
+      cardID: _this.props.cardID || uuid,
+      childrenCardIDs: _this.props.childrenCardIDs || [],
+      parentCardIDs: _this.props.parentCardIDs || [],
+
+      speaker: _this.props.speaker || "",
+      message: _this.props.message || "",
+
       visible: true,
-      cardId: "",
-      parentCardId: "",
-      speaker: "",
-      message: "",
-      childLogicCards: {}
+      highlight: false,
+
+      xpos: _this.props.xpos || 0,
+      ypos: _this.props.ypos || 0,
     };
   },
 
+  componentDidUpdate: function(prevProps, prevState) {
+    console.log("I just updated!");
+  },
+
+  preventDefault: function(ev) { ev.preventDefault(); },
+
+  // Creates a new card.
   handleAdd: function() {
     var _this = this;
-    var uniqueDateKey = Date.now();
+    var uuid = guid();
 
-    // Add a new logic child to the start of the list.
-    _this.state.childLogicCards[uniqueDateKey] = (
-      <LogicCard card={{}}
-        key={uniqueDateKey} 
-        childCardId={uniqueDateKey}
-        deleteCard={_this.deleteChildCard}/>
-    );
+    var logicCard = document.querySelector('#' + _this.state.cardID);
 
-    _this.setState(_this.state);
+    var xpos = Number(logicCard.style.left.slice(0,-2));
+    var ypos = Number(logicCard.style.top.slice(0,-2)) + 400;
+
+    // Creates a new Logic card and save it into the GlobalTree.
+    GTC.setLogicCard({
+      cardID: uuid,
+      childrenCardIDs: [],
+      parentCardIDs: [_this.state.cardID],
+      speaker: "",
+      message: "",
+      visible: true,
+      highlight: false,
+      xpos: xpos,
+      ypos: ypos
+    });
+
+    // Add new child ID to the parent's reference.
+    var childrenCardIDs = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
+    childrenCardIDs = pushIfUnique(childrenCardIDs, uuid);
+
+    // Bind the child to the parent.
+    GTC.setLogicCard({
+      cardID: _this.state.cardID,
+      childrenCardIDs: childrenCardIDs
+    }).refresh();
   },
 
-  hideChildren: function() {
-    var _this = this;
-
-    _this.state.visible = !_this.state.visible;
-    _this.setState(_this.state);
+  toggleVisibility: function() {
+    GTC.toggleVisibility(_this.state.cardID).refresh();
   },
 
-  // Pass the context back to the parent.
   deleteCard: function() {
-    this.props.deleteCard(this);
+    GTC.deleteLogicCard(this.state.cardID).refresh();
   },
 
-  deleteChildCard: function(childCard) {
-    var _this = this;
-
-    delete _this.state.childLogicCards[childCard.props.childCardId]; 
-    _this.setState(_this.state);
-  },
-
-  preventDefault: function (event) {
-    event.preventDefault();
-  },
-
+  // Handle collecting information when dropping a card from the messageBank.
   handleDrop: function(ev) {
+    ev.preventDefault();
+    console.log("Something was dropped!");
+
+    var _this = this;
+    var data;
+
+    try { data = JSON.parse(ev.dataTransfer.getData('text')); }
+    catch (e) { return; }
+
+    console.log(data);
+    var card = GTC.getLogicCard(_this.state.cardID);
+    card.message = data.message;
+    console.log(card);
+
+    GTC.setLogicCard(card).refresh();
+  },
+
+  handleSelect: function(ev) {
     var _this = this;
     ev.preventDefault();
 
-    var data;
+    console.log("Selected.");
+    $(GlobalEvents).trigger("card:selected", [_this.state.cardID]);
+  },
 
-    try {
-      data = JSON.parse(ev.dataTransfer.getData('text'));
-    } catch (e) {
-      return;
-    }
-    _this.state.cardId = data.bankCardId;
-    _this.state.message = data.message;
-    _this.setState(_this.state);
+  handleMouseEnter: function(ev) {
+    ev.preventDefault();
+  },
+
+  handleMouseLeave: function(ev) {
+    ev.preventDefault();
   },
 
   render: function() {
@@ -76,9 +114,9 @@ var LogicCard = React.createClass({
     var hideButtonStyle;
 
     // Toggle depending on visibility.
+    // TODO: Package or shorten for cleaner code.
     if (_this.state.visible === true) {
       childrenTreeStyle = classNames({
-        'tree-new-level': true,
         'hide': false
       });
       hideButtonStyle = classNames({
@@ -88,7 +126,6 @@ var LogicCard = React.createClass({
       });
     } else {
       childrenTreeStyle = classNames({
-        'tree-new-level': true,
         'hide': true
       });
       hideButtonStyle = classNames({
@@ -99,53 +136,51 @@ var LogicCard = React.createClass({
     }
 
     // Toggle if there are any child logic cards.
-    if ($.isEmptyObject(_this.state.childLogicCards)) {
+    if ($.isEmptyObject(_this.state.childrenCards)) {
       newOrAddButton = <i className="fa fa-arrow-right"></i>;
       hideButton = <div></div>;
     } else {
       newOrAddButton = <i className="fa fa-plus"></i>;
       hideButton = (
-        <div className="hide-card-button" onClick={_this.hideChildren}>
+        <div className="hide-card-button" onClick={_this.toggleVisibility}>
           <i className={hideButtonStyle}></i>
         </div>
       );
     }
 
+    // Draw at the correct location.
+    var positionCSS = {
+      left: _this.state.xpos,
+      top: _this.state.ypos
+    }
+
     return (
-      <div className="logic-card-block" id="testing" >
-        <div className="logic-card">
-          <div className="logic-card-content" 
-            onDragOver={_this.preventDefault}
-            onDrop={_this.handleDrop}>
-            <span>Parent ID: </span>
-            <div contentEditable='true'>{_this.state.parentCardId}</div>
-            <span>ID: </span>
-            <div contentEditable='true'>{_this.state.cardId}</div>
-            <span>Speaker: </span>
-            <div contentEditable='true'>{_this.state.speaker}</div>
-            <span>Message: </span>
-            <div contentEditable='true'>{_this.state.message}</div>
+      <div className="logic-card" 
+        id={_this.state.cardID}
+        style={positionCSS}
+        onClick={_this.handleSelect}>
 
-            <div className="card-buttons-container">
-              <div className="add-card-button" onClick={_this.handleAdd}>
-                {newOrAddButton}
-              </div>
+        <div className="lc-sink"></div>
+        <div className="lc-source"></div>
 
-              {hideButton}
+        <div className="logic-card-content" 
+          onDragOver={_this.preventDefault}
+          onDrop={_this.handleDrop}>
+          <b>{_this.state.speaker}</b>: {_this.state.message}
+        </div>
 
-              <div className="delete-card-button" 
-                onClick={_this.deleteCard}>
-                <i className="fa fa-times"></i>
-              </div>
+        <div className="card-buttons-container">
+          <div className="add-card-button" onClick={_this.handleAdd}>
+            {newOrAddButton}
+          </div>
 
-            </div>
+          {hideButton}
+
+          <div className="delete-card-button" 
+            onClick={_this.deleteCard}>
+            <i className="fa fa-times"></i>
           </div>
         </div>
-
-        <div className={childrenTreeStyle}>
-          {_this.state.childLogicCards}
-        </div>
-
       </div>
     );
   }

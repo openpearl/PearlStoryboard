@@ -1,17 +1,9 @@
 var MessageCard = React.createClass({
 
-  componentDidMount: function() {
-    // console.log(this.props.cardId);    
-  },
-
+  // Handle collecting data for a drag.
   dragStart: function(ev) {
     var _this = this;
-
-    var data = {
-      bankCardId: _this.props.cardId,
-      message: _this.props.message
-    }
-
+    var data = { message: _this.props.message };
     ev.dataTransfer.setData('text', JSON.stringify(data));
   },
 
@@ -20,7 +12,6 @@ var MessageCard = React.createClass({
     return (
       <div className="message-card" draggable="true" 
         onDragStart={_this.dragStart}>
-        <i>{_this.props.cardId}</i> 
         <div>{_this.props.message}</div>
       </div>
     );

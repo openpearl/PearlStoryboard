@@ -1,0 +1,10 @@
+#content-editor {
+  background-color: yellow;
+  width: 100%;
+  padding: 20px;
+
+  & > input {
+    display: block;
+    width: 100%;
+  }
+}
