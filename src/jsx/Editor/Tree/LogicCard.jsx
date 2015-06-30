@@ -12,8 +12,8 @@ var LogicCard = React.createClass({
       speaker: _this.props.speaker || "",
       messages: _this.props.messages || [],
 
+      tagnames: _this.props.tagnames || [],
       conditionals: _this.props.conditionals || [],
-      callbacks: _this.props.conditionals || [],
 
       visible: true,
       highlight: false,

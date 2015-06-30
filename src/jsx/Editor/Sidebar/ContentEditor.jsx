@@ -8,8 +8,8 @@ var ContentEditor = React.createClass({
 
       // These are strings because constant conversion is excessive.
       // Conversion is done later at the save.
+      tagnames: "",
       conditionals: "",
-      callbacks: ""
     };
   },
 
@@ -44,10 +44,10 @@ var ContentEditor = React.createClass({
     var _this = this;
     console.log("Submitting.");
 
-    // Convert the conditionals and callbacks into arrays.
-    if (_this.state.conditionals.splice || _this.state.callbacks.splice) {
+    // Convert the conditionals and tagnames into arrays.
+    if (_this.state.conditionals.splice || _this.state.tagnames.splice) {
       _this.state.conditionals = _this.state.conditionals.splice(',');
-      _this.state.callbacks = _this.state.callbacks.splice(',');
+      _this.state.tagnames = _this.state.tagnames.splice(',');
     }
 
     // Save the data to the tree.
@@ -80,10 +80,10 @@ var ContentEditor = React.createClass({
           value={_this.state.conditionals}
           onChange={_this.handleFormChange}></textarea>
         
-        <span>Callbacks: </span>
-        <textarea id="ce-callbacks" 
-          data-source="callbacks"
-          value={_this.state.callbacks}
+        <span>Tagnames: </span>
+        <textarea id="ce-tagnames" 
+          data-source="tagnames"
+          value={_this.state.tagnames}
           onChange={_this.handleFormChange}></textarea>
         <input type="submit"></input> 
       
