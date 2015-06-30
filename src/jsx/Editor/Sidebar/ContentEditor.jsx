@@ -45,8 +45,11 @@ var ContentEditor = React.createClass({
     console.log("Submitting.");
 
     // Convert the conditionals and tagnames into arrays.
-    if (_this.state.conditionals.splice || _this.state.tagnames.splice) {
+    if (_this.state.conditionals.splice) {
       _this.state.conditionals = _this.state.conditionals.splice(',');
+    }
+
+    if (_this.state.tagnames.splice) {
       _this.state.tagnames = _this.state.tagnames.splice(',');
     }
 
@@ -74,19 +77,19 @@ var ContentEditor = React.createClass({
           value={_this.state.messages}
           onChange={_this.handleFormChange}></textarea>
         
-        <span>Conditionals: </span>
-        <textarea id="ce-conditionals" 
-          data-source="conditionals"
-          value={_this.state.conditionals}
-          onChange={_this.handleFormChange}></textarea>
-        
         <span>Tagnames: </span>
         <textarea id="ce-tagnames" 
           data-source="tagnames"
           value={_this.state.tagnames}
           onChange={_this.handleFormChange}></textarea>
+
+        <span>Conditionals: </span>
+        <textarea id="ce-conditionals" 
+          data-source="conditionals"
+          value={_this.state.conditionals}
+          onChange={_this.handleFormChange}></textarea>
+
         <input type="submit"></input> 
-      
       </form>
     );
   }

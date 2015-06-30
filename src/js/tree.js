@@ -1,21 +1,19 @@
-// Holder for the processed tree document.
-var GlobalTree = {
-  // Requirements:
-  // cardID: String,
-  // childrenCardIDs: [String],
-  // parentCardIDs: [String],
+var $GlobalEvents = $(GlobalEvents); // Global event system.
+var GlobalTree = {}; // Holder for the processed tree document.
+CardSchema = {
+  cardID: "", // String
+  childrenCardIDs: [], // [String]
+  parentCardIDs: [], // [String] 
 
-  // speaker: String,
-  // messages: [String],
+  speaker: "", // String
+  messages: [], // [String]
 
-  // visible: true,
-  // highlight: false,
+  visible: true, // Boolean
+  highlight: false, // Boolean
 
-  // xpos: String,
-  // ypos: String,
-};
-
-var $GlobalEvents = $(GlobalEvents);
+  xpos: 0, // Number
+  ypos: 0, // Number
+}
 
 var GlbTreeProto = function GlbTreeProto() {};
 GlbTreeProto.prototype = {
@@ -69,6 +67,14 @@ function getTree() {
 
 function setTree(inputTree) {
   GlobalTree = inputTree;
+  for (i in GlobalTree) {
+    for (j in GlobalTree[i]) {
+      if (!GlobalTree[i][j]) {
+        GlobalTree[i][j] = [];
+      }
+    }
+  }
+
   return this;
 }
 
@@ -78,8 +84,12 @@ function clearTree() {
 }
 
 function saveTree() {
-  var data = GTC.getTree();
+  var data = GlobalTree;
   var _this = this;
+
+  console.log(GlobalTree['root']);
+  console.log("Saving tree!");
+  console.log(JSON.stringify(data));
 
   $.ajax({
     type: "POST",

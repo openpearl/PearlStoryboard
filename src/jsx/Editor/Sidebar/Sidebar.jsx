@@ -25,14 +25,15 @@ var Sidebar = React.createClass({
   },
 
   saveTree: function() {
-    var data = GTC.getTree();
+    // var data = GTC.getTree();
+    GTC.saveTree();
 
-    $.ajax({
-      type: "POST",
-      url: "/save",
-      data: data,
-      success: function() {}
-    });
+    // $.ajax({
+    //   type: "POST",
+    //   url: "/save",
+    //   data: data,
+    //   success: function() {}
+    // });
 
   },
 
