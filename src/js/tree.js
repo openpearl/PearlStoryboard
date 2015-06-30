@@ -1,7 +1,7 @@
 var $GlobalEvents = $(GlobalEvents); // Global event system.
 var GlobalTree = {}; // Holder for the processed tree document.
 CardSchema = {
-  cardID: "", // String
+  cardID: "default", // String
   childrenCardIDs: [], // [String]
   parentCardIDs: [], // [String] 
 
@@ -67,10 +67,13 @@ function getTree() {
 
 function setTree(inputTree) {
   GlobalTree = inputTree;
+
+  // FIXME: This may be a naive and excessive way of doing things.
+  // Filter to add in missing empty arrays.
   for (i in GlobalTree) {
-    for (j in GlobalTree[i]) {
+    for (j in CardSchema) {
       if (!GlobalTree[i][j]) {
-        GlobalTree[i][j] = [];
+        GlobalTree[i][j] = CardSchema[j];
       }
     }
   }

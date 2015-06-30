@@ -4,23 +4,16 @@ var LogicCard = React.createClass({
     var _this = this;
     var uuid = guid();
 
-    return {
-      cardID: _this.props.cardID || uuid,
-      childrenCardIDs: _this.props.childrenCardIDs || [],
-      parentCardIDs: _this.props.parentCardIDs || [],
+    var initialState = {};
+    for (key in CardSchema) {
+      initialState[key] = _this.props[key] || CardSchema[key];
+    }
 
-      speaker: _this.props.speaker || "",
-      messages: _this.props.messages || [],
+    if (initialState.cardID === "default") {
+      initialState.cardID = uuid;
+    }
 
-      tagnames: _this.props.tagnames || [],
-      conditionals: _this.props.conditionals || [],
-
-      visible: true,
-      highlight: false,
-
-      xpos: _this.props.xpos || 0,
-      ypos: _this.props.ypos || 0,
-    };
+    return initialState;
   },
 
   componentDidMount: function() {
