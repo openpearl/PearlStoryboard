@@ -1,16 +1,7 @@
 var ContentEditor = React.createClass({
 
   getInitialState: function() {
-    return {
-      cardID: "",
-      speaker: "",
-      messages: "",
-
-      // These are strings because constant conversion is excessive.
-      // Conversion is done later at the save.
-      tagnames: "",
-      conditionals: "",
-    };
+    return CardSchema;
   },
 
 
@@ -19,11 +10,7 @@ var ContentEditor = React.createClass({
     $(GlobalEvents).on("card:selected", function(ev, cardID) {
       console.log(cardID + " clicked.");
 
-      var currentCard = GTC.getLogicCard(cardID);
-      _this.state.cardID = cardID;
-      _this.state.speaker = currentCard.speaker;
-      _this.state.messages = currentCard.messages;
-
+      _this.state = GTC.getLogicCard(cardID);
       _this.setState(_this.state);
     });
   },
@@ -36,6 +23,8 @@ var ContentEditor = React.createClass({
     var _this = this;
     var chosenSource = ev.target.getAttribute("data-source");
     _this.state[chosenSource] = ev.target.value;
+
+    console.log(_this.state[chosenSource]);
     _this.setState(_this.state);
   },
 

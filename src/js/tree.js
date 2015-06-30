@@ -8,6 +8,9 @@ CardSchema = {
   speaker: "", // String
   messages: [], // [String]
 
+  tagnames: [], // [String]
+  conditionals: [], // [String]
+
   visible: true, // Boolean
   highlight: false, // Boolean
 
@@ -89,10 +92,6 @@ function clearTree() {
 function saveTree() {
   var data = GlobalTree;
   var _this = this;
-
-  console.log(GlobalTree['root']);
-  console.log("Saving tree!");
-  console.log(JSON.stringify(data));
 
   $.ajax({
     type: "POST",
