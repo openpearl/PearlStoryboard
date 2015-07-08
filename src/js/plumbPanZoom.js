@@ -19,7 +19,7 @@ jsPlumb.ready(function() {
     Anchor: [ "Continuous", { faces:["top","bottom"] }],
     Anchors : [ "Bottom", "Top" ],    
     MaxConnections: 99,
-    Connector: "Straight"
+    Connector: "Flowchart"
   });
 });
 
@@ -75,7 +75,10 @@ module.exports = {
 
         plumbInstance.connect({
           source: cardIDNode, 
-          target: childIDNode
+          target: childIDNode,
+          overlays:[ 
+              ["Arrow" , { width:30, length:30, location:0.9 }]
+          ]
         });
       }
     }
@@ -145,6 +148,9 @@ module.exports = {
       transition: true,
       duration: 500,
       easing: "ease-in-out",
+      minScale: 0.1,
+      maxScale: 2,
+      increment: 0.5
     });
     $panzoom.panzoom('transition');
 
