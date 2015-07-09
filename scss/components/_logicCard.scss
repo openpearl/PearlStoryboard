@@ -21,14 +21,14 @@
 .lc-source {
   @extend %source-sink;
   top: 100%;
-  background-color: red;
+  background-color: $accent_2;
 
 }
 
 .lc-sink {
   @extend %source-sink;
   bottom: 100%;
-  background-color: green;
+  background-color: $primary_3;
 
 }
 
