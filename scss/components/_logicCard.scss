@@ -21,14 +21,14 @@
 .lc-source {
   @extend %source-sink;
   top: 100%;
-  background-color: red;
+  background-color: $accent_2;
 
 }
 
 .lc-sink {
   @extend %source-sink;
   bottom: 100%;
-  background-color: green;
+  background-color: $primary_3;
 
 }
 
@@ -41,7 +41,7 @@ $card-button-size: 40px;
   border-radius: $card-button-size / 2;
   @extend %sh1;
 
-  background-color: $blue;
+  background-color: $primary;
 
   display: flex;
   align-items: center;
@@ -66,9 +66,9 @@ $card-button-size: 40px;
 }
 
 .hide-card-button {
-  background-color: $brown;
+  background-color: $primary_2;
 }
 
 .delete-card-button {
-  background-color: $red;
+  background-color: $accent;
 }

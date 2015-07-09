@@ -9,21 +9,27 @@
   flex: 1;
   height: 100%;
   width: 350px;
+  background-color: $primary;
+  // overflow-y: scroll;
+
+  @extend %sh1;
+  display: flex;
+  flex-direction: column;
 }
 
 #button-storage {
   display: flex;
   flex-direction: column;
-  background-color: $blue;
+  background-color: $primary;
   height: min-content;
   @extend %sh1;
 }
 
 #hiddenForm {
-    display:block;
-    height:0;
-    width:0;
-    visibility: hidden;
+  display:block;
+  height:0;
+  width:0;
+  visibility: hidden;
 }
 
 .bt-menu {

@@ -4,20 +4,16 @@ var LogicCard = React.createClass({
     var _this = this;
     var uuid = guid();
 
-    return {
-      cardID: _this.props.cardID || uuid,
-      childrenCardIDs: _this.props.childrenCardIDs || [],
-      parentCardIDs: _this.props.parentCardIDs || [],
+    var initialState = {};
+    for (key in CardSchema) {
+      initialState[key] = _this.props[key] || CardSchema[key];
+    }
 
-      speaker: _this.props.speaker || "",
-      message: _this.props.message || "",
+    if (initialState.cardID === "default") {
+      initialState.cardID = uuid;
+    }
 
-      visible: true,
-      highlight: false,
-
-      xpos: _this.props.xpos || 0,
-      ypos: _this.props.ypos || 0,
-    };
+    return initialState;
   },
 
   componentDidMount: function() {
@@ -56,7 +52,7 @@ var LogicCard = React.createClass({
       childrenCardIDs: [],
       parentCardIDs: [_this.state.cardID],
       speaker: "",
-      message: "",
+      messages: "",
       visible: true,
       highlight: false,
       xpos: xpos,
@@ -82,7 +78,7 @@ var LogicCard = React.createClass({
     GTC.deleteLogicCard(this.state.cardID).refresh();
   },
 
-  // Handle collecting information when dropping a card from the messageBank.
+  // Handle collecting information when dropping a card from the messagesBank.
   handleDrop: function(ev) {
     ev.preventDefault();
     console.log("Something was dropped!");
@@ -95,7 +91,7 @@ var LogicCard = React.createClass({
 
     console.log(data);
     var card = GTC.getLogicCard(_this.state.cardID);
-    card.message = data.message;
+    card.messages = pushIfUnique(card.messages, data.message);
     console.log(card);
 
     GTC.setLogicCard(card).refresh();
@@ -180,7 +176,7 @@ var LogicCard = React.createClass({
         <div className="lc-source"></div>
 
         <div className="logic-card-content">
-          <b>{_this.state.speaker}</b>: {_this.state.message}
+          <b>{_this.state.speaker}</b>: {_this.state.messages}
         </div>
 
         <div className="card-buttons-container">

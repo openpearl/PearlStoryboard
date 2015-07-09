@@ -10,16 +10,20 @@ jsPlumb.ready(function() {
   plumbInstance.importDefaults({
     PaintStyle : {
       lineWidth:5,
-      strokeStyle: 'rgba(200,0,0,0.5)'
+      strokeStyle: 'rgba(63,81,181,1)'
     },
     DragOptions : { cursor: "crosshair" },
     Endpoint: ["Dot", { radius: 7}],
-    Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
-    EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }],
+    EndpointStyle: { fillStyle: "#303F9F" },
+    // Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
+    // EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }],
     Anchor: [ "Continuous", { faces:["top","bottom"] }],
     Anchors : [ "Bottom", "Top" ],    
     MaxConnections: 99,
-    Connector: "Straight"
+    Connector: "Flowchart",
+    Overlays:[ 
+      ["Arrow" , { width:30, length:30, location: 0.9 }]
+    ]
   });
 });
 
@@ -42,7 +46,6 @@ module.exports = {
 
     // Common endpoint settings.
     var commEndSettings = {
-      endpoint:["Rectangle", { width:20, height:20 }],
       maxConnections: 99,
       anchor: "Continuous",
       onMaxConnections:function(info, originalEvent) {
@@ -72,6 +75,9 @@ module.exports = {
       for (j in childrenCardIDs) {
         var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
         var childIDNode = $(childIDSelector)[0];
+
+        // console.log(childIDSelector);
+        // console.log(childIDNode);
 
         plumbInstance.connect({
           source: cardIDNode, 
@@ -145,6 +151,9 @@ module.exports = {
       transition: true,
       duration: 500,
       easing: "ease-in-out",
+      minScale: 0.1,
+      maxScale: 2,
+      increment: 0.5
     });
     $panzoom.panzoom('transition');
 
