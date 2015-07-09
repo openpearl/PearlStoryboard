@@ -73,6 +73,9 @@ module.exports = {
         var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
         var childIDNode = $(childIDSelector)[0];
 
+        // console.log(childIDSelector);
+        // console.log(childIDNode);
+
         plumbInstance.connect({
           source: cardIDNode, 
           target: childIDNode,

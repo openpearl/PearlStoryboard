@@ -41,7 +41,7 @@ $card-button-size: 40px;
   border-radius: $card-button-size / 2;
   @extend %sh1;
 
-  background-color: $blue;
+  background-color: $primary;
 
   display: flex;
   align-items: center;
@@ -66,9 +66,9 @@ $card-button-size: 40px;
 }
 
 .hide-card-button {
-  background-color: $brown;
+  background-color: $primary_2;
 }
 
 .delete-card-button {
-  background-color: $red;
+  background-color: $accent;
 }
