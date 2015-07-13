@@ -1,4 +1,4 @@
-//plumPanZoom.js
+// plumPanZoom.js
 
 plumbInstance = {};
 
@@ -55,7 +55,7 @@ module.exports = {
     }
 
     // Draw the connectors.
-    plumbInstance.setSuspendDrawing(true);
+    // plumbInstance.setSuspendDrawing(true);
     var currentTree = GTC.getTree();
     for (i in currentTree) {
       var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
@@ -85,8 +85,6 @@ module.exports = {
         });
       }
     }
-
-    plumbInstance.setSuspendDrawing(false, true);
 
     // Bind events to update our models.
     plumbInstance.bind("connection", function(conn, ev) {

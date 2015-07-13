@@ -38,6 +38,7 @@ var LogicCard = React.createClass({
 
   // Creates a new card.
   handleAdd: function() {
+    console.log("handleAdd called.");
     var _this = this;
     var uuid = guid();
 
@@ -60,13 +61,19 @@ var LogicCard = React.createClass({
     });
 
     // Add new child ID to the parent's reference.
-    var childrenCardIDs = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
-    childrenCardIDs = pushIfUnique(childrenCardIDs, uuid);
+    var newChildrenCardIDs 
+      = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
+    
+    // var tempChildrenCardIDs = pushIfUnique(newChildrenCardIDs, uuid);
+    // var tempChildrenCardIDs = newChildrenCardIDs.push(uuid);
+    newChildrenCardIDs = pushIfUnique(newChildrenCardIDs, uuid);
+    console.log(newChildrenCardIDs);
 
     // Bind the child to the parent.
+    // GTC.refresh();
     GTC.setLogicCard({
       cardID: _this.state.cardID,
-      childrenCardIDs: childrenCardIDs
+      childrenCardIDs: newChildrenCardIDs
     }).refresh();
   },
 
