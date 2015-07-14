@@ -1,5 +1,5 @@
 var plumbPanZoom = require('../../../js/plumbPanZoom.js');
-var LogicCard = require('./LogicCard.jsx');
+var LogicCard = require('./LogicCard/LogicCard.jsx');
 
 var Tree = React.createClass({
 

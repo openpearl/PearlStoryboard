@@ -33,6 +33,11 @@ var ContentEditor = React.createClass({
     var _this = this;
     console.log("Submitting.");
 
+    // TODO: Patched code. Refactor this into the state. Why isn't it working?
+    if (_this.state.filters === undefined) {
+      _this.state.filters = "";
+    }
+
     // Convert the filters into arrays.
     if (_this.state.filters.splice) {
       _this.state.filters = _this.state.filters.splice(',');

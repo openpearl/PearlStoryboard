@@ -1,3 +1,5 @@
+var LCMessages = require('./LCMessages.jsx');
+
 var LogicCard = React.createClass({
 
   getInitialState: function() {
@@ -16,7 +18,7 @@ var LogicCard = React.createClass({
     return initialState;
   },
 
-  componentDidMount: function() {
+  componentDidMount: function() { 
     var _this = this;
 
     $(GlobalEvents).on(_this.props.cardID + ":changed", function() {
@@ -171,6 +173,10 @@ var LogicCard = React.createClass({
       top: _this.state.ypos
     }
 
+    // <div className="logic-card-content">
+    //   <b>{_this.state.speaker}</b>: {_this.state.messages}
+    // </div>
+
     return (
       <div className="logic-card" 
         id={_this.state.cardID}
@@ -182,9 +188,8 @@ var LogicCard = React.createClass({
         <div className="lc-sink"></div>
         <div className="lc-source"></div>
 
-        <div className="logic-card-content">
-          <b>{_this.state.speaker}</b>: {_this.state.messages}
-        </div>
+        <div className="lc-speaker">{_this.state.speaker}</div>
+        <LCMessages messages={_this.state.messages}/>
 
         <div className="card-buttons-container">
           <div className="add-card-button" onClick={_this.handleAdd}>
