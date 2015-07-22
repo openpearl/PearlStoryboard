@@ -33,13 +33,14 @@ var ContentEditor = React.createClass({
     var _this = this;
     console.log("Submitting.");
 
-    // Convert the conditionals and tagnames into arrays.
-    if (_this.state.conditionals.splice) {
-      _this.state.conditionals = _this.state.conditionals.splice(',');
+    // TODO: Patched code. Refactor this into the state. Why isn't it working?
+    if (_this.state.filters === undefined) {
+      _this.state.filters = "";
     }
 
-    if (_this.state.tagnames.splice) {
-      _this.state.tagnames = _this.state.tagnames.splice(',');
+    // Convert the filters into arrays.
+    if (_this.state.filters.splice) {
+      _this.state.filters = _this.state.filters.splice(',');
     }
 
     // Save the data to the tree.
@@ -66,16 +67,10 @@ var ContentEditor = React.createClass({
           value={_this.state.messages}
           onChange={_this.handleFormChange}></textarea>
         
-        <span>Tagnames: </span>
-        <textarea id="ce-tagnames" 
-          data-source="tagnames"
-          value={_this.state.tagnames}
-          onChange={_this.handleFormChange}></textarea>
-
-        <span>Conditionals: </span>
-        <textarea id="ce-conditionals" 
-          data-source="conditionals"
-          value={_this.state.conditionals}
+        <span>Filters: </span>
+        <textarea id="ce-filters" 
+          data-source="filters"
+          value={_this.state.filters}
           onChange={_this.handleFormChange}></textarea>
 
         <input type="submit"></input> 

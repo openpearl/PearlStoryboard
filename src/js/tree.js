@@ -8,8 +8,7 @@ CardSchema = {
   speaker: "", // String
   messages: [], // [String]
 
-  tagnames: [], // [String]
-  conditionals: [], // [String]
+  filters: [], // [String]
 
   visible: true, // Boolean
   highlight: false, // Boolean
@@ -112,7 +111,12 @@ function setLogicCard(logicCard) {
   var result = {};
   $.extend(result, GlobalTree[logicCard.cardID], logicCard);
 
+  console.log(logicCard.cardID);
+  console.log(result);
+
   GlobalTree[logicCard.cardID] = result;
+  // console.log(GlobalTree);
+
   return this;
 }
 

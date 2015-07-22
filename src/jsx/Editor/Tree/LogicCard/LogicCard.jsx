@@ -1,3 +1,5 @@
+var LCMessages = require('./LCMessages.jsx');
+
 var LogicCard = React.createClass({
 
   getInitialState: function() {
@@ -16,7 +18,7 @@ var LogicCard = React.createClass({
     return initialState;
   },
 
-  componentDidMount: function() {
+  componentDidMount: function() { 
     var _this = this;
 
     $(GlobalEvents).on(_this.props.cardID + ":changed", function() {
@@ -38,6 +40,7 @@ var LogicCard = React.createClass({
 
   // Creates a new card.
   handleAdd: function() {
+    console.log("handleAdd called.");
     var _this = this;
     var uuid = guid();
 
@@ -60,13 +63,19 @@ var LogicCard = React.createClass({
     });
 
     // Add new child ID to the parent's reference.
-    var childrenCardIDs = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
-    childrenCardIDs = pushIfUnique(childrenCardIDs, uuid);
+    var newChildrenCardIDs 
+      = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
+    
+    // var tempChildrenCardIDs = pushIfUnique(newChildrenCardIDs, uuid);
+    // var tempChildrenCardIDs = newChildrenCardIDs.push(uuid);
+    newChildrenCardIDs = pushIfUnique(newChildrenCardIDs, uuid);
+    console.log(newChildrenCardIDs);
 
     // Bind the child to the parent.
+    // GTC.refresh();
     GTC.setLogicCard({
       cardID: _this.state.cardID,
-      childrenCardIDs: childrenCardIDs
+      childrenCardIDs: newChildrenCardIDs
     }).refresh();
   },
 
@@ -164,6 +173,10 @@ var LogicCard = React.createClass({
       top: _this.state.ypos
     }
 
+    // <div className="logic-card-content">
+    //   <b>{_this.state.speaker}</b>: {_this.state.messages}
+    // </div>
+
     return (
       <div className="logic-card" 
         id={_this.state.cardID}
@@ -175,9 +188,8 @@ var LogicCard = React.createClass({
         <div className="lc-sink"></div>
         <div className="lc-source"></div>
 
-        <div className="logic-card-content">
-          <b>{_this.state.speaker}</b>: {_this.state.messages}
-        </div>
+        <div className="lc-speaker">{_this.state.speaker}</div>
+        <LCMessages messages={_this.state.messages}/>
 
         <div className="card-buttons-container">
           <div className="add-card-button" onClick={_this.handleAdd}>
