@@ -1,12 +1,16 @@
+var editor = {};
+
 var ContentEditor = React.createClass({
 
   getInitialState: function() {
-    return CardSchema;
+    return CardSchemaDefaults;
   },
-
 
   componentDidMount: function() {
     var _this = this;
+
+    // editor = new JSONEditor(document.getElementById('editor-holder'), ) 
+
     $(GlobalEvents).on("card:selected", function(ev, cardID) {
       console.log(cardID + " clicked.");
 
@@ -17,6 +21,7 @@ var ContentEditor = React.createClass({
 
   componentWillUnmount: function() {
     $(GlobalEvents).off("card:selected");
+    editor.destroy();
   },
 
   handleFormChange: function(ev) {
