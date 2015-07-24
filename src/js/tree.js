@@ -2,55 +2,24 @@ var $GlobalEvents = $(GlobalEvents); // Global event system.
 var GlobalTree = {}; // Holder for the processed tree document.
 
 CardSchema = {
-  "type": "object",
-  "properties": {
-    "cardID": {
-      "type": "string"
-    },
-    "childrenCardIDs": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "parentCardIDs": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "speaker": {
-      "type": "string"
-    },
-    "cardBody": {
-      "type": "object",
-      "properties": {
-        "messages": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    }
-  }
-};
-
-CardSchemaDefaults = {
   cardID: "default", // String
   childrenCardIDs: [], // [String]
   parentCardIDs: [], // [String] 
 
   speaker: "", // String
-  messages: [], // [String]
-
   filters: [], // [String]
 
-  visible: true, // Boolean
-  highlight: false, // Boolean
+  cardBody: {
+    messages: [], // [String]  
+  },
 
-  xpos: 0, // Number
-  ypos: 0, // Number
+  ui: { // Only for visualization. Will get removed on final save.
+    visible: true, // Boolean
+    highlight: false, // Boolean
+
+    xpos: 0, // Number
+    ypos: 0, // Number  
+  }
 };
 
 var GlbTreeProto = function GlbTreeProto() {};
@@ -109,9 +78,9 @@ function setTree(inputTree) {
   // FIXME: This may be a naive and excessive way of doing things.
   // Filter to add in missing empty arrays.
   for (var i in GlobalTree) {
-    for (var j in CardSchemaDefaults) {
+    for (var j in CardSchema) {
       if (!GlobalTree[i][j]) {
-        GlobalTree[i][j] = CardSchemaDefaults[j];
+        GlobalTree[i][j] = CardSchema[j];
       }
     }
   }

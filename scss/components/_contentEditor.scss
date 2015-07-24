@@ -2,8 +2,9 @@
   width: 100%;
   padding: 20px;
   // color: rgba(255,255,255,.7);
-  color: white;
-  background-color: $primary_2;
+  // color: white;
+  // background-color: $primary_2;
+  background-color: white;
 
   & > textarea {
     display: block;
@@ -13,4 +14,29 @@
 
   & > span {
   }
+
+  .fa {
+    color: black;
+  }
+
+  div {
+    border: 0px !important;
+  }
+
+  input {
+    width: 100%;
+  }
+}
+
+.json-editor-btn-edit, 
+.json-editor-btn-collapse,
+.json-editor-btn-add, 
+.json-editor-btn-delete,
+.json-editor-btn-movedown,
+.json-editor-btn-moveup {
+  border-radius: 0 !important;
+  border: 0;
+  background-color: white;
+  @extend %sh1;
+  margin-right: 10px;
 }

@@ -7,8 +7,8 @@ var LogicCard = React.createClass({
     var uuid = guid();
 
     var initialState = {};
-    for (key in CardSchemaDefaults) {
-      initialState[key] = _this.props[key] || CardSchemaDefaults[key];
+    for (key in CardSchema) {
+      initialState[key] = _this.props[key] || CardSchema[key];
     }
 
     if (initialState.cardID === "default") {
