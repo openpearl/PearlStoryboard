@@ -134,7 +134,7 @@ var LogicCard = React.createClass({
 
     // Toggle depending on visibility.
     // TODO: Package or shorten for cleaner code.
-    if (_this.state.visible === true) {
+    if (_this.state.ui.visible === true) {
       childrenTreeStyle = classNames({
         'hide': false
       });
@@ -169,8 +169,8 @@ var LogicCard = React.createClass({
 
     // Draw at the correct location.
     var positionCSS = {
-      left: _this.state.xpos,
-      top: _this.state.ypos
+      left: _this.state.ui.xpos,
+      top: _this.state.ui.ypos
     }
 
     // <div className="logic-card-content">
@@ -189,7 +189,7 @@ var LogicCard = React.createClass({
         <div className="lc-source"></div>
 
         <div className="lc-speaker">{_this.state.speaker}</div>
-        <LCMessages messages={_this.state.messages}/>
+        <LCMessages messages={_this.state.ui.messages}/>
 
         <div className="card-buttons-container">
           <div className="add-card-button" onClick={_this.handleAdd}>

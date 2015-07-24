@@ -46,6 +46,8 @@ var Tree = React.createClass({
     logicCardViews = {};
 
     var currentTree = GTC.getTree();
+    console.log(currentTree);
+
     for (i in currentTree) {
 
       // This uuid is different from the cardID; otherwise the virtual DOM
@@ -59,6 +61,8 @@ var Tree = React.createClass({
 
       logicCardViews[i] = React.createElement(LogicCard, settings);
     }
+
+    console.log(logicCardViews);
 
     return (
       <div id="tree-screen" tabIndex="1">

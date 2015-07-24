@@ -2,7 +2,7 @@ var $GlobalEvents = $(GlobalEvents); // Global event system.
 var GlobalTree = {}; // Holder for the processed tree document.
 
 CardSchema = {
-  cardID: "default", // String
+  cardID: "root", // String
   childrenCardIDs: [], // [String]
   parentCardIDs: [], // [String] 
 
@@ -17,8 +17,8 @@ CardSchema = {
     visible: true, // Boolean
     highlight: false, // Boolean
 
-    xpos: 0, // Number
-    ypos: 0, // Number  
+    xpos: 300, // Number
+    ypos: 300, // Number  
   }
 };
 
@@ -62,13 +62,18 @@ function savePos() {
       // $GlobalEvents.trigger("global_tree:changed");
       // return this;
     } else {
-      GlobalTree[i].xpos = Number(logicCard.style.left.slice(0,-2));
-      GlobalTree[i].ypos = Number(logicCard.style.top.slice(0,-2));
+      GlobalTree[i].ui.xpos = Number(logicCard.style.left.slice(0,-2));
+      GlobalTree[i].ui.ypos = Number(logicCard.style.top.slice(0,-2));
     }
   }
 }
 
 function getTree() {
+  if ($.isEmptyObject(GlobalTree)) {
+    GlobalTree.root = CardSchema;
+  }
+
+  console.log(GlobalTree);
   return GlobalTree;
 }
 
@@ -158,7 +163,7 @@ function deleteLogicCard(logicCardID) {
 }
 
 function toggleVisibility(logicCardID) {
-  GlobalTree[logicCardID].visible = !GlobalTree[logicCardID].visible;
+  GlobalTree[logicCardID].ui.visible = !GlobalTree[logicCardID].ui.visible;
   var childrenCardIDs = GlobalTree[logicCardID].childrenCardIDs;
   
   // Base case.

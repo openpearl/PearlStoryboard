@@ -52,12 +52,12 @@ module.exports = {
         console.log("element is ", info.element, "maxConnections is", 
           info.maxConnections); 
       }
-    }
+    };
 
     // Draw the connectors.
     plumbInstance.setSuspendDrawing(true);
     var currentTree = GTC.getTree();
-    for (i in currentTree) {
+    for (var i in currentTree) {
       var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
       var cardIDNode = $(cardIDSelector);
       plumbInstance.makeSource(cardIDNode, {isSource: true}, commEndSettings);
@@ -67,13 +67,13 @@ module.exports = {
       plumbInstance.makeTarget(childIDNode, {isTarget: true}, commEndSettings);
     }
 
-    for (i in currentTree) {
-      var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
+    for (var j in currentTree) {
+      var cardIDSelector = '#' + currentTree[j].cardID + ' .lc-source';
       var cardIDNode = $(cardIDSelector)[0];
       
       var childrenCardIDs = currentTree[i].childrenCardIDs;
-      for (j in childrenCardIDs) {
-        var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
+      for (var k in childrenCardIDs) {
+        var childIDSelector = '#' + childrenCardIDs[k] + ' .lc-sink';
         var childIDNode = $(childIDSelector)[0];
 
         // console.log(childIDSelector);
@@ -140,6 +140,8 @@ module.exports = {
   },
 
   panzoom: function() {
+    console.log("panzoom");
+
     $treeScreen = $("#tree-screen");
     $treeDisplay = $("#tree-display");
 
@@ -165,6 +167,7 @@ module.exports = {
       switch(code) {
         // TODO: Refactor the q button to go elsewhere.
         case 81: // q
+          // console.log("q pressed.");
           $(GlobalEvents).trigger("sidebar:toggle");
           break;
         case 87: // w
