@@ -70,11 +70,19 @@ var ContentEditor = React.createClass({
     filters.setValue(card.filters);
   },
 
+  _saveEditor: function(ev) {
+    console.log("Hello world!");
+  },
+
   render: function() {
     var _this = this;
 
     return (
-      <div id="content-editor">
+      <div>
+        <div id="content-editor"></div>
+        <button id="content-editor-submit" onClick={_this._saveEditor}>
+          Submit
+        </button>
       </div>
     );
   }
