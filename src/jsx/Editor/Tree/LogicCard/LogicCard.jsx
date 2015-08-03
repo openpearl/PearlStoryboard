@@ -50,16 +50,25 @@ var LogicCard = React.createClass({
     var ypos = Number(logicCard.style.top.slice(0,-2)) + 400;
 
     // Creates a new Logic card and save it into the GlobalTree.
+    // GTC.setLogicCard({
+    //   cardID: uuid,
+    //   childrenCardIDs: [],
+    //   parentCardIDs: [_this.state.cardID],
+    //   speaker: "",
+    //   messages: "",
+    //   visible: true,
+    //   highlight: false,
+    //   xpos: xpos,
+    //   ypos: ypos
+    // });
+    
     GTC.setLogicCard({
       cardID: uuid,
-      childrenCardIDs: [],
       parentCardIDs: [_this.state.cardID],
-      speaker: "",
-      messages: "",
-      visible: true,
-      highlight: false,
-      xpos: xpos,
-      ypos: ypos
+      ui: {
+        xpos: xpos,
+        ypos: ypos
+      }
     });
 
     // Add new child ID to the parent's reference.

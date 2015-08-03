@@ -6,7 +6,13 @@ var ContentEditorSchema = {
     "speaker": {
       "type": "string"
     },
-        "filters": {
+    "filters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inputs": {
       "type": "array",
       "items": {
         "type": "string"
@@ -53,15 +59,14 @@ var ContentEditor = React.createClass({
     });
 
     // Keyboard enter.
-    // $(editorElement).bind("keypress", function(e) {
-    // editor.on("change", function() {
-    //   console.log(e);
-    //   var code = e.keyCode || e.which;
-    //   if (e.keyCode === 13) {
-    //     console.log("Enter pressed.");
-    //     _this._saveEditor();
-    //   }
-    // });
+    $(editorElement).bind("keypress", function(e) {
+      var code = e.keyCode || e.which;
+      if (e.keyCode === 13) {
+        console.log("Enter pressed.");
+        // Need a timeout to allow for saving first.
+        setTimeout(_this._saveEditor, 1);
+      }
+    });
   },
 
   componentWillUnmount: function() {
@@ -76,10 +81,12 @@ var ContentEditor = React.createClass({
     var speaker = editor.getEditor('root.speaker');
     var cardBody = editor.getEditor('root.cardBody');
     var filters = editor.getEditor('root.filters');
+    var inputs = editor.getEditor('root.inputs');
 
     speaker.setValue(card.speaker);
     cardBody.setValue(card.cardBody);
     filters.setValue(card.filters);
+    inputs.setValue(card.inputs);
 
     _this.state.cardID = card.cardID;
     _this.setState(_this.state);
@@ -100,12 +107,7 @@ var ContentEditor = React.createClass({
     var _this = this;
 
     return (
-      <div>
-        <div id="content-editor"></div>
-        <button id="content-editor-submit" onClick={_this._saveEditor}>
-          Submit
-        </button>
-      </div>
+      <div id="content-editor"></div>
     );
   }
 });

@@ -76,8 +76,8 @@ module.exports = {
         var childIDSelector = '#' + childrenCardIDs[k] + ' .lc-sink';
         var childIDNode = $(childIDSelector)[0];
 
-        console.log(childIDSelector);
-        console.log(childIDNode);
+        // console.log(childIDSelector);
+        // console.log(childIDNode);
 
         plumbInstance.connect({
           source: cardIDNode, 
@@ -133,8 +133,8 @@ module.exports = {
     });
 
     var draggables = [];
-    for (k in currentTree) {
-      draggables.push($('#' + currentTree[k].cardID));
+    for (var l in currentTree) {
+      draggables.push($('#' + currentTree[l].cardID));
     }
     plumbInstance.draggable(draggables);
   },

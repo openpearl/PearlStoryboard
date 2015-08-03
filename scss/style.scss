@@ -12,11 +12,11 @@
 @import "base/base";
 
 // Components.
-@import "components/editor";
+@import "_components/editor";
 
-@import "components/sidebar";
-@import "components/contentEditor";
-@import "components/messageBank";
+@import "_components/sidebar";
+@import "_components/contentEditor";
+@import "_components/messageBank";
 
-@import "components/tree";
-@import "components/logicCard";
+@import "_components/tree";
+@import "_components/logicCard";

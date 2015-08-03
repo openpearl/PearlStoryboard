@@ -8,6 +8,7 @@ CardSchema = {
 
   speaker: "", // String
   filters: [], // [String]
+  inputs: [], // [String]
 
   cardBody: {
     messages: [], // [String]  
@@ -119,7 +120,9 @@ function setLogicCard(logicCard) {
 
   // Update the logic card.
   var result = {};
-  $.extend(result, GlobalTree[logicCard.cardID], logicCard);
+  var cardInData = GlobalTree[logicCard.cardID];
+  if (cardInData === undefined) { cardInData = CardSchema; }
+  $.extend(true, result, cardInData, logicCard);
 
   // console.log(logicCard.cardID);
   // console.log(result);
