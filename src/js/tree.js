@@ -73,7 +73,7 @@ function getTree() {
     GlobalTree.root = CardSchema;
   }
 
-  console.log(GlobalTree);
+  // console.log(GlobalTree);
   return GlobalTree;
 }
 
@@ -121,8 +121,8 @@ function setLogicCard(logicCard) {
   var result = {};
   $.extend(result, GlobalTree[logicCard.cardID], logicCard);
 
-  console.log(logicCard.cardID);
-  console.log(result);
+  // console.log(logicCard.cardID);
+  // console.log(result);
 
   GlobalTree[logicCard.cardID] = result;
   // console.log(GlobalTree);

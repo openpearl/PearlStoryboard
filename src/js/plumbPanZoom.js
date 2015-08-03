@@ -71,13 +71,13 @@ module.exports = {
       var cardIDSelector = '#' + currentTree[j].cardID + ' .lc-source';
       var cardIDNode = $(cardIDSelector)[0];
       
-      var childrenCardIDs = currentTree[i].childrenCardIDs;
+      var childrenCardIDs = currentTree[j].childrenCardIDs;
       for (var k in childrenCardIDs) {
         var childIDSelector = '#' + childrenCardIDs[k] + ' .lc-sink';
         var childIDNode = $(childIDSelector)[0];
 
-        // console.log(childIDSelector);
-        // console.log(childIDNode);
+        console.log(childIDSelector);
+        console.log(childIDNode);
 
         plumbInstance.connect({
           source: cardIDNode, 

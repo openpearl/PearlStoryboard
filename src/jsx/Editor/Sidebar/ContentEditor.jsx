@@ -54,14 +54,14 @@ var ContentEditor = React.createClass({
 
     // Keyboard enter.
     // $(editorElement).bind("keypress", function(e) {
-    editor.on("change", function() {
-      console.log(e);
-      var code = e.keyCode || e.which;
-      if (e.keyCode === 13) {
-        console.log("Enter pressed.");
-        _this._saveEditor();
-      }
-    });
+    // editor.on("change", function() {
+    //   console.log(e);
+    //   var code = e.keyCode || e.which;
+    //   if (e.keyCode === 13) {
+    //     console.log("Enter pressed.");
+    //     _this._saveEditor();
+    //   }
+    // });
   },
 
   componentWillUnmount: function() {
