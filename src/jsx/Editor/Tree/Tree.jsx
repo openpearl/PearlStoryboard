@@ -53,7 +53,7 @@ var Tree = React.createClass({
       // This uuid is different from the cardID; otherwise the virtual DOM
       // gets confused.
       var uuid = guid();
-      var settings = {}
+      var settings = {};
       $.extend(settings, currentTree[i], {
         key: uuid, 
         ref: currentTree[i].cardID

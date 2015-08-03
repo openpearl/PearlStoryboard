@@ -173,10 +173,6 @@ var LogicCard = React.createClass({
       top: _this.state.ui.ypos
     }
 
-    // <div className="logic-card-content">
-    //   <b>{_this.state.speaker}</b>: {_this.state.messages}
-    // </div>
-
     return (
       <div className="logic-card" 
         id={_this.state.cardID}
@@ -189,7 +185,7 @@ var LogicCard = React.createClass({
         <div className="lc-source"></div>
 
         <div className="lc-speaker">{_this.state.speaker}</div>
-        <LCMessages messages={_this.state.ui.messages}/>
+        <LCMessages messages={_this.state.cardBody.messages}/>
 
         <div className="card-buttons-container">
           <div className="add-card-button" onClick={_this.handleAdd}>

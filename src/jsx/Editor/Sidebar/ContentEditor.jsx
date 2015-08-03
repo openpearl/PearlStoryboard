@@ -51,6 +51,17 @@ var ContentEditor = React.createClass({
       _this._populateEditor(_this.state);      
       _this.setState(_this.state);
     });
+
+    // Keyboard enter.
+    // $(editorElement).bind("keypress", function(e) {
+    editor.on("change", function() {
+      console.log(e);
+      var code = e.keyCode || e.which;
+      if (e.keyCode === 13) {
+        console.log("Enter pressed.");
+        _this._saveEditor();
+      }
+    });
   },
 
   componentWillUnmount: function() {
@@ -60,6 +71,7 @@ var ContentEditor = React.createClass({
 
   _populateEditor: function(card) {
     // TODO: This code isn't DRY.
+    var _this = this;
 
     var speaker = editor.getEditor('root.speaker');
     var cardBody = editor.getEditor('root.cardBody');
@@ -68,10 +80,20 @@ var ContentEditor = React.createClass({
     speaker.setValue(card.speaker);
     cardBody.setValue(card.cardBody);
     filters.setValue(card.filters);
+
+    _this.state.cardID = card.cardID;
+    _this.setState(_this.state);
   },
 
   _saveEditor: function(ev) {
-    console.log("Hello world!");
+    var _this = this;
+
+    console.log("Saving the content in the editor.");
+    var contentSnapshot = editor.getValue();
+    console.log(contentSnapshot);
+
+    contentSnapshot.cardID = _this.state.cardID;
+    GTC.setLogicCard(contentSnapshot).refresh();
   },
 
   render: function() {
