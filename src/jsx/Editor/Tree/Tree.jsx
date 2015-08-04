@@ -46,7 +46,7 @@ var Tree = React.createClass({
     logicCardViews = {};
 
     var currentTree = GTC.getTree();
-    console.log(currentTree);
+    // console.log(currentTree);
 
     for (i in currentTree) {
 
@@ -62,7 +62,7 @@ var Tree = React.createClass({
       logicCardViews[i] = React.createElement(LogicCard, settings);
     }
 
-    console.log(logicCardViews);
+    // console.log(logicCardViews);
 
     return (
       <div id="tree-screen" tabIndex="1">

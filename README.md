@@ -19,8 +19,8 @@ The most important concept and purpose for this tool is card design. Cards act a
 
 ```
 // This is the key as well as the cardID.
-"uuid_31f6e7046976d442": {
-  cardID: "uuid_31f6e7046976d442",
+"id_31f6e7046976d442": {
+  cardID: "id_31f6e7046976d442",
 
   parentCardIDs: [],
   childrenCardIDs: [],

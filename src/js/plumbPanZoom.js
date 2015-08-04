@@ -136,7 +136,33 @@ module.exports = {
     for (var l in currentTree) {
       draggables.push($('#' + currentTree[l].cardID));
     }
-    plumbInstance.draggable(draggables);
+
+    plumbInstance.draggable(draggables, {
+      start:function(params) {
+        // console.log("Dragging has started!");
+        // console.log(params.el.id);
+        // var subTreeDraggables = GTC.getSubTree(params.el.id);
+        // console.log(subTreeDraggables);
+        // plumbInstance.addToDragSelection(subTreeDraggables);
+      },
+      drag:function(params) {
+
+      },
+      stop:function(params) {
+        // plumbInstance.clearDragSelection();
+      }
+    });
+
+    // Allows for group dragging.
+    // plumbInstance.bind("connectionMoved", function(conn, ev) {
+    //   console.log("Dragging has started.");
+    //   console.log(conn);
+    // });
+
+    // plumbInstance.bind("connectionDragStop", function(conn, ev) {
+    //   console.log("Dragging has stopped.");
+    //   console.log(conn);
+    // });
   },
 
   panzoom: function() {

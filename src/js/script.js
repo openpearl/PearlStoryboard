@@ -40,8 +40,8 @@ var refreshTreeView = function() {
     dataType: "json",
     success: function(_data) {
       data = _data;
-      console.log(typeof data);
-      console.log(data);
+      // console.log(typeof data);
+      // console.log(data);
       if (data === null) {
         data = CardSchema;        
       }

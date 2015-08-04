@@ -33,6 +33,8 @@ GlbTreeProto.prototype = {
   saveTree: saveTree,
   clearTree: clearTree,
 
+  getSubTree: getSubTree,
+
   getLogicCard: getLogicCard,
   setLogicCard: setLogicCard,
   deleteLogicCard: deleteLogicCard,
@@ -109,6 +111,30 @@ function saveTree() {
     data: data,
     success: function() { return _this;}
   });
+}
+
+function getSubTree(logicCardID) {
+  var card = GlobalTree[logicCardID];
+
+  // Base case.
+  if (card.childrenCardIDs === undefined) {
+    return [card.cardID];
+  } else {
+    if (card.childrenCardIDs.length === 0) {
+      return [card.cardID];
+    }
+  }
+
+  // Recursively locate all children.
+  var biggerSubTree = [card.cardID];
+  for (var i in card.childrenCardIDs) {
+    var subTreeCards = getSubTree(card.childrenCardIDs[i]);    
+    biggerSubTree = biggerSubTree.concat(subTreeCards);
+  }
+
+  // Propogate recursion to the top.
+  console.log("Hit.");
+  return biggerSubTree;
 }
 
 function getLogicCard(logicCardID) {

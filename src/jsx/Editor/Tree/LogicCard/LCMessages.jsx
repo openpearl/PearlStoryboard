@@ -13,7 +13,7 @@ var LCMessages = React.createClass({
       messagesHolderUI.push(<li>{_this.props.messages[i]}</li>);
     }
 
-    console.log(messagesHolderUI);
+    // console.log(messagesHolderUI);
 
     return (
       <div className="lc-messages">
@@ -28,4 +28,3 @@ var LCMessages = React.createClass({
 });
 
 module.exports = LCMessages;
- 
