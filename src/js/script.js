@@ -32,16 +32,32 @@ var routes = (
 );
 
 // Start rendering React only when documents have been loaded.
-refreshTreeView = function() {
+var refreshTreeView = function() {
+  var data;
   $.ajax({
     type: "GET",
     url: "files/input.json",
     dataType: "json",
-    success: function(data) {
+    success: function(_data) {
+      data = _data;
+      // console.log(typeof data);
+      // console.log(data);
+      if (data === null) {
+        data = CardSchema;        
+      }
+
       GTC.setTree(data).refresh();
       Router.run(routes, function (Handler) {
         React.render(<Handler/>, document.getElementById('content'));
       });
+    },
+    error: function(_error) {
+      data = CardSchema;
+      GTC.setTree(data).refresh();
+      Router.run(routes, function (Handler) {
+        React.render(<Handler/>, document.getElementById('content'));
+      });
+      console.log(_error);
     }
   });
 }

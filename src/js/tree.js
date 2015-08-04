@@ -1,21 +1,27 @@
 var $GlobalEvents = $(GlobalEvents); // Global event system.
 var GlobalTree = {}; // Holder for the processed tree document.
+
 CardSchema = {
-  cardID: "default", // String
+  cardID: "root", // String
   childrenCardIDs: [], // [String]
   parentCardIDs: [], // [String] 
 
   speaker: "", // String
-  messages: [], // [String]
-
   filters: [], // [String]
+  inputs: [], // [String]
 
-  visible: true, // Boolean
-  highlight: false, // Boolean
+  cardBody: {
+    messages: [], // [String]  
+  },
 
-  xpos: 0, // Number
-  ypos: 0, // Number
-}
+  ui: { // Only for visualization. Will get removed on final save.
+    visible: true, // Boolean
+    highlight: false, // Boolean
+
+    xpos: 300, // Number
+    ypos: 300, // Number  
+  }
+};
 
 var GlbTreeProto = function GlbTreeProto() {};
 GlbTreeProto.prototype = {
@@ -27,6 +33,8 @@ GlbTreeProto.prototype = {
   saveTree: saveTree,
   clearTree: clearTree,
 
+  getSubTree: getSubTree,
+
   getLogicCard: getLogicCard,
   setLogicCard: setLogicCard,
   deleteLogicCard: deleteLogicCard,
@@ -36,7 +44,7 @@ GlbTreeProto.prototype = {
 
 var GlbTreeCtrl = function GlbTreeCtrl() {
   return new GlbTreeProto();
-}
+};
 
 function done(callback) {
   callback();
@@ -50,20 +58,25 @@ function refresh() {
 
 function savePos() {
   // Save positions of all nodes.
-  for (i in GlobalTree) {
+  for (var i in GlobalTree) {
     var logicCard = document.querySelector('#' + i);
     if (logicCard === null) {
       // TODO: Figure out what this does.
       // $GlobalEvents.trigger("global_tree:changed");
       // return this;
     } else {
-      GlobalTree[i].xpos = Number(logicCard.style.left.slice(0,-2));
-      GlobalTree[i].ypos = Number(logicCard.style.top.slice(0,-2));
+      GlobalTree[i].ui.xpos = Number(logicCard.style.left.slice(0,-2));
+      GlobalTree[i].ui.ypos = Number(logicCard.style.top.slice(0,-2));
     }
   }
 }
 
 function getTree() {
+  if ($.isEmptyObject(GlobalTree)) {
+    GlobalTree.root = CardSchema;
+  }
+
+  // console.log(GlobalTree);
   return GlobalTree;
 }
 
@@ -72,8 +85,8 @@ function setTree(inputTree) {
 
   // FIXME: This may be a naive and excessive way of doing things.
   // Filter to add in missing empty arrays.
-  for (i in GlobalTree) {
-    for (j in CardSchema) {
+  for (var i in GlobalTree) {
+    for (var j in CardSchema) {
       if (!GlobalTree[i][j]) {
         GlobalTree[i][j] = CardSchema[j];
       }
@@ -100,6 +113,30 @@ function saveTree() {
   });
 }
 
+function getSubTree(logicCardID) {
+  var card = GlobalTree[logicCardID];
+
+  // Base case.
+  if (card.childrenCardIDs === undefined) {
+    return [card.cardID];
+  } else {
+    if (card.childrenCardIDs.length === 0) {
+      return [card.cardID];
+    }
+  }
+
+  // Recursively locate all children.
+  var biggerSubTree = [card.cardID];
+  for (var i in card.childrenCardIDs) {
+    var subTreeCards = getSubTree(card.childrenCardIDs[i]);    
+    biggerSubTree = biggerSubTree.concat(subTreeCards);
+  }
+
+  // Propogate recursion to the top.
+  console.log("Hit.");
+  return biggerSubTree;
+}
+
 function getLogicCard(logicCardID) {
   return GlobalTree[logicCardID];
 }
@@ -109,10 +146,12 @@ function setLogicCard(logicCard) {
 
   // Update the logic card.
   var result = {};
-  $.extend(result, GlobalTree[logicCard.cardID], logicCard);
+  var cardInData = GlobalTree[logicCard.cardID];
+  if (cardInData === undefined) { cardInData = CardSchema; }
+  $.extend(true, result, cardInData, logicCard);
 
-  console.log(logicCard.cardID);
-  console.log(result);
+  // console.log(logicCard.cardID);
+  // console.log(result);
 
   GlobalTree[logicCard.cardID] = result;
   // console.log(GlobalTree);
@@ -128,7 +167,7 @@ function deleteLogicCard(logicCardID) {
   console.log(childrenCardIDs);
 
   // Remove the associated ID from parents.
-  for (i in parentCardIDs) {
+  for (var i in parentCardIDs) {
     var parentCard = GlobalTree[parentCardIDs[i]];
     if (parentCard) {
       var index = parentCard.childrenCardIDs.indexOf(logicCardID);
@@ -138,7 +177,7 @@ function deleteLogicCard(logicCardID) {
   }
 
   // And do the same for the children.
-  for (j in childrenCardIDs) {
+  for (var j in childrenCardIDs) {
     var childCard = GlobalTree[childrenCardIDs[j]];
     if (childCard) {
       var index = childCard.parentCardIDs.indexOf(logicCardID);
@@ -153,14 +192,14 @@ function deleteLogicCard(logicCardID) {
 }
 
 function toggleVisibility(logicCardID) {
-  GlobalTree[logicCardID].visible = !GlobalTree[logicCardID].visible;
+  GlobalTree[logicCardID].ui.visible = !GlobalTree[logicCardID].ui.visible;
   var childrenCardIDs = GlobalTree[logicCardID].childrenCardIDs;
   
   // Base case.
   if (childrenCardIDs.length === 0) { return; }
 
   // Recurse.
-  for (i in childrenCardIDs) {
+  for (var i in childrenCardIDs) {
     GlbTreeCtrl.toggleVisibility(childrenCardIDs[i]);
   }
 

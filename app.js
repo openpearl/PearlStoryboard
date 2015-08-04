@@ -52,19 +52,26 @@ app.get('/', function (req, res) {
 });
 
 app.post('/save', function (req, res) {
-  var stringed = JSON.stringify(req.body);
-
+  var tree = req.body;
+  var stringed = JSON.stringify(tree);
   fs.writeFile('./files/input.json', stringed, function (err) {
     if (err) return console.log(err);
     console.log('file saved!');
-
     res.status(200).end();
   });
 
+  for (var card in tree) {
+    delete tree[card].ui;
+  }
+  var miniStringed = JSON.stringify(tree);
+  fs.writeFile('./files/input.min.json', miniStringed, function (err) {
+    if (err) return console.log(err);
+    console.log("min file saved!");    
+  });
 });
 
 app.post('/files/processedTree', function (req, res) {
-  if (done==true) {
+  if (done === true) {
     res.redirect('/');    
   }
 });

@@ -1,80 +1,113 @@
+var editor = {};
+var ContentEditorSchema = {
+  "title": "Card Editor",
+  "type": "object",
+  "properties": {
+    "speaker": {
+      "type": "string"
+    },
+    "filters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cardBody": {
+      "type": "object",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+};
+
 var ContentEditor = React.createClass({
 
   getInitialState: function() {
     return CardSchema;
   },
 
-
   componentDidMount: function() {
     var _this = this;
+
+    var editorElement = document.getElementById('content-editor');
+    var editorOptions = {
+      schema: ContentEditorSchema,
+      iconlib: "fontawesome4"
+    };
+
+    editor = new JSONEditor(editorElement, editorOptions);
+    editor.disable();
+
     $(GlobalEvents).on("card:selected", function(ev, cardID) {
       console.log(cardID + " clicked.");
-
+      editor.enable();
       _this.state = GTC.getLogicCard(cardID);
+      _this._populateEditor(_this.state);      
       _this.setState(_this.state);
+    });
+
+    // Keyboard enter.
+    $(editorElement).bind("keypress", function(e) {
+      var code = e.keyCode || e.which;
+      if (e.keyCode === 13) {
+        console.log("Enter pressed.");
+        // Need a timeout to allow for saving first.
+        setTimeout(_this._saveEditor, 1);
+      }
     });
   },
 
   componentWillUnmount: function() {
+    editor.destroy();
     $(GlobalEvents).off("card:selected");
   },
 
-  handleFormChange: function(ev) {
+  _populateEditor: function(card) {
+    // TODO: This code isn't DRY.
     var _this = this;
-    var chosenSource = ev.target.getAttribute("data-source");
-    _this.state[chosenSource] = ev.target.value;
 
-    console.log(_this.state[chosenSource]);
+    var speaker = editor.getEditor('root.speaker');
+    var cardBody = editor.getEditor('root.cardBody');
+    var filters = editor.getEditor('root.filters');
+    var inputs = editor.getEditor('root.inputs');
+
+    speaker.setValue(card.speaker);
+    cardBody.setValue(card.cardBody);
+    filters.setValue(card.filters);
+    inputs.setValue(card.inputs);
+
+    _this.state.cardID = card.cardID;
     _this.setState(_this.state);
   },
 
-  handleSubmit: function(ev) {
-    ev.preventDefault();
+  _saveEditor: function(ev) {
     var _this = this;
-    console.log("Submitting.");
 
-    // TODO: Patched code. Refactor this into the state. Why isn't it working?
-    if (_this.state.filters === undefined) {
-      _this.state.filters = "";
-    }
+    console.log("Saving the content in the editor.");
+    var contentSnapshot = editor.getValue();
+    console.log(contentSnapshot);
 
-    // Convert the filters into arrays.
-    if (_this.state.filters.splice) {
-      _this.state.filters = _this.state.filters.splice(',');
-    }
-
-    // Save the data to the tree.
-    GTC.setLogicCard(_this.state).done(function(){
-      $(GlobalEvents).trigger(_this.state.cardID + ":changed");
-    });
+    contentSnapshot.cardID = _this.state.cardID;
+    GTC.setLogicCard(contentSnapshot).refresh();
   },
 
   render: function() {
     var _this = this;
 
     return (
-      <form id="content-editor" onSubmit={_this.handleSubmit}>
-        
-        <span>Speaker: </span>
-        <textarea id="ce-speaker"
-          data-source="speaker" 
-          value={_this.state.speaker}
-          onChange={_this.handleFormChange}></textarea>
-        
-        <span>Messages: </span>
-        <textarea id="ce-messages" 
-          data-source="messages"
-          value={_this.state.messages}
-          onChange={_this.handleFormChange}></textarea>
-        
-        <span>Filters: </span>
-        <textarea id="ce-filters" 
-          data-source="filters"
-          value={_this.state.filters}
-          onChange={_this.handleFormChange}></textarea>
-
-        <input type="submit"></input> 
-      </form>
+      <div id="content-editor"></div>
     );
   }
 });

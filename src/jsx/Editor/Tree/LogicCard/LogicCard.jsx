@@ -50,16 +50,25 @@ var LogicCard = React.createClass({
     var ypos = Number(logicCard.style.top.slice(0,-2)) + 400;
 
     // Creates a new Logic card and save it into the GlobalTree.
+    // GTC.setLogicCard({
+    //   cardID: uuid,
+    //   childrenCardIDs: [],
+    //   parentCardIDs: [_this.state.cardID],
+    //   speaker: "",
+    //   messages: "",
+    //   visible: true,
+    //   highlight: false,
+    //   xpos: xpos,
+    //   ypos: ypos
+    // });
+    
     GTC.setLogicCard({
       cardID: uuid,
-      childrenCardIDs: [],
       parentCardIDs: [_this.state.cardID],
-      speaker: "",
-      messages: "",
-      visible: true,
-      highlight: false,
-      xpos: xpos,
-      ypos: ypos
+      ui: {
+        xpos: xpos,
+        ypos: ypos
+      }
     });
 
     // Add new child ID to the parent's reference.
@@ -134,7 +143,7 @@ var LogicCard = React.createClass({
 
     // Toggle depending on visibility.
     // TODO: Package or shorten for cleaner code.
-    if (_this.state.visible === true) {
+    if (_this.state.ui.visible === true) {
       childrenTreeStyle = classNames({
         'hide': false
       });
@@ -169,13 +178,9 @@ var LogicCard = React.createClass({
 
     // Draw at the correct location.
     var positionCSS = {
-      left: _this.state.xpos,
-      top: _this.state.ypos
+      left: _this.state.ui.xpos,
+      top: _this.state.ui.ypos
     }
-
-    // <div className="logic-card-content">
-    //   <b>{_this.state.speaker}</b>: {_this.state.messages}
-    // </div>
 
     return (
       <div className="logic-card" 
@@ -189,7 +194,7 @@ var LogicCard = React.createClass({
         <div className="lc-source"></div>
 
         <div className="lc-speaker">{_this.state.speaker}</div>
-        <LCMessages messages={_this.state.messages}/>
+        <LCMessages messages={_this.state.cardBody.messages}/>
 
         <div className="card-buttons-container">
           <div className="add-card-button" onClick={_this.handleAdd}>

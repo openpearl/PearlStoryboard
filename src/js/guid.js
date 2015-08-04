@@ -4,5 +4,5 @@ module.exports = function guid() {
       .toString(16)
       .substring(1);
   }
-  return 'uuid_' + s4() + s4() + s4() + s4();
-}
+  return 'id_' + s4() + s4() + s4() + s4();
+};
