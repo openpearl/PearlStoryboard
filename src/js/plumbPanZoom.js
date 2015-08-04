@@ -58,22 +58,33 @@ module.exports = {
     plumbInstance.setSuspendDrawing(true);
     var currentTree = GTC.getTree();
     for (var i in currentTree) {
-      var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
+      // var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
+      // var cardIDNode = $(cardIDSelector);
+      // plumbInstance.makeSource(cardIDNode, {isSource: true}, commEndSettings);
+
+      // var childIDSelector = '#' + currentTree[i].cardID + ' .lc-sink';
+      // var childIDNode = $(childIDSelector);
+      // plumbInstance.makeTarget(childIDNode, {isTarget: true}, commEndSettings);
+    
+      var cardIDSelector = '#' + currentTree[i].cardID + 
+        ' .logic-card-wrapper';
       var cardIDNode = $(cardIDSelector);
       plumbInstance.makeSource(cardIDNode, {isSource: true}, commEndSettings);
-
-      var childIDSelector = '#' + currentTree[i].cardID + ' .lc-sink';
-      var childIDNode = $(childIDSelector);
-      plumbInstance.makeTarget(childIDNode, {isTarget: true}, commEndSettings);
+      plumbInstance.makeTarget(cardIDNode, {isTarget: true}, commEndSettings);
     }
 
     for (var j in currentTree) {
-      var cardIDSelector = '#' + currentTree[j].cardID + ' .lc-source';
-      var cardIDNode = $(cardIDSelector)[0];
+      // var cardIDSelector = '#' + currentTree[j].cardID + ' .lc-source';
+      var cardIDSelector = '#' + currentTree[j].cardID + 
+        ' .logic-card-wrapper';
+      var cardIDNode = $(cardIDSelector);
       
+
       var childrenCardIDs = currentTree[j].childrenCardIDs;
       for (var k in childrenCardIDs) {
-        var childIDSelector = '#' + childrenCardIDs[k] + ' .lc-sink';
+        // var childIDSelector = '#' + childrenCardIDs[k] + ' .lc-sink';
+        var childIDSelector = 
+          '#' + childrenCardIDs[k] + ' .logic-card-wrapper';
         var childIDNode = $(childIDSelector)[0];
 
         // console.log(childIDSelector);

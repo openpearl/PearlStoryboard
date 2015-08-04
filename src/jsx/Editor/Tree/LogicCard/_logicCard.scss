@@ -1,9 +1,23 @@
 .logic-card {
-  @extend %sh1;
   width: 300px;
   min-height: 100px;
   position: absolute;
   background-color: white;
+}
+
+$card-padding: -7px;
+.logic-card-wrapper {
+  @extend %sh1;
+  position: absolute;
+
+  top: $card-padding;
+  right: $card-padding;
+  left: $card-padding;
+  bottom: $card-padding;
+
+  z-index: -5;
+  background-color: $primary;
+  border-radius: 5px;
 }
 
 .logic-card-content {

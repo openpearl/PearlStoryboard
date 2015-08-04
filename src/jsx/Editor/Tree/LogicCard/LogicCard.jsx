@@ -190,9 +190,6 @@ var LogicCard = React.createClass({
         onDragOver={_this.preventDefault}
         onDrop={_this.handleDrop}>
 
-        <div className="lc-sink"></div>
-        <div className="lc-source"></div>
-
         <div className="lc-speaker">{_this.state.speaker}</div>
         <LCMessages messages={_this.state.cardBody.messages}/>
 
@@ -208,6 +205,7 @@ var LogicCard = React.createClass({
             <i className="fa fa-times"></i>
           </div>
         </div>
+        <div className="logic-card-wrapper"></div>
       </div>
     );
   }

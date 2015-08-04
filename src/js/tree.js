@@ -115,6 +115,7 @@ function saveTree() {
 
 function getSubTree(logicCardID) {
   var card = GlobalTree[logicCardID];
+  card.isVisited = true; // Prevents infinite recursion.
 
   // Base case.
   if (card.childrenCardIDs === undefined) {
@@ -128,12 +129,18 @@ function getSubTree(logicCardID) {
   // Recursively locate all children.
   var biggerSubTree = [card.cardID];
   for (var i in card.childrenCardIDs) {
-    var subTreeCards = getSubTree(card.childrenCardIDs[i]);    
-    biggerSubTree = biggerSubTree.concat(subTreeCards);
+    if (!card.childrenCardIDs[i].isVisited) {
+      var subTreeCards = getSubTree(card.childrenCardIDs[i]);    
+      biggerSubTree = biggerSubTree.concat(subTreeCards);  
+    }
+  }
+
+  // Remove visited tags.
+  for (var j in biggerSubTree) {
+    delete biggerSubTree[j].isVisited;
   }
 
   // Propogate recursion to the top.
-  console.log("Hit.");
   return biggerSubTree;
 }
 
