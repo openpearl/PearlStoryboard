@@ -129,15 +129,19 @@ function getSubTree(logicCardID, customMethod) {
   // Recursively locate all children.
   var biggerSubTree = [card.cardID];
   for (var i in card.childrenCardIDs) {
-    if (!card.childrenCardIDs[i].isVisited) {
+    var child = GlobalTree[card.childrenCardIDs[i]];
+    if (!child.isVisited) {
       var subTreeCards = getSubTree(card.childrenCardIDs[i]);    
       biggerSubTree = biggerSubTree.concat(subTreeCards);  
+    } else {
+      return [card.cardID];
     }
   }
 
   // Remove visited tags.
+  // for (var j in biggerSubTree) {
   for (var j in biggerSubTree) {
-    delete biggerSubTree[j].isVisited;
+    delete GlobalTree[biggerSubTree[j]].isVisited;
   }
 
   // Propogate recursion to the top.
@@ -171,7 +175,7 @@ function modifySubTree(logicCardID, includeParent, customMethod) {
 
   // Remove visited tags.
   for (var j in biggerSubTree) {
-    delete biggerSubTree[j].isVisited;
+    delete GlobalTree[biggerSubTree[j]].isVisited;
   }
 
   return this;
