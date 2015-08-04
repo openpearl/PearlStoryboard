@@ -27,10 +27,10 @@ var LogicCard = React.createClass({
     });
 
     // TODO: Find a way to bypass clicking with this implementation.
-    $('#' + _this.state.cardID).hoverIntent(
-      _this.handleMouseEnter, 
-      _this.handleMouseLeave
-    );
+    // $('#' + _this.state.cardID).hoverIntent(
+    //   _this.handleMouseEnter, 
+    //   _this.handleMouseLeave
+    // );
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -177,6 +177,20 @@ var LogicCard = React.createClass({
       positionCSS.visibility = 'visible';
     }
 
+    // FIXME: Fix this horrendously hacky code.
+    var visibilityCSS = {};
+    var childVisible = true;
+
+    try {
+      childVisible = GTC.getLogicCard(
+        GTC.getLogicCard(_this.state.cardID).childrenCardIDs[0]
+      ).ui.visible;
+    } catch (err) {}
+    
+    if (!childVisible) {
+      visibilityCSS.color = "#FF4081";
+    }
+
     // This was in 'logic-card' ...
     // onDragOver={_this.preventDefault}
     // onDrop={_this.handleDrop}
@@ -185,6 +199,8 @@ var LogicCard = React.createClass({
       <div className="logic-card" 
         id={_this.state.cardID}
         style={positionCSS}
+        onMouseEnter={_this.handleMouseEnter}
+        onMouseLeave={_this.handleMouseLeave}
         onClick={_this.handleSelect}>
 
         <div className="lc-speaker">{_this.state.speaker}</div>
@@ -197,7 +213,7 @@ var LogicCard = React.createClass({
           </div>
 
           <div className="card-button" onClick={_this.toggleVisibility}>
-            <i className="fa fa-eye"></i>
+            <i className="fa fa-eye" style={visibilityCSS}></i>
           </div>
 
           <div className="card-button" 

@@ -77,14 +77,16 @@ module.exports = {
         var childIDSelector = 
           '#' + childrenCardIDs[k] + ' .logic-card-wrapper';
         var childIDNode = $(childIDSelector)[0];
+        var childNodeParent = $(childIDSelector).parent()[0];
 
-        // console.log(childIDSelector);
-        console.log(childIDNode.style.visibility);
-
-        plumbInstance.connect({
-          source: cardIDNode, 
-          target: childIDNode
-        });
+        // console.log(childNodeParent);
+        // console.log(childNodeParent.style.visibility);
+        if (childNodeParent.style.visibility === 'visible') {
+          plumbInstance.connect({
+            source: cardIDNode, 
+            target: childIDNode
+          });  
+        }
       }
     }
 
