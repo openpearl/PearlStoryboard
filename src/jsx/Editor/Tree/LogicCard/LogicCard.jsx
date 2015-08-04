@@ -49,19 +49,7 @@ var LogicCard = React.createClass({
     var xpos = Number(logicCard.style.left.slice(0,-2));
     var ypos = Number(logicCard.style.top.slice(0,-2)) + 400;
 
-    // Creates a new Logic card and save it into the GlobalTree.
-    // GTC.setLogicCard({
-    //   cardID: uuid,
-    //   childrenCardIDs: [],
-    //   parentCardIDs: [_this.state.cardID],
-    //   speaker: "",
-    //   messages: "",
-    //   visible: true,
-    //   highlight: false,
-    //   xpos: xpos,
-    //   ypos: ypos
-    // });
-    
+    // Creates a new Logic card and save it into the GlobalTree.    
     GTC.setLogicCard({
       cardID: uuid,
       parentCardIDs: [_this.state.cardID],
@@ -74,14 +62,10 @@ var LogicCard = React.createClass({
     // Add new child ID to the parent's reference.
     var newChildrenCardIDs 
       = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
-    
-    // var tempChildrenCardIDs = pushIfUnique(newChildrenCardIDs, uuid);
-    // var tempChildrenCardIDs = newChildrenCardIDs.push(uuid);
     newChildrenCardIDs = pushIfUnique(newChildrenCardIDs, uuid);
     console.log(newChildrenCardIDs);
 
     // Bind the child to the parent.
-    // GTC.refresh();
     GTC.setLogicCard({
       cardID: _this.state.cardID,
       childrenCardIDs: newChildrenCardIDs
@@ -163,19 +147,6 @@ var LogicCard = React.createClass({
       });
     }
 
-    // Toggle if there are any child logic cards.
-    if ($.isEmptyObject(_this.state.childrenCards)) {
-      newOrAddButton = <i className="fa fa-arrow-right"></i>;
-      hideButton = <div></div>;
-    } else {
-      newOrAddButton = <i className="fa fa-plus"></i>;
-      hideButton = (
-        <div className="hide-card-button" onClick={_this.toggleVisibility}>
-          <i className={hideButtonStyle}></i>
-        </div>
-      );
-    }
-
     // Draw at the correct location.
     var positionCSS = {
       left: _this.state.ui.xpos,
@@ -194,16 +165,20 @@ var LogicCard = React.createClass({
         <LCMessages messages={_this.state.cardBody.messages}/>
 
         <div className="card-buttons-container">
+          
           <div className="add-card-button" onClick={_this.handleAdd}>
-            {newOrAddButton}
+            <i className="fa fa-plus"></i>
           </div>
 
-          {hideButton}
+          <div className="hide-card-button" onClick={_this.toggleVisibility}>
+            <i className="fa fa-eye"></i>
+          </div>
 
           <div className="delete-card-button" 
             onClick={_this.deleteCard}>
             <i className="fa fa-times"></i>
           </div>
+
         </div>
         <div className="logic-card-wrapper"></div>
       </div>

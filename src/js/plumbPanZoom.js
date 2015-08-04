@@ -20,9 +20,10 @@ jsPlumb.ready(function() {
     Anchor: [ "Continuous", { faces:["top","bottom"] }],
     Anchors : [ "Bottom", "Top" ],    
     MaxConnections: 99,
-    Connector: "Flowchart",
+    // Connector: "Flowchart",
+    Connector: "Straight",
     Overlays:[ 
-      ["Arrow" , { width:30, length:30, location: 0.9 }]
+      ["Arrow" , { width:30, length:30, location: 0.7 }]
     ]
   });
 });
@@ -58,14 +59,6 @@ module.exports = {
     plumbInstance.setSuspendDrawing(true);
     var currentTree = GTC.getTree();
     for (var i in currentTree) {
-      // var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
-      // var cardIDNode = $(cardIDSelector);
-      // plumbInstance.makeSource(cardIDNode, {isSource: true}, commEndSettings);
-
-      // var childIDSelector = '#' + currentTree[i].cardID + ' .lc-sink';
-      // var childIDNode = $(childIDSelector);
-      // plumbInstance.makeTarget(childIDNode, {isTarget: true}, commEndSettings);
-    
       var cardIDSelector = '#' + currentTree[i].cardID + 
         ' .logic-card-wrapper';
       var cardIDNode = $(cardIDSelector);
@@ -74,7 +67,6 @@ module.exports = {
     }
 
     for (var j in currentTree) {
-      // var cardIDSelector = '#' + currentTree[j].cardID + ' .lc-source';
       var cardIDSelector = '#' + currentTree[j].cardID + 
         ' .logic-card-wrapper';
       var cardIDNode = $(cardIDSelector);
@@ -82,7 +74,6 @@ module.exports = {
 
       var childrenCardIDs = currentTree[j].childrenCardIDs;
       for (var k in childrenCardIDs) {
-        // var childIDSelector = '#' + childrenCardIDs[k] + ' .lc-sink';
         var childIDSelector = 
           '#' + childrenCardIDs[k] + ' .logic-card-wrapper';
         var childIDNode = $(childIDSelector)[0];

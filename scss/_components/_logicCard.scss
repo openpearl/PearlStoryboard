@@ -1,8 +1,13 @@
+$card-button-size: 40px;
+
 .logic-card {
   width: 300px;
   min-height: 100px;
   position: absolute;
   background-color: white;
+
+  padding: 10px;
+  padding-bottom: $card-button-size;
 }
 
 $card-padding: -7px;
@@ -20,48 +25,36 @@ $card-padding: -7px;
   border-radius: 5px;
 }
 
-.logic-card-content {
-  padding: 15px;
-  
-}
+// Button styling.
+.card-buttons-container {
+  // position: absolute;
+  // left: 100%;
+  // top: 0;
 
-%source-sink {
-  width: 100%;
+  clear: both; /*may be omitted*/
   position: absolute;
-  left: 0;
-  height: 20px;
+  bottom: 0; 
+  width: 100%;
+  height: $card-button-size; /* or anything you like */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-.lc-source {
-  @extend %source-sink;
-  top: 100%;
-  background-color: $accent_2;
-
-}
-
-.lc-sink {
-  @extend %source-sink;
-  bottom: 100%;
-  background-color: $primary_3;
-
-}
-
-$card-button-size: 40px;
 
 %card-button {
-
   width: $card-button-size;
   height: $card-button-size;
   border-radius: $card-button-size / 2;
-  @extend %sh1;
-
-  background-color: $primary;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 24px;
+  & > .fa {
+    font-size: 24px;
+    color: $primary;  
+  }
 
   &:hover {
     @extend %sh2;
@@ -69,20 +62,12 @@ $card-button-size: 40px;
   }
 }
 
-.card-buttons-container {
-  position: absolute;
-  left: 100%;
-  top: 0;
-}
-
 .add-card-button, .hide-card-button, .delete-card-button {
   @extend %card-button;
 }
 
 .hide-card-button {
-  background-color: $primary_2;
 }
 
 .delete-card-button {
-  background-color: $accent;
 }

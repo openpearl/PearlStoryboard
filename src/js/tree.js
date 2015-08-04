@@ -102,6 +102,8 @@ function clearTree() {
 }
 
 function saveTree() {
+  savePos();
+
   var data = GlobalTree;
   var _this = this;
 
