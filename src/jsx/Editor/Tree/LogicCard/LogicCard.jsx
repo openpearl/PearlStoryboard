@@ -25,6 +25,12 @@ var LogicCard = React.createClass({
       _this.state = GTC.getLogicCard(_this.props.cardID);
       _this.setState(_this.state);
     });
+
+    // TODO: Find a way to bypass clicking with this implementation.
+    $('#' + _this.state.cardID).hoverIntent(
+      _this.handleMouseEnter, 
+      _this.handleMouseLeave
+    );
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -73,7 +79,12 @@ var LogicCard = React.createClass({
   },
 
   toggleVisibility: function() {
-    GTC.toggleVisibility(_this.state.cardID).refresh();
+    var _this = this;
+    GTC.modifySubTree(_this.state.cardID, false, function(card) {
+      var _card = card;
+      _card.ui.visible = !_card.ui.visible;
+      return _card;
+    }).refresh();
   },
 
   deleteCard: function() {
@@ -81,23 +92,23 @@ var LogicCard = React.createClass({
   },
 
   // Handle collecting information when dropping a card from the messagesBank.
-  handleDrop: function(ev) {
-    ev.preventDefault();
-    console.log("Something was dropped!");
+  // handleDrop: function(ev) {
+  //   ev.preventDefault();
+  //   console.log("Something was dropped!");
 
-    var _this = this;
-    var data;
+  //   var _this = this;
+  //   var data;
 
-    try { data = JSON.parse(ev.dataTransfer.getData('text')); }
-    catch (e) { return; }
+  //   try { data = JSON.parse(ev.dataTransfer.getData('text')); }
+  //   catch (e) { return; }
 
-    console.log(data);
-    var card = GTC.getLogicCard(_this.state.cardID);
-    card.messages = pushIfUnique(card.messages, data.message);
-    console.log(card);
+  //   console.log(data);
+  //   var card = GTC.getLogicCard(_this.state.cardID);
+  //   card.messages = pushIfUnique(card.messages, data.message);
+  //   console.log(card);
 
-    GTC.setLogicCard(card).refresh();
-  },
+  //   GTC.setLogicCard(card).refresh();
+  // },
 
   handleSelect: function(ev) {
     var _this = this;
@@ -108,11 +119,18 @@ var LogicCard = React.createClass({
   },
 
   handleMouseEnter: function(ev) {
+    // TODO: Potentially add a timeout here so that the calculations kick in a bit later for less CPU consumption.
+
+    // console.log("Mouse entered.");
     ev.preventDefault();
+    var _this = this;
+    var subTreeDraggables = GTC.getSubTree(_this.state.cardID);
+    plumbInstance.addToDragSelection(subTreeDraggables);
   },
 
   handleMouseLeave: function(ev) {
     ev.preventDefault();
+    plumbInstance.clearDragSelection();
   },
 
   render: function() {
@@ -127,25 +145,25 @@ var LogicCard = React.createClass({
 
     // Toggle depending on visibility.
     // TODO: Package or shorten for cleaner code.
-    if (_this.state.ui.visible === true) {
-      childrenTreeStyle = classNames({
-        'hide': false
-      });
-      hideButtonStyle = classNames({
-        'fa': true,
-        'fa-bookmark': true,
-        'fa-bookmark-o': false
-      });
-    } else {
-      childrenTreeStyle = classNames({
-        'hide': true
-      });
-      hideButtonStyle = classNames({
-        'fa': true,
-        'fa-bookmark': false,
-        'fa-bookmark-o': true
-      });
-    }
+    // if (_this.state.ui.visible === true) {
+    //   childrenTreeStyle = classNames({
+    //     'hide': false
+    //   });
+    //   hideButtonStyle = classNames({
+    //     'fa': true,
+    //     'fa-bookmark': true,
+    //     'fa-bookmark-o': false
+    //   });
+    // } else {
+    //   childrenTreeStyle = classNames({
+    //     'hide': true
+    //   });
+    //   hideButtonStyle = classNames({
+    //     'fa': true,
+    //     'fa-bookmark': false,
+    //     'fa-bookmark-o': true
+    //   });
+    // }
 
     // Draw at the correct location.
     var positionCSS = {
@@ -153,28 +171,36 @@ var LogicCard = React.createClass({
       top: _this.state.ui.ypos
     }
 
+    if (!_this.state.ui.visible) {
+      positionCSS.visibility = 'hidden';
+    } else {
+      positionCSS.visibility = 'visible';
+    }
+
+    // This was in 'logic-card' ...
+    // onDragOver={_this.preventDefault}
+    // onDrop={_this.handleDrop}
+
     return (
       <div className="logic-card" 
         id={_this.state.cardID}
         style={positionCSS}
-        onClick={_this.handleSelect}
-        onDragOver={_this.preventDefault}
-        onDrop={_this.handleDrop}>
+        onClick={_this.handleSelect}>
 
         <div className="lc-speaker">{_this.state.speaker}</div>
         <LCMessages messages={_this.state.cardBody.messages}/>
 
         <div className="card-buttons-container">
           
-          <div className="add-card-button" onClick={_this.handleAdd}>
+          <div className="card-button" onClick={_this.handleAdd}>
             <i className="fa fa-plus"></i>
           </div>
 
-          <div className="hide-card-button" onClick={_this.toggleVisibility}>
+          <div className="card-button" onClick={_this.toggleVisibility}>
             <i className="fa fa-eye"></i>
           </div>
 
-          <div className="delete-card-button" 
+          <div className="card-button" 
             onClick={_this.deleteCard}>
             <i className="fa fa-times"></i>
           </div>

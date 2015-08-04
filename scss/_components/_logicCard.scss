@@ -42,7 +42,7 @@ $card-padding: -7px;
   justify-content: center;
 }
 
-%card-button {
+.card-button {
   width: $card-button-size;
   height: $card-button-size;
   border-radius: $card-button-size / 2;
@@ -60,14 +60,4 @@ $card-padding: -7px;
     @extend %sh2;
     cursor: pointer;
   }
-}
-
-.add-card-button, .hide-card-button, .delete-card-button {
-  @extend %card-button;
-}
-
-.hide-card-button {
-}
-
-.delete-card-button {
 }

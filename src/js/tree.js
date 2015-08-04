@@ -34,12 +34,11 @@ GlbTreeProto.prototype = {
   clearTree: clearTree,
 
   getSubTree: getSubTree,
+  modifySubTree: modifySubTree,
 
   getLogicCard: getLogicCard,
   setLogicCard: setLogicCard,
-  deleteLogicCard: deleteLogicCard,
-
-  toggleVisibility: toggleVisibility
+  deleteLogicCard: deleteLogicCard
 };
 
 var GlbTreeCtrl = function GlbTreeCtrl() {
@@ -115,10 +114,9 @@ function saveTree() {
   });
 }
 
-function getSubTree(logicCardID) {
+function getSubTree(logicCardID, customMethod) {
   var card = GlobalTree[logicCardID];
   card.isVisited = true; // Prevents infinite recursion.
-
   // Base case.
   if (card.childrenCardIDs === undefined) {
     return [card.cardID];
@@ -144,6 +142,39 @@ function getSubTree(logicCardID) {
 
   // Propogate recursion to the top.
   return biggerSubTree;
+}
+
+// TODO: This doesn't feel DRY.
+function modifySubTree(logicCardID, includeParent, customMethod) {
+  var card = GlobalTree[logicCardID];
+  card.isVisited = true; // Prevents infinite recursion.
+
+  // Determines if the modification should apply to the root as well.
+  if (includeParent) { card = customMethod(card); }
+
+  // Base case.
+  if (card.childrenCardIDs === undefined) {
+    return;
+  } else {
+    if (card.childrenCardIDs.length === 0) {
+      return;
+    }
+  }
+
+  // Recursively locate all children.
+  var biggerSubTree = [card.cardID];
+  for (var i in card.childrenCardIDs) {
+    if (!card.childrenCardIDs[i].isVisited) {
+      modifySubTree(card.childrenCardIDs[i], true, customMethod);    
+    }
+  }
+
+  // Remove visited tags.
+  for (var j in biggerSubTree) {
+    delete biggerSubTree[j].isVisited;
+  }
+
+  return this;
 }
 
 function getLogicCard(logicCardID) {
@@ -197,22 +228,6 @@ function deleteLogicCard(logicCardID) {
 
   // Delete and then notify.
   delete GlobalTree[logicCardID];
-  return this;
-}
-
-function toggleVisibility(logicCardID) {
-  GlobalTree[logicCardID].ui.visible = !GlobalTree[logicCardID].ui.visible;
-  var childrenCardIDs = GlobalTree[logicCardID].childrenCardIDs;
-  
-  // Base case.
-  if (childrenCardIDs.length === 0) { return; }
-
-  // Recurse.
-  for (var i in childrenCardIDs) {
-    GlbTreeCtrl.toggleVisibility(childrenCardIDs[i]);
-  }
-
-  // Callback.
   return this;
 }
 

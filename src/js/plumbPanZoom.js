@@ -79,7 +79,7 @@ module.exports = {
         var childIDNode = $(childIDSelector)[0];
 
         // console.log(childIDSelector);
-        // console.log(childIDNode);
+        console.log(childIDNode.style.visibility);
 
         plumbInstance.connect({
           source: cardIDNode, 
@@ -140,31 +140,10 @@ module.exports = {
     }
 
     plumbInstance.draggable(draggables, {
-      start:function(params) {
-        // console.log("Dragging has started!");
-        // console.log(params.el.id);
-        // var subTreeDraggables = GTC.getSubTree(params.el.id);
-        // console.log(subTreeDraggables);
-        // plumbInstance.addToDragSelection(subTreeDraggables);
-      },
-      drag:function(params) {
-
-      },
-      stop:function(params) {
-        // plumbInstance.clearDragSelection();
-      }
+      start:function(params) {},
+      drag:function(params) {},
+      stop:function(params) {}
     });
-
-    // Allows for group dragging.
-    // plumbInstance.bind("connectionMoved", function(conn, ev) {
-    //   console.log("Dragging has started.");
-    //   console.log(conn);
-    // });
-
-    // plumbInstance.bind("connectionDragStop", function(conn, ev) {
-    //   console.log("Dragging has stopped.");
-    //   console.log(conn);
-    // });
   },
 
   panzoom: function() {
