@@ -1,5 +1,5 @@
 var plumbPanZoom = require('../../../js/plumbPanZoom.js');
-var LogicCard = require('./LogicCard.jsx');
+var LogicCard = require('./LogicCard/LogicCard.jsx');
 
 var Tree = React.createClass({
 
@@ -18,6 +18,29 @@ var Tree = React.createClass({
     });
 
     plumbPanZoom.panzoom();
+
+    // Allow screen drag.
+    var last_position = {};
+    $treeDisplay = $("#tree-display");
+    $("#tree-screen").on('mousemove', function (event) {
+      if (event.which === 1 && event.target === this) {
+        if (typeof(last_position.x) != 'undefined') {
+          var deltaX = last_position.x - event.clientX;
+          var deltaY = last_position.y - event.clientY;
+
+          // console.log("Delta: " + deltaX + " " + deltaY);
+          $treeDisplay.panzoom("pan", -1 * deltaX, -1 * deltaY, 
+            { relative: true });
+        }
+
+        last_position = {
+          x : event.clientX,
+          y : event.clientY
+        };
+      }
+    }).on('mouseup', function() {
+      last_position = {};
+    });
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -37,6 +60,10 @@ var Tree = React.createClass({
   zoom: function(ev) {
   },
 
+  _dragScreen: function(ev) {
+    console.log("Dragging.");
+  },
+
   render: function() {
     console.log("Re-rendered.");
 
@@ -46,27 +73,23 @@ var Tree = React.createClass({
     logicCardViews = {};
 
     var currentTree = GTC.getTree();
+    // console.log(currentTree);
+
     for (i in currentTree) {
 
       // This uuid is different from the cardID; otherwise the virtual DOM
       // gets confused.
       var uuid = guid();
-      logicCardViews[i] = 
-        <LogicCard
-          key={uuid}
-          ref={currentTree[i].cardID}
-          
-          cardID={currentTree[i].cardID}
-          childrenCardIDs={currentTree[i].childrenCardIDs}
-          parentCardIDs={currentTree[i].parentCardIDs}
+      var settings = {};
+      $.extend(settings, currentTree[i], {
+        key: uuid, 
+        ref: currentTree[i].cardID
+      });
 
-          speaker={currentTree[i].speaker}
-          message={currentTree[i].message}
-
-          xpos={currentTree[i].xpos}
-          ypos={currentTree[i].ypos}
-        />
+      logicCardViews[i] = React.createElement(LogicCard, settings);
     }
+
+    // console.log(logicCardViews);
 
     return (
       <div id="tree-screen" tabIndex="1">

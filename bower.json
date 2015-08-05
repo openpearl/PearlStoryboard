@@ -1,0 +1,19 @@
+{
+  "name": "PearlTool-LogicGenerator",
+  "version": "1.0.0",
+  "homepage": "https://github.com/openpearl/PearlTool-LogicGenerator",
+  "authors": [
+    "David Zhu <hdavidzhu@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "classnames": "~2.1.3"
+  }
+}

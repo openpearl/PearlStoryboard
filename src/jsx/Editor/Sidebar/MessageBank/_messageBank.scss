@@ -1,0 +1,43 @@
+#message-bank {
+  padding: 20px;
+
+  flex: 1;
+  width: 100%;
+  overflow-y: scroll;
+  white-space: normal;
+}
+
+#message-bank::-webkit-scrollbar {
+  width: 5px;
+}
+
+#message-bank::-webkit-scrollbar-track {
+  box-shadow: none;
+  border-radius: 5px;
+}
+
+#message-bank::-webkit-scrollbar-thumb {
+  box-shadow: none;
+  border-radius: 5px;
+  background-color: white;
+}
+
+#searchBarNew {
+  width: 100% !important;
+  height: 30px;
+  width: 100%;
+}
+
+.message-card {
+  width: 100%;
+
+  @extend %sh1;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: white;
+  border-radius: 3px;
+
+  &:hover {
+    @extend %sh2;
+  }
+}

@@ -1,4 +1,7 @@
+//plumPanZoom.js
+
 plumbInstance = {};
+toggleGroupDrag = false;
 
 jsPlumb.ready(function() {
 
@@ -7,16 +10,22 @@ jsPlumb.ready(function() {
   // Set jsPlumb defaults.
   plumbInstance.importDefaults({
     PaintStyle : {
-      lineWidth:13,
-      strokeStyle: 'rgba(200,0,0,0.5)'
+      lineWidth:5,
+      strokeStyle: 'rgba(63,81,181,1)'
     },
     DragOptions : { cursor: "crosshair" },
     Endpoint: ["Dot", { radius: 7}],
-    Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
-    EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }],
+    EndpointStyle: { fillStyle: "#303F9F" },
+    // Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
+    // EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }],
     Anchor: [ "Continuous", { faces:["top","bottom"] }],
     Anchors : [ "Bottom", "Top" ],    
     MaxConnections: 99,
+    // Connector: "Flowchart",
+    Connector: "Straight",
+    Overlays:[ 
+      ["Arrow" , { width:30, length:30, location: 0.7 }]
+    ]
   });
 });
 
@@ -37,52 +46,52 @@ module.exports = {
       plumbInstance.setContainer(document.getElementById("tree-display"));
     }
 
-    // Draw the connectors.
-    // plumbInstance.setSuspendDrawing(true);
-    var currentTree = GTC.getTree();
-    for (i in currentTree) {
-      var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
-      var cardIDNode = $(cardIDSelector);
-      plumbInstance.makeSource(cardIDNode, {
-        isSource: true,
-        anchor:"Continuous",
-        endpoint:["Rectangle", { width:40, height:20 }],
-        maxConnections: 10,
-        onMaxConnections:function(info, originalEvent) {
-          console.log("element is ", info.element, "maxConnections is", 
-            info.maxConnections); 
-        }
-      });
+    // Common endpoint settings.
+    var commEndSettings = {
+      maxConnections: 99,
+      anchor: "Continuous",
+      onMaxConnections:function(info, originalEvent) {
+        console.log("element is ", info.element, "maxConnections is", 
+          info.maxConnections); 
+      }
+    };
 
-      var childIDSelector = '#' + currentTree[i].cardID + ' .lc-sink';
-      var childIDNode = $(childIDSelector);
-      plumbInstance.makeTarget(childIDNode, {
-        isTarget: true,
-        ConnectionsDetachable: true,
-        anchor:"Continuous",
-        endpoint:["Rectangle", { width:40, height:20 }],
-        maxConnections: 10,
-        onMaxConnections:function(info, originalEvent) {
-          console.log("element is ", info.element, "maxConnections is", 
-            info.maxConnections); 
-        }
-      });
+    // Draw the connectors.
+    plumbInstance.setSuspendDrawing(true);
+    var currentTree = GTC.getTree();
+    for (var i in currentTree) {
+      var cardIDSelector = '#' + currentTree[i].cardID + 
+        ' .logic-card-wrapper';
+      var cardIDNode = $(cardIDSelector);
+      plumbInstance.makeSource(cardIDNode, {isSource: true}, commEndSettings);
+      plumbInstance.makeTarget(cardIDNode, {isTarget: true}, commEndSettings);
     }
 
-    for (i in currentTree) {
-      var childrenCardIDs = currentTree[i].childrenCardIDs;
-      var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
+    for (var j in currentTree) {
+      var cardIDSelector = '#' + currentTree[j].cardID + 
+        ' .logic-card-wrapper';
       var cardIDNode = $(cardIDSelector);
-      for (j in childrenCardIDs) {
-        var childIDSelector = '#' + childrenCardIDs[j] + ' .lc-sink';
-        var childIDNode = $(childIDSelector);
+      
 
-        plumbInstance.connect({
-          source: cardIDNode, 
-          target: childIDNode
-        });
+      var childrenCardIDs = currentTree[j].childrenCardIDs;
+      for (var k in childrenCardIDs) {
+        var childIDSelector = 
+          '#' + childrenCardIDs[k] + ' .logic-card-wrapper';
+        var childIDNode = $(childIDSelector)[0];
+        var childNodeParent = $(childIDSelector).parent()[0];
+
+        // console.log(childNodeParent);
+        // console.log(childNodeParent.style.visibility);
+        if (childNodeParent.style.visibility === 'visible') {
+          plumbInstance.connect({
+            source: cardIDNode, 
+            target: childIDNode
+          });  
+        }
       }
     }
+
+    plumbInstance.setSuspendDrawing(false, true);
 
     // Bind events to update our models.
     plumbInstance.bind("connection", function(conn, ev) {
@@ -96,11 +105,12 @@ module.exports = {
       var source = GTC.getLogicCard(sourceID);
       var target = GTC.getLogicCard(targetID);
 
-      pushIfUnique(source.childrenCardIDs, targetID);
-      pushIfUnique(target.parentCardIDs, sourceID);
+      source.childrenCardIDs = pushIfUnique(source.childrenCardIDs, targetID);
+      target.parentCardIDs = pushIfUnique(target.parentCardIDs, sourceID);
 
       GTC.setLogicCard(source);
-      GTC.setLogicCard(target).refresh();
+      // GTC.setLogicCard(target).refresh();
+      GTC.setLogicCard(target);
     });
 
     plumbInstance.bind("connectionDetached", function(conn, ev) {
@@ -128,13 +138,21 @@ module.exports = {
     });
 
     var draggables = [];
-    for (k in currentTree) {
-      draggables.push($('#' + currentTree[k].cardID));
+    for (var l in currentTree) {
+      draggables.push($('#' + currentTree[l].cardID));
     }
-    plumbInstance.draggable(draggables);
+
+    plumbInstance.draggable(draggables, {
+      start:function(params) {
+      },
+      drag:function(params) {},
+      stop:function(params) {}
+    });
   },
 
   panzoom: function() {
+    console.log("panzoom");
+
     $treeScreen = $("#tree-screen");
     $treeDisplay = $("#tree-display");
 
@@ -148,6 +166,9 @@ module.exports = {
       transition: true,
       duration: 500,
       easing: "ease-in-out",
+      minScale: 0.1,
+      maxScale: 2,
+      increment: 0.5
     });
     $panzoom.panzoom('transition');
 
@@ -157,10 +178,14 @@ module.exports = {
       switch(code) {
         // TODO: Refactor the q button to go elsewhere.
         case 81: // q
+          // console.log("q pressed.");
           $(GlobalEvents).trigger("sidebar:toggle");
           break;
         case 87: // w
           $treeDisplay.panzoom("pan", 0, panRate, { relative: true });
+          break;
+        case 69: // e
+          toggleGroupDrag = !toggleGroupDrag;
           break;
         case 83: // s
           $treeDisplay.panzoom("pan", 0, -panRate, { relative: true });
