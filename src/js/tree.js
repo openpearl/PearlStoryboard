@@ -10,6 +10,7 @@ CardSchema = {
   filters: [], // [String]
   inputs: [], // [String]
 
+  cardType: "", // String
   cardBody: {
     messages: [], // [String]  
   },
@@ -34,12 +35,11 @@ GlbTreeProto.prototype = {
   clearTree: clearTree,
 
   getSubTree: getSubTree,
+  modifySubTree: modifySubTree,
 
   getLogicCard: getLogicCard,
   setLogicCard: setLogicCard,
-  deleteLogicCard: deleteLogicCard,
-
-  toggleVisibility: toggleVisibility
+  deleteLogicCard: deleteLogicCard
 };
 
 var GlbTreeCtrl = function GlbTreeCtrl() {
@@ -102,6 +102,8 @@ function clearTree() {
 }
 
 function saveTree() {
+  savePos();
+
   var data = GlobalTree;
   var _this = this;
 
@@ -114,27 +116,81 @@ function saveTree() {
 }
 
 function getSubTree(logicCardID) {
-  var card = GlobalTree[logicCardID];
 
-  // Base case.
-  if (card.childrenCardIDs === undefined) {
-    return [card.cardID];
-  } else {
-    if (card.childrenCardIDs.length === 0) {
+  var recurseSubTree = function(logicCardID) {
+    var card = GlobalTree[logicCardID];
+    card.isVisited = true; // Prevents infinite recursion.
+
+    // Base case.
+    if (card.childrenCardIDs === undefined) {
       return [card.cardID];
+    } else {
+      if (card.childrenCardIDs.length === 0) {
+        return [card.cardID];
+      }
     }
-  }
 
-  // Recursively locate all children.
-  var biggerSubTree = [card.cardID];
-  for (var i in card.childrenCardIDs) {
-    var subTreeCards = getSubTree(card.childrenCardIDs[i]);    
-    biggerSubTree = biggerSubTree.concat(subTreeCards);
+    // Recursively locate all children.
+    var biggerSubTree = [card.cardID];
+    for (var i in card.childrenCardIDs) {
+      var child = GlobalTree[card.childrenCardIDs[i]];
+      if (!child.isVisited) {
+        var subTreeCards = getSubTree(card.childrenCardIDs[i]);    
+        biggerSubTree = biggerSubTree.concat(subTreeCards);  
+      } else {
+        return [card.cardID];
+      }
+    }
+
+    return biggerSubTree;
+  };
+
+  var resultingTree = recurseSubTree(logicCardID);
+
+  // Remove visited tags.
+  for (var j in resultingTree) {
+    delete GlobalTree[resultingTree[j]].isVisited;
   }
 
   // Propogate recursion to the top.
-  console.log("Hit.");
-  return biggerSubTree;
+  return resultingTree;
+}
+
+// TODO: This doesn't feel DRY.
+function modifySubTree(logicCardID, includeParent, customMethod) {
+
+  var recurseSubTree = function(logicCardID, includeParent, customMethod) {
+    var card = GlobalTree[logicCardID];
+    card.isVisited = true; // Prevents infinite recursion.
+
+    // Determines if the modification should apply to the root as well.
+    if (includeParent) { card = customMethod(card); }
+
+    // Base case.
+    if (card.childrenCardIDs === undefined) {
+      return;
+    } else {
+      if (card.childrenCardIDs.length === 0) {
+        return;
+      }
+    }
+
+    // Recursively locate all children.
+    for (var i in card.childrenCardIDs) {
+      if (!card.childrenCardIDs[i].isVisited) {
+        modifySubTree(card.childrenCardIDs[i], true, customMethod);    
+      }
+    }
+  };
+
+  recurseSubTree(logicCardID, includeParent, customMethod);
+
+  // Remove visited tags.
+  for (var j in GlobalTree) {
+    delete GlobalTree[j].isVisited;
+  }
+
+  return this;
 }
 
 function getLogicCard(logicCardID) {
@@ -188,22 +244,6 @@ function deleteLogicCard(logicCardID) {
 
   // Delete and then notify.
   delete GlobalTree[logicCardID];
-  return this;
-}
-
-function toggleVisibility(logicCardID) {
-  GlobalTree[logicCardID].ui.visible = !GlobalTree[logicCardID].ui.visible;
-  var childrenCardIDs = GlobalTree[logicCardID].childrenCardIDs;
-  
-  // Base case.
-  if (childrenCardIDs.length === 0) { return; }
-
-  // Recurse.
-  for (var i in childrenCardIDs) {
-    GlbTreeCtrl.toggleVisibility(childrenCardIDs[i]);
-  }
-
-  // Callback.
   return this;
 }
 

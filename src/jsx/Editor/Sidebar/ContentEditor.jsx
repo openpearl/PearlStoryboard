@@ -6,17 +6,8 @@ var ContentEditorSchema = {
     "speaker": {
       "type": "string"
     },
-    "filters": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "inputs": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+    "cardType": {
+      "type": "string"
     },
     "cardBody": {
       "type": "object",
@@ -27,6 +18,18 @@ var ContentEditorSchema = {
             "type": "string"
           }
         }
+      }
+    },
+    "filters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     }
   }
@@ -79,11 +82,13 @@ var ContentEditor = React.createClass({
     var _this = this;
 
     var speaker = editor.getEditor('root.speaker');
+    var cardType = editor.getEditor('root.cardType');
     var cardBody = editor.getEditor('root.cardBody');
     var filters = editor.getEditor('root.filters');
     var inputs = editor.getEditor('root.inputs');
 
     speaker.setValue(card.speaker);
+    cardType.setValue(card.cardType);
     cardBody.setValue(card.cardBody);
     filters.setValue(card.filters);
     inputs.setValue(card.inputs);

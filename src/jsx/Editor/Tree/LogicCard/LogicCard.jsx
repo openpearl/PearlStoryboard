@@ -25,6 +25,12 @@ var LogicCard = React.createClass({
       _this.state = GTC.getLogicCard(_this.props.cardID);
       _this.setState(_this.state);
     });
+
+    // TODO: Find a way to bypass clicking with this implementation.
+    // $('#' + _this.state.cardID).hoverIntent(
+    //   _this.handleMouseEnter, 
+    //   _this.handleMouseLeave
+    // );
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -49,19 +55,7 @@ var LogicCard = React.createClass({
     var xpos = Number(logicCard.style.left.slice(0,-2));
     var ypos = Number(logicCard.style.top.slice(0,-2)) + 400;
 
-    // Creates a new Logic card and save it into the GlobalTree.
-    // GTC.setLogicCard({
-    //   cardID: uuid,
-    //   childrenCardIDs: [],
-    //   parentCardIDs: [_this.state.cardID],
-    //   speaker: "",
-    //   messages: "",
-    //   visible: true,
-    //   highlight: false,
-    //   xpos: xpos,
-    //   ypos: ypos
-    // });
-    
+    // Creates a new Logic card and save it into the GlobalTree.    
     GTC.setLogicCard({
       cardID: uuid,
       parentCardIDs: [_this.state.cardID],
@@ -74,14 +68,10 @@ var LogicCard = React.createClass({
     // Add new child ID to the parent's reference.
     var newChildrenCardIDs 
       = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
-    
-    // var tempChildrenCardIDs = pushIfUnique(newChildrenCardIDs, uuid);
-    // var tempChildrenCardIDs = newChildrenCardIDs.push(uuid);
     newChildrenCardIDs = pushIfUnique(newChildrenCardIDs, uuid);
     console.log(newChildrenCardIDs);
 
     // Bind the child to the parent.
-    // GTC.refresh();
     GTC.setLogicCard({
       cardID: _this.state.cardID,
       childrenCardIDs: newChildrenCardIDs
@@ -89,7 +79,12 @@ var LogicCard = React.createClass({
   },
 
   toggleVisibility: function() {
-    GTC.toggleVisibility(_this.state.cardID).refresh();
+    var _this = this;
+    GTC.modifySubTree(_this.state.cardID, false, function(card) {
+      var _card = card;
+      _card.ui.visible = !_card.ui.visible;
+      return _card;
+    }).refresh();
   },
 
   deleteCard: function() {
@@ -97,38 +92,55 @@ var LogicCard = React.createClass({
   },
 
   // Handle collecting information when dropping a card from the messagesBank.
-  handleDrop: function(ev) {
-    ev.preventDefault();
-    console.log("Something was dropped!");
+  // handleDrop: function(ev) {
+  //   ev.preventDefault();
+  //   console.log("Something was dropped!");
 
-    var _this = this;
-    var data;
+  //   var _this = this;
+  //   var data;
 
-    try { data = JSON.parse(ev.dataTransfer.getData('text')); }
-    catch (e) { return; }
+  //   try { data = JSON.parse(ev.dataTransfer.getData('text')); }
+  //   catch (e) { return; }
 
-    console.log(data);
-    var card = GTC.getLogicCard(_this.state.cardID);
-    card.messages = pushIfUnique(card.messages, data.message);
-    console.log(card);
+  //   console.log(data);
+  //   var card = GTC.getLogicCard(_this.state.cardID);
+  //   card.messages = pushIfUnique(card.messages, data.message);
+  //   console.log(card);
 
-    GTC.setLogicCard(card).refresh();
-  },
+  //   GTC.setLogicCard(card).refresh();
+  // },
 
   handleSelect: function(ev) {
     var _this = this;
+    ev.stopPropagation();
     ev.preventDefault();
+    ev.cancelBubble = true;
 
     console.log("Selected.");
     $(GlobalEvents).trigger("card:selected", [_this.state.cardID]);
   },
 
   handleMouseEnter: function(ev) {
+    // TODO: Potentially add a timeout here so that the calculations kick in a bit later for less CPU consumption.
+
+    // console.log("Mouse entered.");
+    ev.stopPropagation();
     ev.preventDefault();
+    ev.cancelBubble = true;
+
+    var _this = this;
+    var subTreeDraggables = GTC.getSubTree(_this.state.cardID);
+    if (toggleGroupDrag) {
+      plumbInstance.addToDragSelection(subTreeDraggables);
+    }
   },
 
   handleMouseLeave: function(ev) {
+    ev.stopPropagation();
     ev.preventDefault();
+    ev.cancelBubble = true;
+
+    plumbInstance.clearDragSelection();
   },
 
   render: function() {
@@ -143,38 +155,25 @@ var LogicCard = React.createClass({
 
     // Toggle depending on visibility.
     // TODO: Package or shorten for cleaner code.
-    if (_this.state.ui.visible === true) {
-      childrenTreeStyle = classNames({
-        'hide': false
-      });
-      hideButtonStyle = classNames({
-        'fa': true,
-        'fa-bookmark': true,
-        'fa-bookmark-o': false
-      });
-    } else {
-      childrenTreeStyle = classNames({
-        'hide': true
-      });
-      hideButtonStyle = classNames({
-        'fa': true,
-        'fa-bookmark': false,
-        'fa-bookmark-o': true
-      });
-    }
-
-    // Toggle if there are any child logic cards.
-    if ($.isEmptyObject(_this.state.childrenCards)) {
-      newOrAddButton = <i className="fa fa-arrow-right"></i>;
-      hideButton = <div></div>;
-    } else {
-      newOrAddButton = <i className="fa fa-plus"></i>;
-      hideButton = (
-        <div className="hide-card-button" onClick={_this.toggleVisibility}>
-          <i className={hideButtonStyle}></i>
-        </div>
-      );
-    }
+    // if (_this.state.ui.visible === true) {
+    //   childrenTreeStyle = classNames({
+    //     'hide': false
+    //   });
+    //   hideButtonStyle = classNames({
+    //     'fa': true,
+    //     'fa-bookmark': true,
+    //     'fa-bookmark-o': false
+    //   });
+    // } else {
+    //   childrenTreeStyle = classNames({
+    //     'hide': true
+    //   });
+    //   hideButtonStyle = classNames({
+    //     'fa': true,
+    //     'fa-bookmark': false,
+    //     'fa-bookmark-o': true
+    //   });
+    // }
 
     // Draw at the correct location.
     var positionCSS = {
@@ -182,32 +181,70 @@ var LogicCard = React.createClass({
       top: _this.state.ui.ypos
     }
 
+    if (!_this.state.ui.visible) {
+      positionCSS.visibility = 'hidden';
+    } else {
+      positionCSS.visibility = 'visible';
+    }
+
+    // FIXME: Fix this horrendously hacky code.
+    var visibilityCSS = {};
+    var childVisible = true;
+
+    try {
+      childVisible = GTC.getLogicCard(
+        GTC.getLogicCard(_this.state.cardID).childrenCardIDs[0]
+      ).ui.visible;
+    } catch (err) {}
+    
+    if (!childVisible) {
+      visibilityCSS.color = "#FF4081";
+    }
+
+    // This was in 'logic-card' ...
+    // onDragOver={_this.preventDefault}
+    // onDrop={_this.handleDrop}
+
     return (
       <div className="logic-card" 
         id={_this.state.cardID}
         style={positionCSS}
-        onClick={_this.handleSelect}
-        onDragOver={_this.preventDefault}
-        onDrop={_this.handleDrop}>
+        onMouseEnter={_this.handleMouseEnter}
+        onMouseLeave={_this.handleMouseLeave}
+        onClick={_this.handleSelect}>
 
-        <div className="lc-sink"></div>
-        <div className="lc-source"></div>
-
-        <div className="lc-speaker">{_this.state.speaker}</div>
-        <LCMessages messages={_this.state.cardBody.messages}/>
+        <div className="card-info-field">
+          <span className="card-info-title">Speaker: </span>
+          {_this.state.speaker}
+        </div>
+        <div className="card-info-field">
+          <span className="card-info-title">Card Type: </span>
+          {_this.state.cardType}
+        </div>
+        <LCMessages title="Inputs: "
+          messages={_this.state.inputs}/>
+        <LCMessages title="Filters: "
+          messages={_this.state.filters}/>
+        <LCMessages title="Messages: " 
+          messages={_this.state.cardBody.messages}/>
 
         <div className="card-buttons-container">
-          <div className="add-card-button" onClick={_this.handleAdd}>
-            {newOrAddButton}
+          
+          <div className="card-button" onClick={_this.handleAdd}>
+            <i className="fa fa-plus"></i>
           </div>
 
-          {hideButton}
+          <div className="card-button" onClick={_this.toggleVisibility}>
+            <i className="fa fa-eye" style={visibilityCSS}></i>
+          </div>
 
-          <div className="delete-card-button" 
+          <div className="card-button" 
             onClick={_this.deleteCard}>
             <i className="fa fa-times"></i>
           </div>
+
         </div>
+        <div className="logic-card-wrapper"></div>
       </div>
     );
   }

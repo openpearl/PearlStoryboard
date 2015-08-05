@@ -1,6 +1,7 @@
 //plumPanZoom.js
 
 plumbInstance = {};
+toggleGroupDrag = false;
 
 jsPlumb.ready(function() {
 
@@ -20,9 +21,10 @@ jsPlumb.ready(function() {
     Anchor: [ "Continuous", { faces:["top","bottom"] }],
     Anchors : [ "Bottom", "Top" ],    
     MaxConnections: 99,
-    Connector: "Flowchart",
+    // Connector: "Flowchart",
+    Connector: "Straight",
     Overlays:[ 
-      ["Arrow" , { width:30, length:30, location: 0.9 }]
+      ["Arrow" , { width:30, length:30, location: 0.7 }]
     ]
   });
 });
@@ -58,31 +60,34 @@ module.exports = {
     plumbInstance.setSuspendDrawing(true);
     var currentTree = GTC.getTree();
     for (var i in currentTree) {
-      var cardIDSelector = '#' + currentTree[i].cardID + ' .lc-source';
+      var cardIDSelector = '#' + currentTree[i].cardID + 
+        ' .logic-card-wrapper';
       var cardIDNode = $(cardIDSelector);
       plumbInstance.makeSource(cardIDNode, {isSource: true}, commEndSettings);
-
-      var childIDSelector = '#' + currentTree[i].cardID + ' .lc-sink';
-      var childIDNode = $(childIDSelector);
-      plumbInstance.makeTarget(childIDNode, {isTarget: true}, commEndSettings);
+      plumbInstance.makeTarget(cardIDNode, {isTarget: true}, commEndSettings);
     }
 
     for (var j in currentTree) {
-      var cardIDSelector = '#' + currentTree[j].cardID + ' .lc-source';
-      var cardIDNode = $(cardIDSelector)[0];
+      var cardIDSelector = '#' + currentTree[j].cardID + 
+        ' .logic-card-wrapper';
+      var cardIDNode = $(cardIDSelector);
       
+
       var childrenCardIDs = currentTree[j].childrenCardIDs;
       for (var k in childrenCardIDs) {
-        var childIDSelector = '#' + childrenCardIDs[k] + ' .lc-sink';
+        var childIDSelector = 
+          '#' + childrenCardIDs[k] + ' .logic-card-wrapper';
         var childIDNode = $(childIDSelector)[0];
+        var childNodeParent = $(childIDSelector).parent()[0];
 
-        // console.log(childIDSelector);
-        // console.log(childIDNode);
-
-        plumbInstance.connect({
-          source: cardIDNode, 
-          target: childIDNode
-        });
+        // console.log(childNodeParent);
+        // console.log(childNodeParent.style.visibility);
+        if (childNodeParent.style.visibility === 'visible') {
+          plumbInstance.connect({
+            source: cardIDNode, 
+            target: childIDNode
+          });  
+        }
       }
     }
 
@@ -139,30 +144,10 @@ module.exports = {
 
     plumbInstance.draggable(draggables, {
       start:function(params) {
-        // console.log("Dragging has started!");
-        // console.log(params.el.id);
-        // var subTreeDraggables = GTC.getSubTree(params.el.id);
-        // console.log(subTreeDraggables);
-        // plumbInstance.addToDragSelection(subTreeDraggables);
       },
-      drag:function(params) {
-
-      },
-      stop:function(params) {
-        // plumbInstance.clearDragSelection();
-      }
+      drag:function(params) {},
+      stop:function(params) {}
     });
-
-    // Allows for group dragging.
-    // plumbInstance.bind("connectionMoved", function(conn, ev) {
-    //   console.log("Dragging has started.");
-    //   console.log(conn);
-    // });
-
-    // plumbInstance.bind("connectionDragStop", function(conn, ev) {
-    //   console.log("Dragging has stopped.");
-    //   console.log(conn);
-    // });
   },
 
   panzoom: function() {
@@ -198,6 +183,9 @@ module.exports = {
           break;
         case 87: // w
           $treeDisplay.panzoom("pan", 0, panRate, { relative: true });
+          break;
+        case 69: // e
+          toggleGroupDrag = !toggleGroupDrag;
           break;
         case 83: // s
           $treeDisplay.panzoom("pan", 0, -panRate, { relative: true });

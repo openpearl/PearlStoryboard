@@ -16,8 +16,8 @@ var LCMessages = React.createClass({
     // console.log(messagesHolderUI);
 
     return (
-      <div className="lc-messages">
-        <span>Messages:</span>
+      <div className="card-info-field">
+        <span className="card-info-title">{_this.props.title}</span>
         <ul>
           {messagesHolderUI}
         </ul>

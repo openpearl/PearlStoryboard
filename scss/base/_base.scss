@@ -13,8 +13,14 @@ body {
 html {
   box-sizing: border-box;
 }
+
 *, *:before, *:after {
   box-sizing: inherit;
+}
+
+ul {
+  padding-left: 20px;
+  margin: 0;
 }
 
 [contenteditable=true] {
