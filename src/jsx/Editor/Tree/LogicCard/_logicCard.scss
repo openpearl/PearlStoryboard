@@ -25,6 +25,14 @@ $card-padding: -7px;
   border-radius: 5px;
 }
 
+.card-info-field {
+  padding-top: 10px;
+  
+  & > .card-info-title {
+    opacity: 0.5;    
+  }
+}
+
 // Button styling.
 .card-buttons-container {
   // position: absolute;
