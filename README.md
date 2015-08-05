@@ -1,5 +1,5 @@
-# PearlTool-LogicGenerator
-[![GitHub version](https://badge.fury.io/gh/openpearl%2FPearlTool-LogicGenerator.svg)](http://badge.fury.io/gh/openpearl%2FPearlTool-LogicGenerator)
+# PearlStoryboard
+[![GitHub version](https://badge.fury.io/gh/openpearl%2FPearlStoryboard.svg)](http://badge.fury.io/gh/openpearl%2FPearlStoryboard)
 
 ### About
 
