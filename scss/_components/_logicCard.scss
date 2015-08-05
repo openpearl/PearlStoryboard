@@ -8,6 +8,12 @@ $card-button-size: 40px;
 
   padding: 10px;
   padding-bottom: $card-button-size;
+
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 $card-padding: -7px;

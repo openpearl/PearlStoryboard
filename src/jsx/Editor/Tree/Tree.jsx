@@ -18,6 +18,29 @@ var Tree = React.createClass({
     });
 
     plumbPanZoom.panzoom();
+
+    // Allow screen drag.
+    var last_position = {};
+    $treeDisplay = $("#tree-display");
+    $("#tree-screen").on('mousemove', function (event) {
+      if (event.which === 1 && event.target === this) {
+        if (typeof(last_position.x) != 'undefined') {
+          var deltaX = last_position.x - event.clientX;
+          var deltaY = last_position.y - event.clientY;
+
+          // console.log("Delta: " + deltaX + " " + deltaY);
+          $treeDisplay.panzoom("pan", -1 * deltaX, -1 * deltaY, 
+            { relative: true });
+        }
+
+        last_position = {
+          x : event.clientX,
+          y : event.clientY
+        };
+      }
+    }).on('mouseup', function() {
+      last_position = {};
+    });
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -35,6 +58,10 @@ var Tree = React.createClass({
   },
 
   zoom: function(ev) {
+  },
+
+  _dragScreen: function(ev) {
+    console.log("Dragging.");
   },
 
   render: function() {

@@ -1,6 +1,7 @@
 //plumPanZoom.js
 
 plumbInstance = {};
+toggleGroupDrag = false;
 
 jsPlumb.ready(function() {
 
@@ -142,7 +143,8 @@ module.exports = {
     }
 
     plumbInstance.draggable(draggables, {
-      start:function(params) {},
+      start:function(params) {
+      },
       drag:function(params) {},
       stop:function(params) {}
     });
@@ -181,6 +183,9 @@ module.exports = {
           break;
         case 87: // w
           $treeDisplay.panzoom("pan", 0, panRate, { relative: true });
+          break;
+        case 69: // e
+          toggleGroupDrag = !toggleGroupDrag;
           break;
         case 83: // s
           $treeDisplay.panzoom("pan", 0, -panRate, { relative: true });

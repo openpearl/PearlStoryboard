@@ -112,7 +112,9 @@ var LogicCard = React.createClass({
 
   handleSelect: function(ev) {
     var _this = this;
+    ev.stopPropagation();
     ev.preventDefault();
+    ev.cancelBubble = true;
 
     console.log("Selected.");
     $(GlobalEvents).trigger("card:selected", [_this.state.cardID]);
@@ -122,14 +124,22 @@ var LogicCard = React.createClass({
     // TODO: Potentially add a timeout here so that the calculations kick in a bit later for less CPU consumption.
 
     // console.log("Mouse entered.");
+    ev.stopPropagation();
     ev.preventDefault();
+    ev.cancelBubble = true;
+
     var _this = this;
     var subTreeDraggables = GTC.getSubTree(_this.state.cardID);
-    plumbInstance.addToDragSelection(subTreeDraggables);
+    if (toggleGroupDrag) {
+      plumbInstance.addToDragSelection(subTreeDraggables);
+    }
   },
 
   handleMouseLeave: function(ev) {
+    ev.stopPropagation();
     ev.preventDefault();
+    ev.cancelBubble = true;
+
     plumbInstance.clearDragSelection();
   },
 
