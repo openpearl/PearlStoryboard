@@ -207,6 +207,10 @@ var LogicCard = React.createClass({
           <span className="card-info-title">Speaker: </span>
           {_this.state.speaker}
         </div>
+        <div className="card-info-field">
+          <span className="card-info-title">Card Type: </span>
+          {_this.state.cardType}
+        </div>
         <LCMessages title="Inputs: "
           messages={_this.state.inputs}/>
         <LCMessages title="Filters: "

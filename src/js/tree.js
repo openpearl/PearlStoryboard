@@ -10,6 +10,7 @@ CardSchema = {
   filters: [], // [String]
   inputs: [], // [String]
 
+  cardType: "", // String
   cardBody: {
     messages: [], // [String]  
   },
