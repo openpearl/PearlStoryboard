@@ -1,6 +1,6 @@
 // METHODS ********************************************************************
 
-function pushIfUnique(_currentArray, queuedItem) {
+function updateObj(_currentArray, queuedItem) {
   var currentArray = _currentArray;
   var returnedArray = [];
 
@@ -38,6 +38,6 @@ function s4() {
 // EXPORTS ********************************************************************
 
 module.exports = {
-  pushIfUnique: pushIfUnique,
+  updateObj: updateObj,
   guid: guid
 };

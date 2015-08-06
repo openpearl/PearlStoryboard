@@ -1,6 +1,6 @@
 // INITIALIZATION *************************************************************
 
-var pushIfUnique = require('./utils').pushIfUnique;
+var updateObj = require('./utils').updateObj;
 var plumbInstance = {};
 var canGroupDrag = false;
 
@@ -132,8 +132,8 @@ function setConnectionBindings() {
     var source = GTC.getLogicCard(sourceID);
     var target = GTC.getLogicCard(targetID);
 
-    source.childrenCardIDs = pushIfUnique(source.childrenCardIDs, targetID);
-    target.parentCardIDs = pushIfUnique(target.parentCardIDs, sourceID);
+    source.childrenCardIDs = updateObj(source.childrenCardIDs, targetID);
+    target.parentCardIDs = updateObj(target.parentCardIDs, sourceID);
 
     GTC.setLogicCard(source);
     GTC.setLogicCard(target);

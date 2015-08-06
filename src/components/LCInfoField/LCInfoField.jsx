@@ -14,7 +14,9 @@ var LCInfoField = React.createClass({
     var infoFieldHolderUI = [];
 
     // If empty, hide.
-    if (_this.props.infoField.length === 0 || _this.props.infoField[0] === "") {
+    if (_this.props.infoField.length === 0 || 
+      _this.props.infoField[0] === "") {
+      
       showIfVisible = { display: "none" };
     
     // If there's only one, display inline.
@@ -27,8 +29,6 @@ var LCInfoField = React.createClass({
         infoFieldHolderUI.push(<li>{_this.props.infoField[i]}</li>);
       }      
     }
-
-    // console.log(infoFieldHolderUI);
 
     return (
       <div className="card-info-field" style={showIfVisible}>

@@ -1,11 +1,10 @@
+require('./globals.js');
+
 // React Router requirements.
 var Router = window.ReactRouter;
 var Route = window.ReactRouter.Route;
 var RouteHandler = window.ReactRouter.RouteHandler;
 var Editor = require('./components/Editor/Editor.jsx');
-
-GlobalEvents = {}; // Global event system.
-GTC = require('./tree.js');
 
 var App = React.createClass({
   render: function() {
@@ -30,8 +29,6 @@ var refreshTreeView = function() {
     dataType: "json",
     success: function(_data) {
       data = _data;
-      // console.log(typeof data);
-      // console.log(data);
       if (data === null) {
         data = CardSchema;        
       }

@@ -1,5 +1,5 @@
 var guid = require('../../utils.js').guid;
-var pushIfUnique = require('../../utils.js').pushIfUnique;
+var updateObj = require('../../utils.js').updateObj;
 var myJsPlumb = require('../../myJsPlumb.js');
 var LCInfoField = require('../LCInfoField/LCInfoField.jsx');
 
@@ -28,12 +28,6 @@ var LogicCard = React.createClass({
       _this.state = GTC.getLogicCard(_this.props.cardID);
       _this.setState(_this.state);
     });
-
-    // TODO: Find a way to bypass clicking with this implementation.
-    // $('#' + _this.state.cardID).hoverIntent(
-    //   _this.handleMouseEnter, 
-    //   _this.handleMouseLeave
-    // );
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -71,7 +65,7 @@ var LogicCard = React.createClass({
     // Add new child ID to the parent's reference.
     var newChildrenCardIDs 
       = GTC.getLogicCard(_this.state.cardID).childrenCardIDs;
-    newChildrenCardIDs = pushIfUnique(newChildrenCardIDs, uuid);
+    newChildrenCardIDs = updateObj(newChildrenCardIDs, uuid);
     console.log(newChildrenCardIDs);
 
     // Bind the child to the parent.
@@ -107,7 +101,7 @@ var LogicCard = React.createClass({
 
   //   console.log(data);
   //   var card = GTC.getLogicCard(_this.state.cardID);
-  //   card.messages = pushIfUnique(card.messages, data.message);
+  //   card.messages = updateObj(card.messages, data.message);
   //   console.log(card);
 
   //   GTC.setLogicCard(card).refresh();
@@ -150,28 +144,6 @@ var LogicCard = React.createClass({
     var childrenTreeStyle;
     var hideButtonStyle;
 
-    // Toggle depending on visibility.
-    // TODO: Package or shorten for cleaner code.
-    // if (_this.state.ui.visible === true) {
-    //   childrenTreeStyle = classNames({
-    //     'hide': false
-    //   });
-    //   hideButtonStyle = classNames({
-    //     'fa': true,
-    //     'fa-bookmark': true,
-    //     'fa-bookmark-o': false
-    //   });
-    // } else {
-    //   childrenTreeStyle = classNames({
-    //     'hide': true
-    //   });
-    //   hideButtonStyle = classNames({
-    //     'fa': true,
-    //     'fa-bookmark': false,
-    //     'fa-bookmark-o': true
-    //   });
-    // }
-
     // Draw at the correct location.
     var positionCSS = {
       left: _this.state.ui.xpos,
@@ -197,10 +169,6 @@ var LogicCard = React.createClass({
     if (!childVisible) {
       visibilityCSS.color = "#FF4081";
     }
-
-    // This was in 'logic-card' ...
-    // onDragOver={_this.preventDefault}
-    // onDrop={_this.handleDrop}
 
     return (
       <div className="logic-card" 

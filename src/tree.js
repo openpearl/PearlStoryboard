@@ -1,30 +1,6 @@
 var $GlobalEvents = $(GlobalEvents); // Global event system.
 var GlobalTree = {}; // Holder for the processed tree document.
 
-CardSchema = {
-  cardID: "root", // String
-  childrenCardIDs: [], // [String]
-  parentCardIDs: [], // [String] 
-
-  speaker: "", // String
-  filters: [], // [String]
-  inputs: [], // [String]
-  methods: [], // [String]
-
-  cardType: "", // String
-  cardBody: {
-    messages: [], // [String]  
-  },
-
-  ui: { // Only for visualization. Will get removed on final save.
-    visible: true, // Boolean
-    highlight: false, // Boolean
-
-    xpos: 300, // Number
-    ypos: 300, // Number  
-  }
-};
-
 var GlbTreeProto = function GlbTreeProto() {};
 GlbTreeProto.prototype = {
   done: done,
@@ -48,8 +24,10 @@ var GlbTreeCtrl = function GlbTreeCtrl() {
   return new GlbTreeProto();
 };
 
-function done(callback) {
-  callback();
+// METHODS ********************************************************************
+
+function done(next) {
+  next();
 }
 
 function refresh() {
@@ -58,27 +36,10 @@ function refresh() {
   return this;
 }
 
-function savePos() {
-  // Save positions of all nodes.
-  for (var i in GlobalTree) {
-    var logicCard = document.querySelector('#' + i);
-    if (logicCard === null) {
-      // TODO: Figure out what this does.
-      // $GlobalEvents.trigger("global_tree:changed");
-      // return this;
-    } else {
-      GlobalTree[i].ui.xpos = Number(logicCard.style.left.slice(0,-2));
-      GlobalTree[i].ui.ypos = Number(logicCard.style.top.slice(0,-2));
-    }
-  }
-}
-
 function getTree() {
   if ($.isEmptyObject(GlobalTree)) {
     GlobalTree.root = CardSchema;
   }
-
-  // console.log(GlobalTree);
   return GlobalTree;
 }
 
@@ -124,8 +85,6 @@ function cleanUpTree(JSObject) {
   if (typeof JSObject === "object") {
     for (var prop in JSObject) {
       
-      // Base cases.
-
       // Empty array.
       if (JSObject[prop].constructor === Array) {
         if (JSObject[prop][0] === "" || JSObject[prop].length === 0) {
@@ -235,14 +194,8 @@ function setLogicCard(logicCard) {
   var result = {};
   var cardInData = GlobalTree[logicCard.cardID];
   if (cardInData === undefined) { cardInData = CardSchema; }
-  $.extend(true, result, cardInData, logicCard);
-
-  // console.log(logicCard.cardID);
-  // console.log(result);
-
+  $.extend(result, cardInData, logicCard);
   GlobalTree[logicCard.cardID] = result;
-  // console.log(GlobalTree);
-
   return this;
 }
 
@@ -277,5 +230,24 @@ function deleteLogicCard(logicCardID) {
   delete GlobalTree[logicCardID];
   return this;
 }
+
+// HELPERS ********************************************************************
+
+function savePos() {
+  // Save positions of all nodes.
+  for (var i in GlobalTree) {
+    var logicCard = document.querySelector('#' + i);
+    if (logicCard === null) {
+      // TODO: Figure out what this does.
+      // $GlobalEvents.trigger("global_tree:changed");
+      // return this;
+    } else {
+      GlobalTree[i].ui.xpos = Number(logicCard.style.left.slice(0,-2));
+      GlobalTree[i].ui.ypos = Number(logicCard.style.top.slice(0,-2));
+    }
+  }
+}
+
+// EXPORTS ********************************************************************
 
 module.exports = GlbTreeCtrl();
