@@ -44,6 +44,10 @@ var MessageBank = React.createClass({
         key={uuid} message={_this.state.messageBank[i]} />);
     }
 
+    if (messageCards.length === 0) {
+      messageCards = <div id="placeholder-bank-text">Try adding a messages.csv file for a word bank! (Upload button above.)</div>;
+    }
+
     return (
       <div id="message-bank">
         <input id="searchBarNew" type="text" placeholder="Search: "></input>

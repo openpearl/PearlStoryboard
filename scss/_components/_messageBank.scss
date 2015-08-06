@@ -41,3 +41,9 @@
     @extend %sh2;
   }
 }
+
+#placeholder-bank-text {
+  @extend .message-card;
+  font-style: italic;
+  color: gray;
+}

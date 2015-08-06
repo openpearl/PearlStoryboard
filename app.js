@@ -27,9 +27,9 @@ app.use(multer({
   onParseStart: function() {
     console.log("On parse start.");
   },
-  rename: function (fieldname, filename) {
-    return 'input';
-  },
+  // rename: function (fieldname, filename) {
+  //   return 'input';
+  // },
   onFileUploadStart: function (file) {
     console.log(file.originalname + ' is starting ...');
   },
