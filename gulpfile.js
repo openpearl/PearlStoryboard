@@ -37,7 +37,7 @@ gulp.task('nodemon', function () {
 gulp.task('browserify', function(){
   var b = browserify();
   b.transform(reactify); // Use the reactify transform.
-  b.add('src/js/script.js');
+  b.add('src/script.js');
   return b.bundle()
     .pipe(source('script.js'))
     .pipe(gulp.dest('public'));

@@ -1,5 +1,5 @@
-var MessageBank = require('./MessageBank/MessageBank.jsx');
-var ContentEditor = require('./ContentEditor.jsx');
+var MessageBank = require('../MessageBank/MessageBank.jsx');
+var ContentEditor = require('../ContentEditor/ContentEditor.jsx');
 
 var Sidebar = React.createClass({
 

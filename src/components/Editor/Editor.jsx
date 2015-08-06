@@ -1,5 +1,5 @@
-var Sidebar = require("./Sidebar/Sidebar.jsx");
-var Tree = require("./Tree/Tree.jsx");
+var Sidebar = require("../Sidebar/Sidebar.jsx");
+var Tree = require("../Tree/Tree.jsx");
 
 var Editor = React.createClass({
 

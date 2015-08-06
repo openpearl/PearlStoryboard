@@ -1,5 +1,7 @@
-var plumbPanZoom = require('../../../js/plumbPanZoom.js');
-var LogicCard = require('./LogicCard/LogicCard.jsx');
+var guid = require('../../utils.js').guid;
+var myJsPlumb = require('../../myJsPlumb.js');
+var myPanZoom = require('../../myPanZoom.js');
+var LogicCard = require('../LogicCard/LogicCard.jsx');
 
 var Tree = React.createClass({
 
@@ -9,7 +11,7 @@ var Tree = React.createClass({
 
     jsPlumb.ready(function() {
       // FIXME: Race condition bug.
-      plumbPanZoom.drawConnections();
+      myJsPlumb.drawConnections();
     });
 
     $(GlobalEvents).on('global_tree:changed', function(ev) {
@@ -17,35 +19,12 @@ var Tree = React.createClass({
       _this.forceUpdate();
     });
 
-    plumbPanZoom.panzoom();
-
-    // Allow screen drag.
-    var last_position = {};
-    $treeDisplay = $("#tree-display");
-    $("#tree-screen").on('mousemove', function (event) {
-      if (event.which === 1 && event.target === this) {
-        if (typeof(last_position.x) != 'undefined') {
-          var deltaX = last_position.x - event.clientX;
-          var deltaY = last_position.y - event.clientY;
-
-          // console.log("Delta: " + deltaX + " " + deltaY);
-          $treeDisplay.panzoom("pan", -1 * deltaX, -1 * deltaY, 
-            { relative: true });
-        }
-
-        last_position = {
-          x : event.clientX,
-          y : event.clientY
-        };
-      }
-    }).on('mouseup', function() {
-      last_position = {};
-    });
+    myPanZoom.initializePanZoom();
   },
 
   componentDidUpdate: function(prevProps, prevState) {
     console.log("Tree componentDidUpdate");
-    plumbPanZoom.drawConnections();
+    myJsPlumb.drawConnections();
   },
 
   componentWillUnmount: function() {

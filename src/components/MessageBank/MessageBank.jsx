@@ -1,4 +1,5 @@
-var MessageCard = require('./MessageCard.jsx');
+var guid = require('../../utils.js').guid;
+var MessageCard = require('../MessageCard/MessageCard.jsx');
 
 var MessageBank = React.createClass({
 

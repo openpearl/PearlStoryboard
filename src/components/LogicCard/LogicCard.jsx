@@ -1,4 +1,7 @@
-var LCInfoField = require('./LCInfoField.jsx');
+var guid = require('../../utils.js').guid;
+var pushIfUnique = require('../../utils.js').pushIfUnique;
+var myJsPlumb = require('../../myJsPlumb.js');
+var LCInfoField = require('../LCInfoField/LCInfoField.jsx');
 
 var LogicCard = React.createClass({
 
@@ -121,26 +124,20 @@ var LogicCard = React.createClass({
   },
 
   handleMouseEnter: function(ev) {
-    // TODO: Potentially add a timeout here so that the calculations kick in a bit later for less CPU consumption.
-
-    // console.log("Mouse entered.");
     ev.stopPropagation();
     ev.preventDefault();
     ev.cancelBubble = true;
 
     var _this = this;
     var subTreeDraggables = GTC.getSubTree(_this.state.cardID);
-    if (toggleGroupDrag) {
-      plumbInstance.addToDragSelection(subTreeDraggables);
-    }
+    myJsPlumb.addToDragSelection(subTreeDraggables);
   },
 
   handleMouseLeave: function(ev) {
     ev.stopPropagation();
     ev.preventDefault();
     ev.cancelBubble = true;
-
-    plumbInstance.clearDragSelection();
+    myJsPlumb.clearDragSelection();
   },
 
   render: function() {

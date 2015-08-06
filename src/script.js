@@ -1,18 +1,8 @@
-// Disable console.log during production.
-// var console = {};
-// console.log = function(){};
-// console.warn = function(){};
-// window.console = console;
-
-guid = require('./guid.js'); // GUID Generator.
-utils = require('./utils.js'); // Utility scripts.
-pushIfUnique = utils.pushIfUnique;
-
 // React Router requirements.
 var Router = window.ReactRouter;
 var Route = window.ReactRouter.Route;
 var RouteHandler = window.ReactRouter.RouteHandler;
-var Editor = require('../jsx/Editor/Editor.jsx');
+var Editor = require('./components/Editor/Editor.jsx');
 
 GlobalEvents = {}; // Global event system.
 GTC = require('./tree.js');
