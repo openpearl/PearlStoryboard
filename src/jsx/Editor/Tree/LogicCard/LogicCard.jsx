@@ -213,14 +213,10 @@ var LogicCard = React.createClass({
         onMouseLeave={_this.handleMouseLeave}
         onClick={_this.handleSelect}>
 
-        <div className="card-info-field">
-          <span className="card-info-title">Speaker: </span>
-          {_this.state.speaker}
-        </div>
-        <div className="card-info-field">
-          <span className="card-info-title">Card Type: </span>
-          {_this.state.cardType}
-        </div>
+        <LCMessages title="Speaker: "
+          messages={_this.state.speaker}/>
+        <LCMessages title="Card Type: "
+          messages={_this.state.cardType}/>
         <LCMessages title="Inputs: "
           messages={_this.state.inputs}/>
         <LCMessages title="Filters: "
