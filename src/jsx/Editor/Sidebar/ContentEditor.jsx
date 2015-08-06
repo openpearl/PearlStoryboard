@@ -31,6 +31,12 @@ var ContentEditorSchema = {
       "items": {
         "type": "string"
       }
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   }
 };
@@ -86,12 +92,14 @@ var ContentEditor = React.createClass({
     var cardBody = editor.getEditor('root.cardBody');
     var filters = editor.getEditor('root.filters');
     var inputs = editor.getEditor('root.inputs');
+    var methods = editor.getEditor('root.methods');
 
     speaker.setValue(card.speaker);
     cardType.setValue(card.cardType);
     cardBody.setValue(card.cardBody);
     filters.setValue(card.filters);
     inputs.setValue(card.inputs);
+    methods.setValue(card.methods);
 
     _this.state.cardID = card.cardID;
     _this.setState(_this.state);

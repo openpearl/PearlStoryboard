@@ -9,6 +9,7 @@ CardSchema = {
   speaker: "", // String
   filters: [], // [String]
   inputs: [], // [String]
+  methods: [], // [String]
 
   cardType: "", // String
   cardBody: {

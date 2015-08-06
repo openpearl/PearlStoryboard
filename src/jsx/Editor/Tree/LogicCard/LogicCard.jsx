@@ -1,4 +1,4 @@
-var LCMessages = require('./LCMessages.jsx');
+var LCInfoField = require('./LCInfoField.jsx');
 
 var LogicCard = React.createClass({
 
@@ -213,16 +213,18 @@ var LogicCard = React.createClass({
         onMouseLeave={_this.handleMouseLeave}
         onClick={_this.handleSelect}>
 
-        <LCMessages title="Speaker: "
-          messages={_this.state.speaker}/>
-        <LCMessages title="Card Type: "
-          messages={_this.state.cardType}/>
-        <LCMessages title="Inputs: "
-          messages={_this.state.inputs}/>
-        <LCMessages title="Filters: "
-          messages={_this.state.filters}/>
-        <LCMessages title="Messages: " 
-          messages={_this.state.cardBody.messages}/>
+        <LCInfoField title="Speaker: "
+          infoField={_this.state.speaker}/>
+        <LCInfoField title="Card Type: "
+          infoField={_this.state.cardType}/>
+        <LCInfoField title="Inputs: "
+          infoField={_this.state.inputs}/>
+        <LCInfoField title="Filters: "
+          infoField={_this.state.filters}/>
+        <LCInfoField title="Methods: " 
+          infoField={_this.state.methods}/>
+        <LCInfoField title="Messages: " 
+          infoField={_this.state.cardBody.messages}/>
 
         <div className="card-buttons-container">
           
