@@ -64,7 +64,11 @@ function clearTree() {
   return this;
 }
 
-function saveTree() {
+function saveTree(callback) {
+  if (callback === undefined) {
+    callback = function() {};
+  }
+
   savePos();
 
   var data = $.extend(true, {}, GlobalTree); // Deep copy.
@@ -76,7 +80,7 @@ function saveTree() {
     type: "POST",
     url: "/save",
     data: data,
-    success: function() { return _this;}
+    success: function() { callback(); return _this; }
   });
 }
 

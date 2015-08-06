@@ -43,16 +43,40 @@ var Sidebar = React.createClass({
   downloadTree: function(ev) {
     ev.preventDefault();
 
-    // Save tree to the location.
-    var uri = "data:text/json;charset=utf-8," 
-          + encodeURIComponent(JSON.stringify(GTC.getTree()));
+    // First save.
+    GTC.saveTree(function() {
+      
+      // Then, Get both files.
+      $.get('/files/input.json', function(data) {
+        var input = data;
+        $.get('/files/input.json', function(data) {
+          var inputMin = data;
 
-    var downloadLink = document.createElement("a");
-    downloadLink.href = uri;
-    downloadLink.download = "input.json";
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+          var inputURI = "data:text/json;charset=utf-8," + 
+            encodeURIComponent(JSON.stringify(input));
+
+          var inputMinURI = "data:text/json;charset=utf-8," + 
+            encodeURIComponent(JSON.stringify(inputMin));
+
+          var downloadLink = document.createElement("a");
+          
+          // Finally, download twice.
+          downloadLink.href = inputURI;
+          downloadLink.download = "input.json";
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+
+          setTimeout(function() {
+            downloadLink.href = inputMinURI;
+            downloadLink.download = "input.min.json";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+          }, 100);
+        });
+      });
+    });
   },
 
   uploadTree: function() {
@@ -105,7 +129,7 @@ var Sidebar = React.createClass({
           <form
             id="hiddenForm"
             encType="multipart/form-data"
-            action="  /files/processedTree"
+            action="/files/processedTree"
             method="post" > 
             <input type="file" name="file" id="fileUpload"></input>
           </form>

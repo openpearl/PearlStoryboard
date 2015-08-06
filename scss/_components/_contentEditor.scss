@@ -1,11 +1,10 @@
 #content-editor {
   width: 100%;
   padding: 20px;
-  max-height: 50%;
+  min-height: 20%;
+  height: 50%;
+  resize: vertical;
   overflow: auto;
-  // color: rgba(255,255,255,.7);
-  // color: white;
-  // background-color: $primary_2;
   background-color: white;
 
   & > textarea {
