@@ -33,6 +33,7 @@ GlbTreeProto.prototype = {
   getTree: getTree,
   setTree: setTree,
   saveTree: saveTree,
+  cleanUpTree: cleanUpTree,
   clearTree: clearTree,
 
   getSubTree: getSubTree,
@@ -86,10 +87,10 @@ function setTree(inputTree) {
 
   // FIXME: This may be a naive and excessive way of doing things.
   // Filter to add in missing empty arrays.
-  for (var i in GlobalTree) {
-    for (var j in CardSchema) {
-      if (!GlobalTree[i][j]) {
-        GlobalTree[i][j] = CardSchema[j];
+  for (var card in GlobalTree) {
+    for (var attribute in CardSchema) {
+      if (!GlobalTree[card][attribute]) {
+        GlobalTree[card][attribute] = CardSchema[attribute];
       }
     }
   }
@@ -105,8 +106,10 @@ function clearTree() {
 function saveTree() {
   savePos();
 
-  var data = GlobalTree;
+  var data = $.extend(true, {}, GlobalTree); // Deep copy.
   var _this = this;
+
+  _this.cleanUpTree(data);
 
   $.ajax({
     type: "POST",
@@ -114,6 +117,33 @@ function saveTree() {
     data: data,
     success: function() { return _this;}
   });
+}
+
+// TODO: Hacky cleanup filter.
+function cleanUpTree(JSObject) {
+  if (typeof JSObject === "object") {
+    for (var prop in JSObject) {
+      
+      // Base cases.
+
+      // Empty array.
+      if (JSObject[prop].constructor === Array) {
+        if (JSObject[prop][0] === "" || JSObject[prop].length === 0) {
+          delete JSObject[prop];     
+        }   
+      }
+
+      // Empty string.
+      else if (JSObject[prop] === "" || JSObject[prop].length === 0) {
+        delete JSObject[prop];
+      }
+
+      // Recurse downwards.
+      else {
+        cleanUpTree(JSObject[prop]);  
+      }
+    }
+  } else { return; }
 }
 
 function getSubTree(logicCardID) {
