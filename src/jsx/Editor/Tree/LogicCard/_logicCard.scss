@@ -1,6 +1,9 @@
 $card-button-size: 40px;
+$card-radius: 5px;
 
 .logic-card {
+  border-radius: $card-radius;
+
   width: 300px;
   min-height: 100px;
   position: absolute;
@@ -26,9 +29,9 @@ $card-padding: -7px;
   left: $card-padding;
   bottom: $card-padding;
 
-  z-index: -5;
+  z-index: -1;
   background-color: $primary;
-  border-radius: 5px;
+  border-radius: $card-radius;
 }
 
 .card-info-field {
@@ -41,9 +44,6 @@ $card-padding: -7px;
 
 // Button styling.
 .card-buttons-container {
-  // position: absolute;
-  // left: 100%;
-  // top: 0;
 
   clear: both; /*may be omitted*/
   position: absolute;
