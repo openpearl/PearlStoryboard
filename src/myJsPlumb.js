@@ -93,8 +93,13 @@ function setZoom(zoomLevel) {
   plumbInstance.setZoom(zoomLevel);
 }
 
+function getDragStatus() {
+  return canGroupDrag;
+}
+
 function toggleGroupDrag() {
   canGroupDrag = !canGroupDrag;
+  $(GlobalEvents).trigger("dragging:toggle");
 }
 
 function addToDragSelection(subTreeDraggables) {
@@ -179,6 +184,7 @@ function setDraggables(cardsObject) {
 module.exports = {
   drawConnections: drawConnections,
   setZoom: setZoom,
+  getDragStatus: getDragStatus,
   toggleGroupDrag: toggleGroupDrag,
   addToDragSelection: addToDragSelection,
   clearDragSelection: clearDragSelection

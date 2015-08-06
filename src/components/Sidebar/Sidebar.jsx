@@ -1,7 +1,14 @@
+var myJsPlumb = require('../../myJsPlumb.js');
 var MessageBank = require('../MessageBank/MessageBank.jsx');
 var ContentEditor = require('../ContentEditor/ContentEditor.jsx');
 
 var Sidebar = React.createClass({
+
+  getInitialState: function () {
+    return {
+      canDrag: myJsPlumb.getDragStatus()       
+    };
+  },
 
   componentDidMount: function() {
     var _this = this;
@@ -12,6 +19,11 @@ var Sidebar = React.createClass({
 
     $(GlobalEvents).on("sidebar:toggle", function() {
       _this.toggleBank();
+    });
+
+    $(GlobalEvents).on("dragging:toggle", function() {
+      _this.state.canDrag = myJsPlumb.getDragStatus();
+      _this.setState(_this.state);
     });
   },
 
@@ -47,8 +59,19 @@ var Sidebar = React.createClass({
     $("#fileUpload").click();
   },
 
+  toggleGroupDrag: function() {
+    myJsPlumb.toggleGroupDrag();
+  },
+
   render: function() {
     var _this = this;
+    var draggingStyle = {};
+
+    if (_this.state.canDrag) {
+      draggingStyle = {
+        color: "#FF4081"
+      }
+    }
 
     return (
       <div id="sidebar">
@@ -73,6 +96,10 @@ var Sidebar = React.createClass({
 
           <div className="bt-menu" onClick={_this.uploadTree}>
             <i className="fa fa-upload"></i>
+          </div>
+
+          <div className="bt-menu" onClick={_this.toggleGroupDrag}>
+            <i className="fa fa-hand-rock-o" style={draggingStyle}></i>
           </div>
 
           <form
