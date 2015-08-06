@@ -1,28 +1,35 @@
-'use strict';
-
+// General.
 var gulp = require('gulp');
 var shell = require('gulp-shell');
 var source = require("vinyl-source-stream");
-var nodemon = require('gulp-nodemon');
-var browserify = require('browserify');
-var reactify = require('reactify');
-var sass = require('gulp-sass');
 var watch = require('gulp-watch');
 var flatten = require('gulp-flatten');
+var nodemon = require('gulp-nodemon');
 
+// Javascript.
+var browserify = require('browserify');
+var reactify = require('reactify');
+
+// CSS.
+var sass = require('gulp-sass');
 var postcss = require('gulp-postcss');
 var autoprefixer = require('autoprefixer-core');
 
+
+// TASKS **********************************************************************
+
+// Kill any existing node servers.
 gulp.task('node:kill', shell.task([
   'pkill node'
 ]));
 
+// Run live node server.
 gulp.task('nodemon', function () {
   nodemon({
-    script: 'app.js'
-  , ext: 'js html'
-  , ignore: ['node_modules/']
-  , env: { 'NODE_ENV': 'development' }
+    script: 'app.js',
+    ext: 'js html',
+    ignore: ['node_modules/'],
+    env: { 'NODE_ENV': 'development' }
   });
 });
 
@@ -38,6 +45,8 @@ gulp.task('browserify', function(){
 
 gulp.task('watch', function() {
   gulp.watch('src/**/*.js*', ['browserify']);
+
+  // TODO: Not sure why this is necessary.
   gulp.watch('src/**/*.scss', ['scss:watch']);
   gulp.watch('scss/**/*.scss', ['scss']);
 });

@@ -1,7 +1,4 @@
 *.swp
-DS_Store
-.DS_Store
-DS_Store/
 
 # Logs
 logs
@@ -32,10 +29,15 @@ build/Release
 node_modules
 bower_components
 
+# OSX defaults
 .DS_Store
 .DS_Store/
+DS_Store
+DS_Store/
 
+# Saved storyboard documents.
 files/
 
+# Generated on build.
 public/script.js
 public/style.css

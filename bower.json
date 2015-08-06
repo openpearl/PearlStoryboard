@@ -1,11 +1,10 @@
 {
-  "name": "PearlTool-LogicGenerator",
-  "version": "1.0.0",
-  "homepage": "https://github.com/openpearl/PearlTool-LogicGenerator",
+  "name": "PearlStoryboard",
+  "homepage": "https://github.com/openpearl/PearlStoryboard",
   "authors": [
     "David Zhu <hdavidzhu@gmail.com>"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "ignore": [
     "**/.*",
     "node_modules",

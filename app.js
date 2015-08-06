@@ -10,10 +10,9 @@ var multer = require('multer');
 var app = express();
 var PORT = process.env.PORT || 3000;
 
+// Middleware.
 app.use(logger('dev'));
-// app.use(bodyParser());
 app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Multer settings.
@@ -45,7 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 app.use('/files',  express.static(__dirname + '/files'));
 
-// Our Routes.
+// Routes.
 app.get('/', function (req, res) {
   console.log("Beginning route.");
   res.status(200).json({});
