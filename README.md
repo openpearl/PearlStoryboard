@@ -7,11 +7,27 @@ The Logic Generator is a handy utility to design a conversation plugin for Pearl
 
 ### Usage
 
-1. Visit https://www.openpearl.org/logic-generator to get access to the tool.
-1. Pan and zoom around the screen to view the whole tree. Navigate using `WASD`.
+#### Run remotely (easy)
+(Currently, PearlStoryboard is not hosted on any server and is not available remotely. This ability will come out in the future.)
+
+1. ~~Visit https://www.openpearl.org/storyboard to get access to the tool.~~
+
+#### Run locally (harder)
+
+1. Clone or download this repository.
+1. Make sure you have NodeJS. If not, follow some tutorials online or visit their official homepage at https://nodejs.org/.
+1. Now `npm install` to get all dependencies.
+1. We need Bower for installing any libraries our front-end app needs. Get Bower at http://bower.io/.
+1. Run `bower install` to get all of our front-end dependencies.
+1. We also need Gulp to run our development tasks. Learn to get Gulp at http://gulpjs.com/.
+1. Run `gulp` to start the server and compile our build folders.
+
+#### Things to do
+1. Pan and zoom around the screen to view the whole tree. Navigate using `WASD` or by dragging with the mouse.
 1. Toggle to sidebar with the `Q` key.
-1. Save and load your existing trees to maintain your progress.
-1. Logic Generator will produce for you a `storyboard.json` file, which you can complement with a `logic.rb` document that contains the actual logic `storyboard.json` references.
+1. Toggle subtree dragging with the `E` key. Handy for moving large subtrees. The current downside of leave subtree dragging on is that this makes registering clicking on cards significantly slower. A fix will come for this as the tool becomes optimized.
+1. Save and load your existing trees to maintain your progress. (Currently, no hotkeys exist for this, but it will come soon.)
+1. Pearl Storyboard will produce for you a `storyboard.json` file, which you can complement with a `logic.rb` document that contains the actual logic `storyboard.json` references.
 
 ### Card Design
 
@@ -22,6 +38,9 @@ The most important concept and purpose for this tool is card design. Cards act a
 "id_31f6e7046976d442": {
   cardID: "id_31f6e7046976d442",
 
+  // These are antiquated terms that are relics of the tree design.
+  // Since we are now using a directed graph, these should be called
+  // lastCardIDs and nextCardIDs in the future.
   parentCardIDs: [],
   childrenCardIDs: [],
 
@@ -50,7 +69,4 @@ The most important concept and purpose for this tool is card design. Cards act a
 ### For Developers
 
 * The Logic Generator is written using ReactJS, jsPlumb, and the JQuery Panzoom plugin.
-* This tool uses the Gulp task runner. To start, run `gulp`.
-* Install any missing dependencies using `npm install` and `bower install`.
 * Please submit issues and pull requests to keep this tool up-to-date!
-* Any direct questions can be made at _____, and other questions can be filed at StackOverflow.
