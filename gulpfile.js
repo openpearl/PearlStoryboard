@@ -23,8 +23,14 @@ gulp.task('node:kill', shell.task([
   'pkill node'
 ]));
 
+gulp.task('initialize', [
+  'browserify',
+  'scss:copy',
+  'scss:process'
+]);
+
 // Run live node server.
-gulp.task('nodemon', function () {
+gulp.task('nodemon', function() {
   nodemon({
     script: 'app.js',
     ext: 'js html',
@@ -47,12 +53,19 @@ gulp.task('watch', function() {
   gulp.watch('src/**/*.js*', ['browserify']);
 
   // TODO: Not sure why this is necessary.
-  gulp.watch('src/**/*.scss', ['scss:watch']);
-  gulp.watch('scss/**/*.scss', ['scss']);
+  gulp.watch('src/**/*.scss', ['scss:copy']);
+  gulp.watch('scss/**/*.scss', ['scss:process']);
 });
 
 // Compile Sass into css.
-gulp.task('scss', function() {
+gulp.task('scss:copy', function() {
+  gulp.src('src/**/*.scss', {base: 'src'})
+    .pipe(watch('src/**/*.scss', {base: 'src'}))
+    .pipe(flatten())
+    .pipe(gulp.dest('scss/_components'));
+});
+
+gulp.task('scss:process', function() {
   var processors = [
     autoprefixer({browsers: ['last 2 version']})
   ];
@@ -63,11 +76,4 @@ gulp.task('scss', function() {
     .pipe(gulp.dest('public'));
 });
 
-gulp.task('scss:watch', function() {
-  gulp.src('src/**/*.scss', {base: 'src'})
-    .pipe(watch('src/**/*.scss', {base: 'src'}))
-    .pipe(flatten())
-    .pipe(gulp.dest('scss/_components'));
-});
-
-gulp.task('default', ['node:kill','nodemon', 'watch']);
+gulp.task('default', ['node:kill', 'initialize', 'nodemon', 'watch']);
