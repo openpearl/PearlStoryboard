@@ -23,11 +23,11 @@ The Logic Generator is a handy utility to design a conversation plugin for Pearl
 1. Run `gulp` to start the server and compile our build folders.
 
 #### Things to do
-1. Pan and zoom around the screen to view the whole tree. Navigate using `WASD` or by dragging with the mouse.
-1. Toggle to sidebar with the `Q` key.
-1. Toggle subtree dragging with the `E` key. Handy for moving large subtrees. The current downside of leave subtree dragging on is that this makes registering clicking on cards significantly slower. A fix will come for this as the tool becomes optimized.
-1. Save and load your existing trees to maintain your progress. (Currently, no hotkeys exist for this, but it will come soon.)
-1. Pearl Storyboard will produce for you a `storyboard.json` file, which you can complement with a `logic.rb` document that contains the actual logic `storyboard.json` references.
+* Pan and zoom around the screen to view the whole tree. Navigate using `WASD` or by dragging with the mouse.
+* Toggle to sidebar with the `Q` key.
+* Toggle subtree dragging with the `E` key. Handy for moving large subtrees. The current downside of leave subtree dragging on is that this makes registering clicking on cards significantly slower. A fix will come for this as the tool becomes optimized.
+* Save and load your existing trees to maintain your progress. (Currently, no hotkeys exist for this, but it will come soon.)
+* Pearl Storyboard will produce for you a `storyboard.json` file, which you can complement with a `logic.rb` document that contains the actual logic `storyboard.json` references.
 
 ### Card Design
 
