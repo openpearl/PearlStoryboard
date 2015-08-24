@@ -198,7 +198,7 @@ function setLogicCard(logicCard) {
   var result = {};
   var cardInData = GlobalTree[logicCard.cardID];
   if (cardInData === undefined) { cardInData = CardSchema; }
-  $.extend(result, cardInData, logicCard);
+  $.extend(true, result, cardInData, logicCard);
   GlobalTree[logicCard.cardID] = result;
   return this;
 }
